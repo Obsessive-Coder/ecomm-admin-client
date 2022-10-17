@@ -5,7 +5,7 @@ import { useLoaderData } from 'react-router-dom';
 import Products_API from '../utils/api/Products'
 
 export async function loader() {
-  const products = await Products_API.findAll();
+  const { data: products } = await Products_API.findAll();
   return { products };
 }
 
