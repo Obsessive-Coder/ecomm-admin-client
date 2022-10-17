@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import reportWebVitals from './reportWebVitals';
 
 import Dashboard from './pages/Dashboard';
-import Products from './pages/Products';
+import Products, { loader as productsLoader } from './pages/Products';
 import Product from './pages/Product';
 import Error404 from './pages/Error404';
 
@@ -18,10 +18,11 @@ import {
 const router = createBrowserRouter([{
   path: '/',
   element: <Dashboard />,
-  errorElement: <Error404 />
+  errorElement: <Error404 />,
 }, {
   path: '/products/',
-  element: <Products />
+  element: <Products />,
+  loader: productsLoader
 }, {
   path: '/products/:productId',
   element: <Product />
