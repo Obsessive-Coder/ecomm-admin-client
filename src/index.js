@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 
 import Dashboard from './pages/Dashboard';
 import Products, { loader as productsLoader } from './pages/Products';
-import Product from './pages/Product';
+import Product, { loader as productLoader } from './pages/Product';
 import Error404 from './pages/Error404';
 
 import {
@@ -25,7 +25,8 @@ const router = createBrowserRouter([{
   loader: productsLoader
 }, {
   path: '/products/:productId',
-  element: <Product />
+  element: <Product />,
+  loader: productLoader
 }]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
