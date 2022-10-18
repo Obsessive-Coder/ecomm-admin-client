@@ -3,36 +3,12 @@ import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import reportWebVitals from './reportWebVitals';
 
-import Dashboard from './pages/Dashboard';
-import Products, { loader as productsLoader } from './pages/Products';
-import Product, { loader as productLoader } from './pages/Product';
-import Error404 from './pages/Error404';
-
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-} from "react-router-dom";
-
-
-const router = createBrowserRouter([{
-  path: '/',
-  element: <Dashboard />,
-  errorElement: <Error404 />,
-}, {
-  path: '/products/',
-  element: <Products />,
-  loader: productsLoader
-}, {
-  path: '/products/:productId',
-  element: <Product />,
-  loader: productLoader
-}]);
+import MasterPage from './pages/MasterPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <MasterPage />
   </React.StrictMode>
 );
 
