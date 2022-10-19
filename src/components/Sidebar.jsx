@@ -25,8 +25,8 @@ export default function Sidebar({ isOpen, handleClose }) {
   const isLargeScreen = useMediaQuery({ query: '(min-width: 992px )' });
   return (
     <Offcanvas
-      scroll
-      backdrop={false}
+      scroll={isLargeScreen}
+      backdrop={!isLargeScreen}
       show={isLargeScreen || isOpen}
       onHide={handleClose}
       style={{ width: '14rem' }}
