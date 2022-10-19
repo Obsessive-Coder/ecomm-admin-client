@@ -5,8 +5,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 
 // Custom components.
 import MainHeader from '../components/MainHeader';
@@ -14,7 +12,7 @@ import Dashboard from './Dashboard';
 import Products, { loader as productsLoader } from './Products';
 import Product, { loader as productLoader } from './Product';
 import Error404 from './Error404';
-import NavItems from '../components/NavItems';
+import Sidebar from '../components/Sidebar';
 
 // Styles, utils, and other helpers.
 import '../style.css';
@@ -24,7 +22,7 @@ const router = createBrowserRouter([{
   element: <Dashboard />,
   errorElement: <Error404 />,
 }, {
-  path: '/products/',
+  path: '/products',
   element: <Products />,
   loader: productsLoader
 }, {
@@ -34,32 +32,18 @@ const router = createBrowserRouter([{
   loader: productLoader
 }]);
 
-export default function MasterPage({ children }) {
+export default function MasterPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const handleOpenSidebar = () => setIsSidebarOpen(true);
-
-  const handleCloseSidebar = () => setIsSidebarOpen(false)
+  const toggleSidebarIsOpen = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <Container fluid>
-      <MainHeader
-        isSidebarOpen={isSidebarOpen}
-        handleOpenSidebar={handleOpenSidebar}
-        handleCloseSidebar={handleCloseSidebar}
-      />
+      <MainHeader handleOpenSidebar={toggleSidebarIsOpen} />
 
-      <div className="d-flex">
-        <div
-          className="d-none d-lg-block offcanvas offcanvas-start show border border-dark"
-          style={{ top: 50, left: 12, width: '14rem' }}
-        >
-          <NavItems />
-        </div>
+      <Sidebar isOpen={isSidebarOpen} handleClose={toggleSidebarIsOpen} />
 
-        <div className="flex-fill p-4 page-content">
-          <RouterProvider router={router} />
-        </div>
+      <div className="page-content">
+        <RouterProvider router={router} />
       </div>
     </Container>
   )
