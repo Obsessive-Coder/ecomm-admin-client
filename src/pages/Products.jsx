@@ -1,22 +1,73 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
+import Form from 'react-bootstrap/Form';
 
 // Style, utils, and other helpers.
-import Products_API from '../utils/api/Products'
+import ProductUtil from '../utils/api/ProductUtil'
 
 export async function loader() {
-  const { data: products } = await Products_API.findAll();
+  const { data: products } = await ProductUtil.findAll();
   return { products };
 }
 
+const ActiveSwitch = ({ id, index, label, isActive }) => {
+  const [isChecked, setIsChecked] = useState(isActive);
+
+  const handleOnChange = () => {
+    setIsChecked(!isChecked);
+    ProductUtil.update(id, { active: !isChecked });
+  };
+
+  return (
+    <Form>
+      <Form.Check
+        id={id}
+        type="switch"
+        aria-label={label}
+        data-product-index={index}
+        checked={isChecked}
+        onChange={handleOnChange}
+      />
+    </Form>
+  );
+};
+
+const tableColumns = [{
+  label: 'title',
+  Component: undefined,
+  handlerName: () => null,
+}, {
+  label: 'description',
+  Component: undefined,
+  handlerName: () => null,
+}, {
+  label: 'category',
+  Component: undefined,
+  handlerName: () => null,
+}, {
+  label: 'status',
+  Component: undefined,
+  handlerName: () => null,
+}, {
+  label: 'active',
+  Component: ActiveSwitch,
+  handlerName: 'toggleProductActive',
+}, {
+  label: 'view',
+  Component: undefined,
+  handlerName: () => null,
+}, {
+  label: 'actions',
+  Component: undefined,
+  handlerName: () => null,
+}];
+
 export default function Products() {
   const { products } = useLoaderData();
-
-  const tableColumns = ['title', 'description', 'category', 'status', 'active', 'view', 'actions']
 
   console.log(products);
 
@@ -27,9 +78,9 @@ export default function Products() {
       <Table responsive striped bordered hover className="table-light">
         <thead>
           <tr>
-            {tableColumns.map(productKey => (
-              <th key={productKey} style={{ maxWidth: 200 }}>
-                <span className="text-capitalize">{productKey}</span>
+            {tableColumns.map(({ label }) => (
+              <th key={label} style={{ maxWidth: 200 }}>
+                <span className="text-capitalize">{label}</span>
               </th>
             ))}
           </tr>
@@ -37,10 +88,22 @@ export default function Products() {
 
         <tbody>
           {products.map(product => (
-            <tr key={product.id}>
-              {tableColumns.map(label => (
-                <td key={label} style={{ maxWidth: 200 }} className="text-truncate">
-                  <span>{product[label] ?? ''}</span>
+            <tr key={`${product.id}-${product.active}`}>
+              {tableColumns.map(({ label, Component, handlerName }, index) => (
+                <td key={`${label}-${product.active}`} style={{ maxWidth: 200 }} className="text-truncate">
+                  {Component ? (
+                    <div>
+                      <Component
+                        id={product.id}
+                        key={`${product.id}-${product.active}-${index}`}
+                        index={index}
+                        label={label}
+                        isActive={product.active}
+                      />
+                    </div>
+                  ) : (
+                    <span>{product[label] ?? ''}</span>
+                  )}
                 </td>
               ))}
             </tr>
