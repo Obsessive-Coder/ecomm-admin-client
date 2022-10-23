@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
@@ -38,32 +38,25 @@ const ActiveSwitch = ({ id, index, label, isActive }) => {
 
 const tableColumns = [{
   label: 'title',
-  Component: undefined,
-  handlerName: () => null,
+  Component: undefined
 }, {
   label: 'description',
-  Component: undefined,
-  handlerName: () => null,
+  Component: undefined
 }, {
   label: 'category',
-  Component: undefined,
-  handlerName: () => null,
+  Component: undefined
 }, {
   label: 'status',
-  Component: undefined,
-  handlerName: () => null,
+  Component: undefined
 }, {
   label: 'active',
   Component: ActiveSwitch,
-  handlerName: 'toggleProductActive',
 }, {
   label: 'view',
-  Component: undefined,
-  handlerName: () => null,
+  Component: undefined
 }, {
   label: 'actions',
-  Component: undefined,
-  handlerName: () => null,
+  Component: undefined
 }];
 
 export default function Products() {
@@ -88,14 +81,13 @@ export default function Products() {
 
         <tbody>
           {products.map(product => (
-            <tr key={`${product.id}-${product.active}`}>
-              {tableColumns.map(({ label, Component, handlerName }, index) => (
-                <td key={`${label}-${product.active}`} style={{ maxWidth: 200 }} className="text-truncate">
+            <tr key={product.id}>
+              {tableColumns.map(({ label, Component }, index) => (
+                <td style={{ maxWidth: 200 }} className="text-truncate">
                   {Component ? (
                     <div>
                       <Component
                         id={product.id}
-                        key={`${product.id}-${product.active}-${index}`}
                         index={index}
                         label={label}
                         isActive={product.active}
