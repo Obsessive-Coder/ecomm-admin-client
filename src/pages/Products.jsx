@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { useLoaderData } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
+import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 
 // Style, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil'
@@ -36,6 +38,12 @@ const ActiveSwitch = ({ id, index, label, isActive }) => {
   );
 };
 
+const ViewLink = ({ id }) => (
+  <Link to={`/products/${id}`}>
+    <BoxArrowRightIcon />
+  </Link>
+)
+
 const tableColumns = [{
   label: 'title',
   Component: undefined
@@ -50,10 +58,10 @@ const tableColumns = [{
   Component: undefined
 }, {
   label: 'active',
-  Component: ActiveSwitch,
+  Component: ActiveSwitch
 }, {
   label: 'view',
-  Component: undefined
+  Component: ViewLink
 }, {
   label: 'actions',
   Component: undefined
@@ -72,7 +80,7 @@ export default function Products() {
         <thead>
           <tr>
             {tableColumns.map(({ label }) => (
-              <th key={label} style={{ maxWidth: 200 }}>
+              <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
                 <span className="text-capitalize">{label}</span>
               </th>
             ))}
@@ -83,16 +91,14 @@ export default function Products() {
           {products.map(product => (
             <tr key={product.id}>
               {tableColumns.map(({ label, Component }, index) => (
-                <td style={{ maxWidth: 200 }} className="text-truncate">
+                <td key={`${label}-data`} style={{ maxWidth: 200 }} className="text-truncate">
                   {Component ? (
-                    <div>
-                      <Component
-                        id={product.id}
-                        index={index}
-                        label={label}
-                        isActive={product.active}
-                      />
-                    </div>
+                    <Component
+                      id={product.id}
+                      index={index}
+                      label={label}
+                      isActive={product.active}
+                    />
                   ) : (
                     <span>{product[label] ?? ''}</span>
                   )}
