@@ -2,10 +2,10 @@ import React from 'react'
 import { useLoaderData } from 'react-router-dom';
 
 // Style, utils, and other helpers.
-import Products_API from '../utils/api/Products'
+import ProductUtil from '../utils/api/ProductUtil'
 
 export async function loader({ params: { productId } }) {
-  const { data: product } = await Products_API.findOne(productId);
+  const { data: product } = await ProductUtil.findOne(productId);
   return { product };
 }
 
