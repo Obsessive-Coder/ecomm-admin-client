@@ -8,6 +8,9 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 
+// Custom Components.
+import Actions from '../components/Actions';
+
 // Style, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil'
 
@@ -64,11 +67,16 @@ const tableColumns = [{
   Component: ViewLink
 }, {
   label: 'actions',
-  Component: undefined
+  Component: Actions
 }];
 
 export default function Products() {
-  const { products } = useLoaderData();
+  const [products, setProducts] = useState(useLoaderData().products);
+
+  const removeProduct = productId => {
+    const filteredProducts = products.filter(({ id }) => id !== productId);
+    setProducts([...filteredProducts]);
+  }
 
   console.log(products);
 
@@ -89,7 +97,7 @@ export default function Products() {
 
         <tbody>
           {products.map(product => (
-            <tr key={product.id}>
+            <tr key={`${product.id}-${products.length}`}>
               {tableColumns.map(({ label, Component }, index) => (
                 <td key={`${label}-data`} style={{ maxWidth: 200 }} className="text-truncate">
                   {Component ? (
@@ -98,6 +106,7 @@ export default function Products() {
                       index={index}
                       label={label}
                       isActive={product.active}
+                      removeProduct={removeProduct}
                     />
                   ) : (
                     <span>{product[label] ?? ''}</span>

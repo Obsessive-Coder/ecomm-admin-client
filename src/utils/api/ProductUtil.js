@@ -13,4 +13,8 @@ export default class ProductUtil {
   static update(productId, updatedProduct) {
     return axios.put(`${BASE_URL}/${productId}`, updatedProduct);
   }
+
+  static delete(productId) {
+    return axios.delete(`${BASE_URL}/${productId}`);
+  }
 }
