@@ -42,9 +42,9 @@ export default function MasterPage() {
 
       <Sidebar isOpen={isSidebarOpen} handleClose={toggleSidebarIsOpen} />
 
-      <div className="page-content">
+      <Container className="page-content">
         <RouterProvider router={router} />
-      </div>
+      </Container>
     </Container>
   )
 }
