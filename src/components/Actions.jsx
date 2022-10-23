@@ -9,6 +9,9 @@ import {
   Trash3 as DeleteIcon
 } from 'react-bootstrap-icons';
 
+// Custom Components.
+import Confirm from './Confirm';
+
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
@@ -24,10 +27,8 @@ const ActionButton = ({ icon, handleClick, className }) => (
 
 export default function Actions({ id: productId, removeProduct, isEdit = true, isDelete = true }) {
   const handleDeleteProduct = () => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      ProductUtil.delete(productId);
-      removeProduct(productId);
-    }
+    ProductUtil.delete(productId);
+    removeProduct(productId);
   };
 
   return (
@@ -37,7 +38,14 @@ export default function Actions({ id: productId, removeProduct, isEdit = true, i
       )}
 
       {isDelete && (
-        <ActionButton icon={<DeleteIcon />} handleClick={handleDeleteProduct} className="delete" />
+        <Confirm
+          title="Confirm Product Deletion"
+          buttonContent={<DeleteIcon />}
+          handleConfirm={handleDeleteProduct}
+          buttonClassName="text-secondary action-button delete"
+        >
+          <span>Are you sure that you want to delete this product?</span>
+        </Confirm>
       )}
     </div>
   )
