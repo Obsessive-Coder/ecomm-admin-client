@@ -10,6 +10,7 @@ import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 
 // Custom Components.
 import Actions from '../components/Actions';
+import AddEditProduct from '../components/AddEditProduct';
 
 // Style, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil'
@@ -57,8 +58,8 @@ const tableColumns = [{
   label: 'category',
   Component: undefined
 }, {
-  label: 'status',
-  Component: undefined
+  label: 'price',
+  Component: undefined,
 }, {
   label: 'active',
   Component: ActiveSwitch
@@ -84,6 +85,10 @@ export default function Products() {
     <Container>
       <h1>Products</h1>
 
+      <div>
+        <AddEditProduct buttonContent={'Add Product'} />
+      </div>
+
       <Table responsive striped bordered hover className="table-light">
         <thead>
           <tr>
@@ -103,6 +108,7 @@ export default function Products() {
                   {Component ? (
                     <Component
                       id={product.id}
+                      product={product}
                       index={index}
                       label={label}
                       isActive={product.active}

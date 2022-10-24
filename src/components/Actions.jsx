@@ -10,31 +10,26 @@ import {
 } from 'react-bootstrap-icons';
 
 // Custom Components.
+import AddEditProduct from './AddEditProduct';
 import Confirm from './Confirm';
 
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
-const ActionButton = ({ icon, handleClick, className }) => (
-  <Button
-    variant="link"
-    onClick={handleClick}
-    className={`text-secondary action-button ${className}`}
-  >
-    {icon}
-  </Button>
-);
-
-export default function Actions({ id: productId, removeProduct, isEdit = true, isDelete = true }) {
+export default function Actions({ product, removeProduct, isEdit = true, isDelete = true }) {
   const handleDeleteProduct = () => {
-    ProductUtil.delete(productId);
-    removeProduct(productId);
+    ProductUtil.delete(product.id);
+    removeProduct(product.id);
   };
 
   return (
     <div>
       {isEdit && (
-        <ActionButton icon={<EditIcon />} handleClick={() => null} className="edit" />
+        <AddEditProduct
+          buttonContent={<EditIcon />}
+          product={product}
+          className="edit"
+        />
       )}
 
       {isDelete && (

@@ -10,6 +10,10 @@ export default class ProductUtil {
     return axios.get(`${BASE_URL}/${productId}`);
   }
 
+  static create(product) {
+    return axios.post(BASE_URL, product);
+  }
+
   static update(productId, updatedProduct) {
     return axios.put(`${BASE_URL}/${productId}`, updatedProduct);
   }
