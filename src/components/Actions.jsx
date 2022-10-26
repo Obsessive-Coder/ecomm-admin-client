@@ -1,7 +1,4 @@
-import React, { useState } from 'react';
-
-// Bootstrap Components.
-import Button from 'react-bootstrap/Button';
+import React from 'react';
 
 // Icons.
 import {
@@ -16,7 +13,7 @@ import Confirm from './Confirm';
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
-export default function Actions({ product, removeProduct, isEdit = true, isDelete = true }) {
+export default function Actions({ product, removeProduct, isEdit = true, isDelete = true, updateProduct }) {
   const handleDeleteProduct = () => {
     ProductUtil.delete(product.id);
     removeProduct(product.id);
@@ -28,6 +25,7 @@ export default function Actions({ product, removeProduct, isEdit = true, isDelet
         <AddEditProduct
           buttonContent={<EditIcon />}
           product={product}
+          updateProduct={updateProduct}
           className="edit"
         />
       )}

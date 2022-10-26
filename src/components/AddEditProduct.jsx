@@ -11,7 +11,7 @@ import Row from 'react-bootstrap/Row';
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
-export default function AddEditProduct({ product = {}, buttonContent, className = '' }) {
+export default function AddEditProduct({ product = {}, buttonContent, className = '', addProduct, updateProduct }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
@@ -32,9 +32,11 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
     if (product.id) {
       // Update the product.
       ProductUtil.update(product.id, updatedProduct);
+      updateProduct(updatedProduct);
     } else {
       // Create a new product.
       ProductUtil.create(updatedProduct);
+      addProduct(updatedProduct);
     }
 
     handleHide();
