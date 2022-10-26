@@ -74,10 +74,29 @@ const tableColumns = [{
 export default function Products() {
   const [products, setProducts] = useState(useLoaderData().products);
 
+  const addProduct = newProduct => {
+    setProducts([...products, newProduct]);
+  };
+
   const removeProduct = productId => {
     const filteredProducts = products.filter(({ id }) => id !== productId);
     setProducts([...filteredProducts]);
-  }
+  };
+
+  const updateProduct = updatedProduct => {
+    const updatedProducts = [...products];
+
+    for (let i = 0; i < updatedProducts.length; i++) {
+      const currentProduct = updatedProducts[i];
+
+      if (currentProduct.id === updatedProduct.id) {
+        updatedProducts[i] = { ...currentProduct, ...updatedProduct };
+      }
+
+    }
+
+    setProducts([...updatedProducts]);
+  };
 
   console.log(products);
 
@@ -86,7 +105,7 @@ export default function Products() {
       <h1>Products</h1>
 
       <div>
-        <AddEditProduct buttonContent={'Add Product'} />
+        <AddEditProduct buttonContent={'Add Product'} addProduct={addProduct} />
       </div>
 
       <Table responsive striped bordered hover className="table-light">
@@ -104,7 +123,7 @@ export default function Products() {
           {products.map(product => (
             <tr key={`${product.id}-${products.length}`}>
               {tableColumns.map(({ label, Component }, index) => (
-                <td key={`${label}-data`} style={{ maxWidth: 200 }} className="text-truncate">
+                <td key={`${product.id}-${label}-${products[label]}`} style={{ maxWidth: 200 }} className="text-truncate">
                   {Component ? (
                     <Component
                       id={product.id}
@@ -113,9 +132,10 @@ export default function Products() {
                       label={label}
                       isActive={product.active}
                       removeProduct={removeProduct}
+                      updateProduct={updateProduct}
                     />
                   ) : (
-                    <span>{product[label] ?? ''}</span>
+                    <span key={`${product.id}-${label}-${products[label]}`}>{product[label] ?? ''}</span>
                   )}
                 </td>
               ))}
