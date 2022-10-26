@@ -26,7 +26,7 @@ export default function Actions({ product, removeProduct, isEdit = true, isDelet
           buttonContent={<EditIcon />}
           product={product}
           updateProduct={updateProduct}
-          className="edit"
+          className="p-0 mx-2 edit"
         />
       )}
 
@@ -35,7 +35,7 @@ export default function Actions({ product, removeProduct, isEdit = true, isDelet
           title="Confirm Product Deletion"
           buttonContent={<DeleteIcon />}
           handleConfirm={handleDeleteProduct}
-          buttonClassName="text-secondary action-button delete"
+          buttonClassName="p-0 mx-2 text-secondary action-button delete"
         >
           <span>Are you sure that you want to delete this product?</span>
         </Confirm>

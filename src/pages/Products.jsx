@@ -11,6 +11,7 @@ import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 // Custom Components.
 import Actions from '../components/Actions';
 import AddEditProduct from '../components/AddEditProduct';
+import TablePagination from '../components/TablePagination';
 
 // Style, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil'
@@ -73,6 +74,7 @@ const tableColumns = [{
 
 export default function Products() {
   const [products, setProducts] = useState(useLoaderData().products);
+  const [pageNumber, setPageNumber] = useState(1);
 
   const addProduct = newProduct => {
     setProducts([...products, newProduct]);
@@ -143,6 +145,8 @@ export default function Products() {
           ))}
         </tbody>
       </Table>
+
+      <TablePagination pageNumber={pageNumber} pageCount={10} setPageNumber={setPageNumber} />
     </Container>
   )
 }
