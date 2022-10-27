@@ -74,15 +74,36 @@ const tableColumns = [{
 
 export default function Products() {
   const [products, setProducts] = useState(useLoaderData().products);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [rowLimit, setRowLimit] = useState(3);
+  const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit))
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit))
 
   const addProduct = newProduct => {
-    setProducts([...products, newProduct]);
+    const updatedProducts = [...products, newProduct];
+    setProducts(updatedProducts);
+
+    const updatedPageProducts = updatedProducts.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+    setPageProducts(updatedPageProducts);
+
+    setPageCount(Math.ceil(updatedProducts.length / rowLimit));
   };
 
   const removeProduct = productId => {
     const filteredProducts = products.filter(({ id }) => id !== productId);
     setProducts([...filteredProducts]);
+
+    let updatedPageProducts = filteredProducts.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
+    if (updatedPageProducts.length === 0) {
+      updatedPageProducts = filteredProducts.slice((pageIndex - 1) * rowLimit, ((pageIndex - 1) * rowLimit) + rowLimit);
+
+      setPageIndex(pageIndex - 1);
+    }
+
+    setPageProducts(updatedPageProducts);
+
+    setPageCount(Math.ceil(filteredProducts.length / rowLimit))
   };
 
   const updateProduct = updatedProduct => {
@@ -94,13 +115,26 @@ export default function Products() {
       if (currentProduct.id === updatedProduct.id) {
         updatedProducts[i] = { ...currentProduct, ...updatedProduct };
       }
+    }
 
+    const updatedPageProducts = [...pageProducts];
+    for (let j = 0; j < updatedPageProducts.length; j++) {
+      const pageProduct = updatedPageProducts[j];
+
+      if (pageProduct.id === updatedProduct.id) {
+        updatedPageProducts[j] = { ...pageProduct, ...updatedProduct };
+      }
     }
 
     setProducts([...updatedProducts]);
+    setPageProducts([...updatedPageProducts]);
   };
 
-  console.log(products);
+  const updatePageProducts = index => {
+    const updatedPageProducts = products.slice(index * rowLimit, (index * rowLimit) + rowLimit);
+    setPageProducts(updatedPageProducts);
+    setPageIndex(index);
+  };
 
   return (
     <Container>
@@ -122,10 +156,10 @@ export default function Products() {
         </thead>
 
         <tbody>
-          {products.map(product => (
-            <tr key={`${product.id}-${products.length}`}>
+          {pageProducts.map(product => (
+            <tr key={`${product.id}`}>
               {tableColumns.map(({ label, Component }, index) => (
-                <td key={`${product.id}-${label}-${products[label]}`} style={{ maxWidth: 200 }} className="text-truncate">
+                <td key={`${product.id}-${label}-${product[label]}`} style={{ maxWidth: 200 }} className="text-truncate">
                   {Component ? (
                     <Component
                       id={product.id}
@@ -137,7 +171,7 @@ export default function Products() {
                       updateProduct={updateProduct}
                     />
                   ) : (
-                    <span key={`${product.id}-${label}-${products[label]}`}>{product[label] ?? ''}</span>
+                    <span key={`${product.id}-${label}-${product[label]}`}>{product[label] ?? ''}</span>
                   )}
                 </td>
               ))}
@@ -146,7 +180,11 @@ export default function Products() {
         </tbody>
       </Table>
 
-      <TablePagination pageNumber={pageNumber} pageCount={10} setPageNumber={setPageNumber} />
+      <TablePagination
+        pageIndex={pageIndex}
+        pageCount={pageCount}
+        updatePageProducts={updatePageProducts}
+      />
     </Container>
   )
 }

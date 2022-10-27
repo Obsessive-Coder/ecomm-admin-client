@@ -16,7 +16,7 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async event => {
     event.preventDefault();
 
     const { title, description, price, active } = event.target;
@@ -35,8 +35,8 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
       updateProduct(updatedProduct);
     } else {
       // Create a new product.
-      ProductUtil.create(updatedProduct);
-      addProduct(updatedProduct);
+      const { data } = await ProductUtil.create(updatedProduct);
+      addProduct(data);
     }
 
     handleHide();
