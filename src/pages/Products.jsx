@@ -193,6 +193,7 @@ export default function Products() {
           {...bootstrap5PaginationPreset}
           total={pageCount}
           current={pageIndex + 1}
+          maxWidth={500}
           previousLabel={<PreviousIcon />}
           nextLabel={<NextIcon />}
           onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
