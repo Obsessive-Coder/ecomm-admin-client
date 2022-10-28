@@ -6,12 +6,18 @@ import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
-import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
+import {
+  BoxArrowRight as BoxArrowRightIcon,
+  ArrowLeftShort as PreviousIcon,
+  ArrowRightShort as NextIcon
+} from 'react-bootstrap-icons';
+
+// Other Components.
+import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-pagination';
 
 // Custom Components.
 import Actions from '../components/Actions';
 import AddEditProduct from '../components/AddEditProduct';
-import TablePagination from '../components/TablePagination';
 
 // Style, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil'
@@ -74,7 +80,7 @@ const tableColumns = [{
 
 export default function Products() {
   const [products, setProducts] = useState(useLoaderData().products);
-  const [rowLimit, setRowLimit] = useState(3);
+  const [rowLimit, setRowLimit] = useState(25);
   const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit))
   const [pageIndex, setPageIndex] = useState(0);
   const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit))
@@ -131,9 +137,11 @@ export default function Products() {
   };
 
   const updatePageProducts = index => {
-    const updatedPageProducts = products.slice(index * rowLimit, (index * rowLimit) + rowLimit);
-    setPageProducts(updatedPageProducts);
-    setPageIndex(index);
+    if (index < pageCount) {
+      const updatedPageProducts = products.slice(index * rowLimit, (index * rowLimit) + rowLimit);
+      setPageProducts(updatedPageProducts);
+      setPageIndex(index);
+    }
   };
 
   return (
@@ -180,11 +188,16 @@ export default function Products() {
         </tbody>
       </Table>
 
-      <TablePagination
-        pageIndex={pageIndex}
-        pageCount={pageCount}
-        updatePageProducts={updatePageProducts}
-      />
+      <div>
+        <Pagination
+          {...bootstrap5PaginationPreset}
+          total={pageCount}
+          current={pageIndex + 1}
+          previousLabel={<PreviousIcon />}
+          nextLabel={<NextIcon />}
+          onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
+        />
+      </div>
     </Container>
   )
 }
