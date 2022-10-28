@@ -11,7 +11,15 @@ import Row from 'react-bootstrap/Row';
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
-export default function AddEditProduct({ product = {}, buttonContent, className = '', addProduct, updateProduct }) {
+export default function AddEditProduct(props) {
+  const {
+    product = {},
+    categories = [],
+    buttonContent,
+    className = '',
+    addProduct, updateProduct
+  } = props;
+
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
@@ -19,7 +27,7 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { title, description, price, active } = event.target;
+    const { title, description, price, active, category } = event.target;
 
     const updatedProduct = {
       ...product,
@@ -27,7 +35,7 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
       description: description.value.trim(),
       price: parseFloat(price.value.trim()).toFixed(2),
       active: active.checked,
-      category_id: '29eb8bc4-7be2-4dae-8b0f-e84ce89748a9'
+      category_id: category.value
     };
 
     if (product.id) {
@@ -61,7 +69,18 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
         </Offcanvas.Header>
 
         <Offcanvas.Body>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit} className="position-relative h-100">
+            <Form.Group as={Row} className="mb-3" controlId="active">
+              <Col>
+                <Form.Check
+                  defaultChecked={product.active ?? true}
+                  type="switch"
+                  id="active"
+                  label="Active"
+                />
+              </Col>
+            </Form.Group>
+
             <Form.Group as={Row} className="mb-3" controlId="title">
               <Col>
                 <FloatingLabel controlId="title" label="Title">
@@ -96,18 +115,25 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
               </Col>
             </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="active">
+            <Form.Group as={Row} className="mb-3" controlId="category">
               <Col>
-                <Form.Check
-                  defaultChecked={product.active ?? true}
-                  type="switch"
-                  id="active"
-                  label="Active"
-                />
+                <Form.Select aria-label="Default select example" defaultValue={product.category_id ?? null}>
+                  <option>Select One</option>
+
+                  {categories.map(({ id, title }) => (
+                    <option key={`${title}-category`} value={id} >
+                      {title}
+                    </option>
+                  ))}
+                </Form.Select>
               </Col>
             </Form.Group>
 
-            <Form.Group as={Row}>
+            <Form.Group
+              as={Row}
+              className="position-absolute"
+              style={{ left: 0, right: 0, bottom: 0 }}
+            >
               <Col className="d-flex">
                 <Button variant="outline-secondary" type="button" onClick={handleHide} className="flex-grow-1 mx-2">
                   Cancel

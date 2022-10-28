@@ -13,7 +13,7 @@ import Confirm from './Confirm';
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
-export default function Actions({ product, removeProduct, isEdit = true, isDelete = true, updateProduct }) {
+export default function Actions({ product, categories, removeProduct, isEdit = true, isDelete = true, updateProduct }) {
   const handleDeleteProduct = () => {
     ProductUtil.delete(product.id);
     removeProduct(product.id);
@@ -25,6 +25,7 @@ export default function Actions({ product, removeProduct, isEdit = true, isDelet
         <AddEditProduct
           buttonContent={<EditIcon />}
           product={product}
+          categories={categories}
           updateProduct={updateProduct}
           className="p-0 mx-2 edit"
         />

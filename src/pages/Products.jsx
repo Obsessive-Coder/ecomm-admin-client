@@ -6,11 +6,7 @@ import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
-import {
-  BoxArrowRight as BoxArrowRightIcon,
-  ArrowLeftShort as PreviousIcon,
-  ArrowRightShort as NextIcon
-} from 'react-bootstrap-icons';
+import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 
 // Other Components.
 import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-pagination';
@@ -20,11 +16,13 @@ import Actions from '../components/Actions';
 import AddEditProduct from '../components/AddEditProduct';
 
 // Style, utils, and other helpers.
-import ProductUtil from '../utils/api/ProductUtil'
+import CategoryUtil from '../utils/api/CategoryUtil';
+import ProductUtil from '../utils/api/ProductUtil';
 
 export async function loader() {
+  const { data: categories } = await new CategoryUtil().findAll();
   const { data: products } = await ProductUtil.findAll();
-  return { products };
+  return { categories, products };
 }
 
 const ActiveSwitch = ({ id, index, label, isActive }) => {
@@ -79,11 +77,12 @@ const tableColumns = [{
 }];
 
 export default function Products() {
+  const categories = useLoaderData().categories;
   const [products, setProducts] = useState(useLoaderData().products);
   const [rowLimit, setRowLimit] = useState(25);
-  const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit))
+  const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit));
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit))
+  const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit));
 
   const addProduct = newProduct => {
     const updatedProducts = [...products, newProduct];
@@ -149,7 +148,11 @@ export default function Products() {
       <h1>Products</h1>
 
       <div>
-        <AddEditProduct buttonContent={'Add Product'} addProduct={addProduct} />
+        <AddEditProduct
+          categories={categories}
+          buttonContent={'Add Product'}
+          addProduct={addProduct}
+        />
       </div>
 
       <Table responsive striped bordered hover className="table-light">
@@ -175,6 +178,7 @@ export default function Products() {
                       index={index}
                       label={label}
                       isActive={product.active}
+                      categories={categories}
                       removeProduct={removeProduct}
                       updateProduct={updateProduct}
                     />
