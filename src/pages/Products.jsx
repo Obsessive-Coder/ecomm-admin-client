@@ -183,7 +183,13 @@ export default function Products() {
                       updateProduct={updateProduct}
                     />
                   ) : (
-                    <span key={`${product.id}-${label}-${product[label]}`}>{product[label] ?? ''}</span>
+                    <span key={`${product.id}-${label}-${product[label]}`}>
+                      {label === 'category' ? (
+                        categories.filter(({ id }) => id === product.category_id)[0]?.title
+                      ) : (
+                        product[label] ?? ''
+                      )}
+                    </span>
                   )}
                 </td>
               ))}
@@ -203,6 +209,6 @@ export default function Products() {
           onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
         />
       </div>
-    </Container>
+    </Container >
   )
 }
