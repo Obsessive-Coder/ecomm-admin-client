@@ -25,8 +25,9 @@ export default function AddEditProduct({ product = {}, buttonContent, className 
       ...product,
       title: title.value.trim(),
       description: description.value.trim(),
-      price: price.value.trim(),
-      active: active.checked
+      price: parseFloat(price.value.trim()).toFixed(2),
+      active: active.checked,
+      category_id: '29eb8bc4-7be2-4dae-8b0f-e84ce89748a9'
     };
 
     if (product.id) {
