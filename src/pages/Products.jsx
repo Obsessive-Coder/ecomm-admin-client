@@ -194,8 +194,8 @@ export default function Products() {
           total={pageCount}
           current={pageIndex + 1}
           maxWidth={500}
-          previousLabel={<PreviousIcon />}
-          nextLabel={<NextIcon />}
+          previousLabel="<"
+          nextLabel=">"
           onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
         />
       </div>
