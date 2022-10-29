@@ -35,6 +35,54 @@ export default function Categories() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCategories, setPageCategories] = useState(categories.slice(0, rowLimit));
 
+  const categoryUtil = new CategoryUtil();
+
+  const handleUpdateCategory = async (categoryId, updatedCategory) => {
+    await categoryUtil.update(categoryId, updatedCategory);
+
+    const updatedCategories = [...categories];
+    for (let i = 0; i < updatedCategories.length; i++) {
+      const category = updatedCategories[i];
+
+      if (category.id === categoryId) {
+        updatedCategories[i] = { ...category, ...updatedCategory };
+      }
+    }
+
+    updatePageCategories(pageIndex, updatedCategories);
+    setCategories([...updatedCategories]);
+  };
+
+  const handleRemoveCategory = async categoryId => {
+    await categoryUtil.delete(categoryId);
+
+    const filteredCategories = categories.filter(({ id }) => id !== categoryId);
+    setCategories([...filteredCategories]);
+
+    let updatedPageCategories = filteredCategories
+      .slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
+    if (updatedPageCategories.length === 0) {
+      updatedPageCategories = filteredCategories
+        .slice((pageIndex - 1) * rowLimit, ((pageIndex - 1) * rowLimit) + rowLimit);
+
+      setPageIndex(pageIndex - 1);
+    }
+
+    setPageCategories(updatedPageCategories);
+    setPageCount(Math.ceil(filteredCategories.length / rowLimit))
+  };
+
+  const updatePageCategories = (index, updatedCategories) => {
+    if (index <= pageIndex) {
+      const updatedPageCategories = updatedCategories
+        .slice(index * rowLimit, (index * rowLimit) + rowLimit);
+
+      setPageCategories(updatedPageCategories);
+      setPageIndex(index);
+    }
+  };
+
   return (
     <Container>
       <h1>Categories</h1>
@@ -51,7 +99,7 @@ export default function Categories() {
         </thead>
 
         <tbody>
-          {categories.map(category => (
+          {pageCategories.map(category => (
             <tr key={`${category.id}`}>
               {tableColumns.map(({ label, Component }, index) => (
                 <td
@@ -67,9 +115,9 @@ export default function Categories() {
                       label={label}
                       isActive={category.active}
                       categories={categories}
-                    // removeProduct={removeProduct}
-                    // updateProduct={updateProduct}
-                    // handleUpdate={ProductUtil.update}
+                      removeProduct={handleRemoveCategory}
+                      // updateProduct={updateProduct}
+                      handleUpdate={handleUpdateCategory}
                     />
                   ) : (
                     <span key={`${category.id}-${label}-${category[label]}`}>

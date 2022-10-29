@@ -86,7 +86,6 @@ export default function Products() {
     }
 
     setPageProducts(updatedPageProducts);
-
     setPageCount(Math.ceil(filteredProducts.length / rowLimit))
   };
 
