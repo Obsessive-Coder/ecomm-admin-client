@@ -13,6 +13,7 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 
 // Custom Components.
 import Actions from '../components/Actions';
+import ActiveSwitch from '../components/ActiveSwitch';
 import AddEditProduct from '../components/AddEditProduct';
 
 // Style, utils, and other helpers.
@@ -24,28 +25,6 @@ export async function loader() {
   const { data: products } = await ProductUtil.findAll();
   return { categories, products };
 }
-
-const ActiveSwitch = ({ id, index, label, isActive }) => {
-  const [isChecked, setIsChecked] = useState(isActive);
-
-  const handleOnChange = () => {
-    setIsChecked(!isChecked);
-    ProductUtil.update(id, { active: !isChecked });
-  };
-
-  return (
-    <Form>
-      <Form.Check
-        id={id}
-        type="switch"
-        aria-label={label}
-        data-product-index={index}
-        checked={isChecked}
-        onChange={handleOnChange}
-      />
-    </Form>
-  );
-};
 
 const ViewLink = ({ id }) => (
   <Link to={`/products/${id}`}>
@@ -181,6 +160,7 @@ export default function Products() {
                       categories={categories}
                       removeProduct={removeProduct}
                       updateProduct={updateProduct}
+                      handleUpdate={ProductUtil.update}
                     />
                   ) : (
                     <span key={`${product.id}-${label}-${product[label]}`}>
