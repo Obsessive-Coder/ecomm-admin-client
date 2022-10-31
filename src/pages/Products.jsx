@@ -90,6 +90,8 @@ export default function Products() {
   };
 
   const updateProduct = updatedProduct => {
+    ProductUtil.update(updatedProduct.id, updatedProduct);
+
     const updatedProducts = [...products];
 
     for (let i = 0; i < updatedProducts.length; i++) {
@@ -152,14 +154,13 @@ export default function Products() {
                   {Component ? (
                     <Component
                       id={product.id}
-                      product={product}
+                      item={product}
                       index={index}
                       label={label}
                       isActive={product.active}
                       categories={categories}
-                      removeProduct={removeProduct}
-                      updateProduct={updateProduct}
-                      handleUpdate={ProductUtil.update}
+                      removeItem={removeProduct}
+                      handleUpdate={updateProduct}
                     />
                   ) : (
                     <span key={`${product.id}-${label}-${product[label]}`}>

@@ -17,7 +17,8 @@ export default function AddEditProduct(props) {
     categories = [],
     buttonContent,
     className = '',
-    addProduct, updateProduct
+    addProduct,
+    updateProduct
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);

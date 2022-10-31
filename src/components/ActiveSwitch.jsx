@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 // Bootstrap Components.
 import Form from 'react-bootstrap/Form';
 
-export default function ActiveSwitch({ id, index, label, isActive, handleUpdate }) {
+export default function ActiveSwitch({ id, label, isActive, handleUpdate }) {
   const [isChecked, setIsChecked] = useState(isActive);
 
-  const handleOnChange = () => {
+  const handleOnChange = (e) => {
     setIsChecked(!isChecked);
-    handleUpdate(id, { active: !isChecked });
+    handleUpdate({ id, active: !isChecked });
   };
 
   return (
@@ -17,7 +17,6 @@ export default function ActiveSwitch({ id, index, label, isActive, handleUpdate 
         id={id}
         type="switch"
         aria-label={label}
-        data-product-index={index}
         checked={isChecked}
         onChange={handleOnChange}
       />

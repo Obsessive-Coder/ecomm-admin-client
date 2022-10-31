@@ -8,6 +8,7 @@ import Table from 'react-bootstrap/Table';
 // Custom Components.
 import Actions from '../components/Actions';
 import ActiveSwitch from '../components/ActiveSwitch';
+import AddEditCategory from '../components/AddEditCategory';
 
 // Styles, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
@@ -37,14 +38,25 @@ export default function Categories() {
 
   const categoryUtil = new CategoryUtil();
 
-  const handleUpdateCategory = async (categoryId, updatedCategory) => {
-    await categoryUtil.update(categoryId, updatedCategory);
+  const handleAddCategory = newCategory => {
+    const updatedCategories = [...categories, newCategory];
+    setCategories(updatedCategories);
+
+    const updatedPageProducts = updatedCategories.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
+    setPageCategories(updatedPageProducts);
+    setPageCount(Math.ceil(updatedCategories.length / rowLimit));
+  };
+
+  const handleUpdateCategory = updatedCategory => {
+    const { id: updatedId } = updatedCategory;
+    categoryUtil.update(updatedId, updatedCategory);
 
     const updatedCategories = [...categories];
     for (let i = 0; i < updatedCategories.length; i++) {
       const category = updatedCategories[i];
 
-      if (category.id === categoryId) {
+      if (category.id === updatedId) {
         updatedCategories[i] = { ...category, ...updatedCategory };
       }
     }
@@ -53,8 +65,8 @@ export default function Categories() {
     setCategories([...updatedCategories]);
   };
 
-  const handleRemoveCategory = async categoryId => {
-    await categoryUtil.delete(categoryId);
+  const handleRemoveCategory = categoryId => {
+    categoryUtil.delete(categoryId);
 
     const filteredCategories = categories.filter(({ id }) => id !== categoryId);
     setCategories([...filteredCategories]);
@@ -74,7 +86,7 @@ export default function Categories() {
   };
 
   const updatePageCategories = (index, updatedCategories) => {
-    if (index <= pageIndex) {
+    if (index < pageCount) {
       const updatedPageCategories = updatedCategories
         .slice(index * rowLimit, (index * rowLimit) + rowLimit);
 
@@ -86,6 +98,13 @@ export default function Categories() {
   return (
     <Container>
       <h1>Categories</h1>
+
+      <div>
+        <AddEditCategory
+          buttonContent={'Add Category'}
+          addCategory={handleAddCategory}
+        />
+      </div>
 
       <Table responsive striped bordered hover className="table-light">
         <thead>
@@ -110,13 +129,11 @@ export default function Categories() {
                   {Component ? (
                     <Component
                       id={category.id}
-                      product={category}
+                      item={category}
                       index={index}
                       label={label}
                       isActive={category.active}
-                      categories={categories}
-                      removeProduct={handleRemoveCategory}
-                      // updateProduct={updateProduct}
+                      removeItem={handleRemoveCategory}
                       handleUpdate={handleUpdateCategory}
                     />
                   ) : (
