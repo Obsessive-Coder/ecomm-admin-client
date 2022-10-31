@@ -16,6 +16,7 @@ export default function AddEditProduct(props) {
     product = {},
     categories = [],
     buttonContent,
+    buttonVariant = 'primary',
     buttonClassName = '',
     addProduct,
     updateProduct
@@ -57,6 +58,7 @@ export default function AddEditProduct(props) {
     <>
       <Button
         type="button"
+        variant={buttonVariant}
         onClick={handleShow}
         className={`action-button ${buttonClassName}`}
       >
