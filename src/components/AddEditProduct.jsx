@@ -28,13 +28,14 @@ export default function AddEditProduct(props) {
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { title, description, price, active, category } = event.target;
+    const { title, description, price, active, category, quantity } = event.target;
 
     const updatedProduct = {
       ...product,
       title: title.value.trim(),
       description: description.value.trim(),
       price: parseFloat(price.value.trim()).toFixed(2),
+      quantity: parseInt(quantity.value.trim()),
       active: active.checked,
       category_id: category.value
     };
@@ -111,6 +112,19 @@ export default function AddEditProduct(props) {
                     placeholder="Price"
                     min={0}
                     defaultValue={product.price}
+                  />
+                </FloatingLabel>
+              </Col>
+            </Form.Group>
+
+            <Form.Group as={Row} className="mb-3" controlId="quantity">
+              <Col>
+                <FloatingLabel controlId="quantity" label="Quantity">
+                  <Form.Control
+                    type="number"
+                    placeholder="Quantity"
+                    min={0}
+                    defaultValue={product.quantity}
                   />
                 </FloatingLabel>
               </Col>

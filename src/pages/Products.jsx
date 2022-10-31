@@ -45,6 +45,9 @@ const tableColumns = [{
   label: 'price',
   Component: undefined,
 }, {
+  label: 'quantity',
+  Component: undefined,
+}, {
   label: 'active',
   Component: ActiveSwitch
 }, {
