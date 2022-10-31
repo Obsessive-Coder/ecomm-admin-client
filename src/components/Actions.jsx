@@ -7,16 +7,17 @@ import {
 } from 'react-bootstrap-icons';
 
 // Custom Components.
+import AddEditCategory from './AddEditCategory';
 import AddEditProduct from './AddEditProduct';
 import Confirm from './Confirm';
 
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
-export default function Actions({ product, removeProduct, isEdit = true, isDelete = true, updateProduct }) {
+export default function Actions({ item, categories, removeItem, isEdit = true, isDelete = true, handleUpdate }) {
   const handleDeleteProduct = () => {
-    ProductUtil.delete(product.id);
-    removeProduct(product.id);
+    ProductUtil.delete(item.id);
+    removeItem(item.id);
   };
 
   return (
@@ -24,10 +25,18 @@ export default function Actions({ product, removeProduct, isEdit = true, isDelet
       {isEdit && (
         <AddEditProduct
           buttonContent={<EditIcon />}
-          product={product}
-          updateProduct={updateProduct}
+          product={item}
+          categories={categories}
+          updateProduct={handleUpdate}
           className="p-0 mx-2 edit"
         />
+
+        // <AddEditCategory
+        //   buttonContent={<EditIcon />}
+        //   category={item}
+        //   updateCategory={handleUpdate}
+        //   className="p-0 mx-2 edit"
+        // />
       )}
 
       {isDelete && (
@@ -37,7 +46,7 @@ export default function Actions({ product, removeProduct, isEdit = true, isDelet
           handleConfirm={handleDeleteProduct}
           buttonClassName="p-0 mx-2 text-secondary action-button delete"
         >
-          <span>Are you sure that you want to delete this product?</span>
+          <span>Are you sure that you want to delete this item?</span>
         </Confirm>
       )}
     </div>

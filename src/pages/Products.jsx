@@ -6,48 +6,25 @@ import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
-import {
-  BoxArrowRight as BoxArrowRightIcon,
-  ArrowLeftShort as PreviousIcon,
-  ArrowRightShort as NextIcon
-} from 'react-bootstrap-icons';
+import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 
 // Other Components.
 import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-pagination';
 
 // Custom Components.
 import Actions from '../components/Actions';
+import ActiveSwitch from '../components/ActiveSwitch';
 import AddEditProduct from '../components/AddEditProduct';
 
 // Style, utils, and other helpers.
-import ProductUtil from '../utils/api/ProductUtil'
+import CategoryUtil from '../utils/api/CategoryUtil';
+import ProductUtil from '../utils/api/ProductUtil';
 
 export async function loader() {
+  const { data: categories } = await new CategoryUtil().findAll();
   const { data: products } = await ProductUtil.findAll();
-  return { products };
+  return { categories, products };
 }
-
-const ActiveSwitch = ({ id, index, label, isActive }) => {
-  const [isChecked, setIsChecked] = useState(isActive);
-
-  const handleOnChange = () => {
-    setIsChecked(!isChecked);
-    ProductUtil.update(id, { active: !isChecked });
-  };
-
-  return (
-    <Form>
-      <Form.Check
-        id={id}
-        type="switch"
-        aria-label={label}
-        data-product-index={index}
-        checked={isChecked}
-        onChange={handleOnChange}
-      />
-    </Form>
-  );
-};
 
 const ViewLink = ({ id }) => (
   <Link to={`/products/${id}`}>
@@ -79,11 +56,12 @@ const tableColumns = [{
 }];
 
 export default function Products() {
+  const categories = useLoaderData().categories;
   const [products, setProducts] = useState(useLoaderData().products);
   const [rowLimit, setRowLimit] = useState(25);
-  const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit))
+  const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit));
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit))
+  const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit));
 
   const addProduct = newProduct => {
     const updatedProducts = [...products, newProduct];
@@ -108,11 +86,12 @@ export default function Products() {
     }
 
     setPageProducts(updatedPageProducts);
-
     setPageCount(Math.ceil(filteredProducts.length / rowLimit))
   };
 
   const updateProduct = updatedProduct => {
+    ProductUtil.update(updatedProduct.id, updatedProduct);
+
     const updatedProducts = [...products];
 
     for (let i = 0; i < updatedProducts.length; i++) {
@@ -149,7 +128,11 @@ export default function Products() {
       <h1>Products</h1>
 
       <div>
-        <AddEditProduct buttonContent={'Add Product'} addProduct={addProduct} />
+        <AddEditProduct
+          categories={categories}
+          buttonContent={'Add Product'}
+          addProduct={addProduct}
+        />
       </div>
 
       <Table responsive striped bordered hover className="table-light">
@@ -171,15 +154,22 @@ export default function Products() {
                   {Component ? (
                     <Component
                       id={product.id}
-                      product={product}
+                      item={product}
                       index={index}
                       label={label}
                       isActive={product.active}
-                      removeProduct={removeProduct}
-                      updateProduct={updateProduct}
+                      categories={categories}
+                      removeItem={removeProduct}
+                      handleUpdate={updateProduct}
                     />
                   ) : (
-                    <span key={`${product.id}-${label}-${product[label]}`}>{product[label] ?? ''}</span>
+                    <span key={`${product.id}-${label}-${product[label]}`}>
+                      {label === 'category' ? (
+                        categories.filter(({ id }) => id === product.category_id)[0]?.title
+                      ) : (
+                        product[label] ?? ''
+                      )}
+                    </span>
                   )}
                 </td>
               ))}
@@ -199,6 +189,6 @@ export default function Products() {
           onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
         />
       </div>
-    </Container>
+    </Container >
   )
 }
