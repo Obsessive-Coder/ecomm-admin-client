@@ -157,11 +157,12 @@ export default function Products() {
                   {Component ? (
                     <Component
                       id={product.id}
-                      item={product}
                       index={index}
                       label={label}
                       isActive={product.active}
+                      item={product}
                       categories={categories}
+                      type="product"
                       removeItem={removeProduct}
                       handleUpdate={updateProduct}
                     />
