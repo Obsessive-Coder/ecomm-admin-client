@@ -13,6 +13,7 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 
 // Custom Components.
 import Actions from '../components/Actions';
+import ActionBar from '../components/ActionBar';
 import ActiveSwitch from '../components/ActiveSwitch';
 import AddEditProduct from '../components/AddEditProduct';
 
@@ -130,13 +131,7 @@ export default function Products() {
     <Container>
       <h1>Products</h1>
 
-      <div>
-        <AddEditProduct
-          categories={categories}
-          buttonContent={'Add Product'}
-          addProduct={addProduct}
-        />
-      </div>
+      <ActionBar categories={categories} addProduct={addProduct} />
 
       <Table responsive striped bordered hover className="table-light">
         <thead>
