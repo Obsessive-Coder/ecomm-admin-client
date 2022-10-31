@@ -129,10 +129,11 @@ export default function Categories() {
                   {Component ? (
                     <Component
                       id={category.id}
-                      item={category}
                       index={index}
                       label={label}
                       isActive={category.active}
+                      item={category}
+                      type="category"
                       removeItem={handleRemoveCategory}
                       handleUpdate={handleUpdateCategory}
                     />

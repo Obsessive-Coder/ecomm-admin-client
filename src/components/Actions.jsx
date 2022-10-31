@@ -14,7 +14,11 @@ import Confirm from './Confirm';
 // Styles, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
 
-export default function Actions({ item, categories, removeItem, isEdit = true, isDelete = true, handleUpdate }) {
+export default function Actions(props) {
+  const {
+    item, categories, removeItem, type = "product", isEdit = true, isDelete = true, handleUpdate
+  } = props;
+
   const handleDeleteProduct = () => {
     ProductUtil.delete(item.id);
     removeItem(item.id);
@@ -23,20 +27,26 @@ export default function Actions({ item, categories, removeItem, isEdit = true, i
   return (
     <div>
       {isEdit && (
-        <AddEditProduct
-          buttonContent={<EditIcon />}
-          product={item}
-          categories={categories}
-          updateProduct={handleUpdate}
-          className="p-0 mx-2 edit"
-        />
+        <>
+          {type === 'product' && (
+            <AddEditProduct
+              buttonContent={<EditIcon />}
+              product={item}
+              categories={categories}
+              updateProduct={handleUpdate}
+              className="p-0 mx-2 edit"
+            />
+          )}
 
-        // <AddEditCategory
-        //   buttonContent={<EditIcon />}
-        //   category={item}
-        //   updateCategory={handleUpdate}
-        //   className="p-0 mx-2 edit"
-        // />
+          {type === 'category' && (
+            <AddEditCategory
+              buttonContent={<EditIcon />}
+              category={item}
+              updateCategory={handleUpdate}
+              className="p-0 mx-2 edit"
+            />
+          )}
+        </>
       )}
 
       {isDelete && (
