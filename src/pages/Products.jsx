@@ -13,8 +13,8 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 
 // Custom Components.
 import Actions from '../components/Actions';
+import ActionBar from '../components/ActionBar';
 import ActiveSwitch from '../components/ActiveSwitch';
-import AddEditProduct from '../components/AddEditProduct';
 
 // Style, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
@@ -65,6 +65,16 @@ export default function Products() {
   const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit));
   const [pageIndex, setPageIndex] = useState(0);
   const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit));
+
+  const getProducts = async queryParams => {
+    const { data: products } = await ProductUtil.findAll(queryParams);
+    setProducts(products);
+
+    const updatedPageProducts = products.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+    setPageProducts(updatedPageProducts);
+
+    setPageCount(Math.ceil(products.length / rowLimit));
+  }
 
   const addProduct = newProduct => {
     const updatedProducts = [...products, newProduct];
@@ -130,13 +140,7 @@ export default function Products() {
     <Container>
       <h1>Products</h1>
 
-      <div>
-        <AddEditProduct
-          categories={categories}
-          buttonContent={'Add Product'}
-          addProduct={addProduct}
-        />
-      </div>
+      <ActionBar categories={categories} addProduct={addProduct} getProducts={getProducts} />
 
       <Table responsive striped bordered hover className="table-light">
         <thead>
@@ -181,6 +185,13 @@ export default function Products() {
           ))}
         </tbody>
       </Table>
+
+      {pageProducts.length === 0 && (
+        <div className="text-center">
+          <h2>There are no products to show.</h2>
+          <p>Try adding products or updating your search criteria</p>
+        </div>
+      )}
 
       <div>
         <Pagination

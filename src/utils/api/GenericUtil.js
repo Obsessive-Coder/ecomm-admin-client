@@ -12,8 +12,8 @@ export default class GenericUtil {
     this.delete = this.delete.bind(this);
   }
 
-  findAll() {
-    return axios.get(this.baseUrl);
+  findAll(params) {
+    return axios.get(this.baseUrl, { params });
   }
 
   findOne(recordId) {

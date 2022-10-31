@@ -34,7 +34,8 @@ export default function Actions(props) {
               product={item}
               categories={categories}
               updateProduct={handleUpdate}
-              className="p-0 mx-2 edit"
+              buttonVariant="link"
+              buttonClassName="p-0 mx-2 edit text-secondary"
             />
           )}
 
@@ -43,7 +44,8 @@ export default function Actions(props) {
               buttonContent={<EditIcon />}
               category={item}
               updateCategory={handleUpdate}
-              className="p-0 mx-2 edit"
+              buttonVariant="link"
+              buttonClassName="p-0 mx-2 edit text-secondary"
             />
           )}
         </>

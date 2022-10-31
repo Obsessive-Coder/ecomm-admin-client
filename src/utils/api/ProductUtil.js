@@ -2,12 +2,12 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:8080/api/products';
 
 export default class ProductUtil {
-  static findAll() {
-    return axios.get(BASE_URL);
+  static findAll(params = {}) {
+    return axios.get(BASE_URL, { params });
   }
 
   static findOne(productId) {
-    return axios.get(`${BASE_URL}/${productId}`);
+    return axios.get(this.baseUrl);
   }
 
   static create(product) {

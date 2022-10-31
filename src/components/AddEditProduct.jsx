@@ -16,7 +16,8 @@ export default function AddEditProduct(props) {
     product = {},
     categories = [],
     buttonContent,
-    className = '',
+    buttonVariant = 'primary',
+    buttonClassName = '',
     addProduct,
     updateProduct
   } = props;
@@ -56,9 +57,10 @@ export default function AddEditProduct(props) {
   return (
     <>
       <Button
-        variant="link"
+        type="button"
+        variant={buttonVariant}
         onClick={handleShow}
-        className={`text-secondary action-button ${className}`}
+        className={`action-button ${buttonClassName}`}
       >
         {buttonContent}
       </Button>
@@ -132,15 +134,17 @@ export default function AddEditProduct(props) {
 
             <Form.Group as={Row} className="mb-3" controlId="category">
               <Col>
-                <Form.Select aria-label="Default select example" defaultValue={product.category_id ?? null}>
-                  <option>Select One</option>
+                <FloatingLabel controlId="category" label="Category">
+                  <Form.Select aria-label="Category" defaultValue={product.category_id ?? null}>
+                    <option>Select One</option>
 
-                  {categories.map(({ id, title }) => (
-                    <option key={`${title}-category`} value={id} >
-                      {title}
-                    </option>
-                  ))}
-                </Form.Select>
+                    {categories.map(({ id, title }) => (
+                      <option key={`${title}-category`} value={id} >
+                        {title}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </FloatingLabel>
               </Col>
             </Form.Group>
 
