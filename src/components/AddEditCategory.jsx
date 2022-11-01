@@ -15,9 +15,10 @@ export default function AddEditCategory(props) {
   const {
     category = {},
     buttonContent,
-    className = '',
-    addCategory,
-    updateCategory
+    buttonVariant = 'primary',
+    buttonClassName = '',
+    addItem,
+    updateItem
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -40,11 +41,11 @@ export default function AddEditCategory(props) {
     if (category.id) {
       // Update the category.
       // categoryUtil.update(category.id, updatedCategory);
-      updateCategory(category.id, updatedCategory);
+      updateItem(updatedCategory);
     } else {
       // Create a new category.
       const { data } = await categoryUtil.create(updatedCategory);
-      addCategory(data);
+      addItem(data);
     }
 
     handleHide();
@@ -53,9 +54,10 @@ export default function AddEditCategory(props) {
   return (
     <>
       <Button
-        variant="link"
+        type="button"
+        variant={buttonVariant}
         onClick={handleShow}
-        className={`text-secondary action-button ${className}`}
+        className={`action-button ${buttonClassName}`}
       >
         {buttonContent}
       </Button>

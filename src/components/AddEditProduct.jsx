@@ -18,8 +18,8 @@ export default function AddEditProduct(props) {
     buttonContent,
     buttonVariant = 'primary',
     buttonClassName = '',
-    addProduct,
-    updateProduct
+    addItem,
+    updateItem
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -44,11 +44,11 @@ export default function AddEditProduct(props) {
     if (product.id) {
       // Update the product.
       ProductUtil.update(product.id, updatedProduct);
-      updateProduct(updatedProduct);
+      updateItem(updatedProduct);
     } else {
       // Create a new product.
       const { data } = await ProductUtil.create(updatedProduct);
-      addProduct(data);
+      addItem(data);
     }
 
     handleHide();
