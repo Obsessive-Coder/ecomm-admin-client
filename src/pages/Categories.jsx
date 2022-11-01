@@ -7,6 +7,7 @@ import Table from 'react-bootstrap/Table';
 
 // Custom Components.
 import Actions from '../components/Actions';
+import ActionBar from '../components/ActionBar';
 import ActiveSwitch from '../components/ActiveSwitch';
 import AddEditCategory from '../components/AddEditCategory';
 
@@ -36,15 +37,27 @@ export default function Categories() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCategories, setPageCategories] = useState(categories.slice(0, rowLimit));
 
+  const allCategories = useLoaderData().categories;
+
   const categoryUtil = new CategoryUtil();
+
+  const getCategories = async queryParams => {
+    const { data: categories } = await categoryUtil.findAll(queryParams);
+    setCategories(categories);
+
+    const updatedPageCategories = categories.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+    setPageCategories(updatedPageCategories);
+
+    setPageCount(Math.ceil(categories.length / rowLimit));
+  };
 
   const handleAddCategory = newCategory => {
     const updatedCategories = [...categories, newCategory];
     setCategories(updatedCategories);
 
     const updatedPageProducts = updatedCategories.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-
     setPageCategories(updatedPageProducts);
+
     setPageCount(Math.ceil(updatedCategories.length / rowLimit));
   };
 
@@ -99,12 +112,14 @@ export default function Categories() {
     <Container>
       <h1>Categories</h1>
 
-      <div>
-        <AddEditCategory
-          buttonContent={'Add Category'}
-          addCategory={handleAddCategory}
-        />
-      </div>
+      <ActionBar
+        isSearchVisible
+        isFilterVisible
+        type="category"
+        categories={allCategories}
+        addItem={handleAddCategory}
+        getItems={getCategories}
+      />
 
       <Table responsive striped bordered hover className="table-light">
         <thead>

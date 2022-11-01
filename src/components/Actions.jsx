@@ -33,7 +33,7 @@ export default function Actions(props) {
               buttonContent={<EditIcon />}
               product={item}
               categories={categories}
-              updateProduct={handleUpdate}
+              updateItem={handleUpdate}
               buttonVariant="link"
               buttonClassName="p-0 mx-2 edit text-secondary"
             />
@@ -43,7 +43,7 @@ export default function Actions(props) {
             <AddEditCategory
               buttonContent={<EditIcon />}
               category={item}
-              updateCategory={handleUpdate}
+              updateItem={handleUpdate}
               buttonVariant="link"
               buttonClassName="p-0 mx-2 edit text-secondary"
             />

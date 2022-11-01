@@ -140,7 +140,15 @@ export default function Products() {
     <Container>
       <h1>Products</h1>
 
-      <ActionBar categories={categories} addProduct={addProduct} getProducts={getProducts} />
+      <ActionBar
+        isSearchVisible
+        isFilterVisible
+        isSortVisible
+        type="product"
+        categories={categories}
+        addItem={addProduct}
+        getItems={getProducts}
+      />
 
       <Table responsive striped bordered hover className="table-light">
         <thead>
