@@ -10,6 +10,7 @@ import Container from 'react-bootstrap/Container';
 import MainHeader from '../components/MainHeader';
 import Dashboard from './Dashboard';
 import Categories, { loader as categoriesLoader } from './Categories';
+import CategoryTypes, { loader as categoryTypesLoader } from './CategoryTypes';
 import Products, { loader as productsLoader } from './Products';
 import Product, { loader as productLoader } from './Product';
 import Error404 from './Error404';
@@ -35,6 +36,10 @@ const router = createBrowserRouter([{
   path: '/categories',
   element: <Categories />,
   loader: categoriesLoader
+}, {
+  path: '/category-types',
+  element: <CategoryTypes />,
+  loader: categoryTypesLoader
 }]);
 
 export default function MasterPage() {

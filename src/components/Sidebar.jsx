@@ -24,6 +24,10 @@ const navItems = [{
   path: '/categories',
   label: 'categories',
   Icon: ListIcon
+}, {
+  path: '/category-types',
+  label: 'category types',
+  Icon: ListIcon
 }];
 
 export default function Sidebar({ isOpen, handleClose }) {

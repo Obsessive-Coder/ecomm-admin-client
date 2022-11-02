@@ -10,11 +10,13 @@ import Row from 'react-bootstrap/Row';
 
 // Styles, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
+import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 
 export default function AddEditCategory(props) {
   const {
     category = {},
     categoryTypes = [],
+    type,
     buttonContent,
     buttonVariant = 'primary',
     buttonClassName = '',
@@ -27,17 +29,18 @@ export default function AddEditCategory(props) {
   const handleHide = () => setIsOpen(false);
 
   const categoryUtil = new CategoryUtil();
+  const categoryTypeUtil = new CategoryTypeUtil();
 
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { title, active, type } = event.target;
+    const { title, active, type: typeSelect } = event.target;
 
     const updatedCategory = {
       ...category,
       title: title.value.trim(),
       active: active.checked,
-      type_id: type.value
+      ...(typeSelect ? { type_id: typeSelect.value } : {})
     };
 
     if (category.id) {
@@ -45,7 +48,8 @@ export default function AddEditCategory(props) {
       updateItem(updatedCategory);
     } else {
       // Create a new category.
-      const { data } = await categoryUtil.create(updatedCategory);
+      const apiUtil = type === 'categoryTypes' ? categoryTypeUtil : categoryUtil;
+      const { data } = await apiUtil.create(updatedCategory);
       addItem(data);
     }
 
@@ -91,21 +95,23 @@ export default function AddEditCategory(props) {
               </Col>
             </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="type">
-              <Col>
-                <FloatingLabel controlId="type" label="Type">
-                  <Form.Select aria-label="Category Type" defaultValue={category.type_id ?? null}>
-                    <option>Select One</option>
+            {type === 'category' && (
+              <Form.Group as={Row} className="mb-3" controlId="type">
+                <Col>
+                  <FloatingLabel controlId="type" label="Type">
+                    <Form.Select aria-label="Category Type" defaultValue={category.type_id ?? null}>
+                      <option>Select One</option>
 
-                    {categoryTypes.map(({ id, title }) => (
-                      <option key={`${title}-type`} value={id}>
-                        {title}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </FloatingLabel>
-              </Col>
-            </Form.Group>
+                      {categoryTypes.map(({ id, title }) => (
+                        <option key={`${title}-type`} value={id}>
+                          {title}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </FloatingLabel>
+                </Col>
+              </Form.Group>
+            )}
 
             <Form.Group
               as={Row}
