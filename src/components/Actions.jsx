@@ -20,7 +20,7 @@ export default function Actions(props) {
     categoryTypes, isDelete = true, handleUpdate
   } = props;
 
-  const handleDeleteProduct = () => {
+  const handleDelete = () => {
     ProductUtil.delete(item.id);
     removeItem(item.id);
   };
@@ -40,10 +40,11 @@ export default function Actions(props) {
             />
           )}
 
-          {type === 'category' && (
+          {(type === 'category' || type === 'categoryTypes') && (
             <AddEditCategory
               buttonContent={<EditIcon />}
               category={item}
+              type={type}
               categoryTypes={categoryTypes}
               updateItem={handleUpdate}
               buttonVariant="link"
@@ -55,9 +56,9 @@ export default function Actions(props) {
 
       {isDelete && (
         <Confirm
-          title="Confirm Product Deletion"
+          title="Confirm Item Deletion"
           buttonContent={<DeleteIcon />}
-          handleConfirm={handleDeleteProduct}
+          handleConfirm={handleDelete}
           buttonClassName="p-0 mx-2 text-secondary action-button delete"
         >
           <span>Are you sure that you want to delete this item?</span>

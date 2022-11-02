@@ -60,8 +60,8 @@ export default function Categories() {
     const updatedCategories = [...categories, newCategory];
     setCategories(updatedCategories);
 
-    const updatedPageProducts = updatedCategories.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-    setPageCategories(updatedPageProducts);
+    const updatedPageCategories = updatedCategories.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+    setPageCategories(updatedPageCategories);
 
     setPageCount(Math.ceil(updatedCategories.length / rowLimit));
   };

@@ -124,14 +124,17 @@ export default function ActionBar(props) {
             />
           )}
 
-          {type === 'category' && (
+          {(type === 'category' || type === 'categoryTypes') && (
             <AddEditCategory
               categories={categories}
               categoryTypes={categoryTypes}
+              type={type}
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}
-                  Add Category
+                  <span>
+                    {type === 'categoryTypes' ? ' Add Type' : 'Add Category'}
+                  </span>
                 </div>
               )}
               addItem={addItem}
