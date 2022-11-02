@@ -51,7 +51,10 @@ export default function ActionBar(props) {
       ...(title ? { title } : {})
     };
 
-    getItems(queryParams)
+    getItems({
+      order: { column: 'title' },
+      ...queryParams
+    })
   };
 
   const handleSubmit = event => {

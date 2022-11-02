@@ -14,7 +14,7 @@ import ActiveSwitch from '../components/ActiveSwitch';
 import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 
 export async function loader() {
-  const { data: categoryTypes } = await new CategoryTypeUtil().findAll();
+  const { data: categoryTypes } = await new CategoryTypeUtil().findAll({ order: { column: 'title' } });
   return { categoryTypes };
 }
 

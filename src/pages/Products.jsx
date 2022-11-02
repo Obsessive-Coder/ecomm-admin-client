@@ -20,8 +20,12 @@ import CategoryUtil from '../utils/api/CategoryUtil';
 import ProductUtil from '../utils/api/ProductUtil';
 
 export async function loader() {
-  const { data: categories } = await new CategoryUtil().findAll();
-  const { data: products } = await ProductUtil.findAll();
+  const { data: categories } = await new CategoryUtil()
+    .findAll({ order: { column: 'title' } });
+
+  const { data: products } = await ProductUtil
+    .findAll({ order: { column: 'title' } });
+
   return { categories, products };
 }
 

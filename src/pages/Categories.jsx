@@ -15,8 +15,8 @@ import CategoryUtil from '../utils/api/CategoryUtil';
 import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 
 export async function loader() {
-  const { data: categoryTypes } = await new CategoryTypeUtil().findAll();
-  const { data: categories } = await new CategoryUtil().findAll();
+  const { data: categoryTypes } = await new CategoryTypeUtil().findAll({ order: { column: 'title' } });
+  const { data: categories } = await new CategoryUtil().findAll({ order: { column: 'title' } });
   return { categoryTypes, categories };
 }
 
