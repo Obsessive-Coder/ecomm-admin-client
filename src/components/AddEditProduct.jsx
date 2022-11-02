@@ -139,7 +139,7 @@ export default function AddEditProduct(props) {
                     <option>Select One</option>
 
                     {categories.map(({ id, title }) => (
-                      <option key={`${title}-category`} value={id} >
+                      <option key={`${title}-category`} value={id}>
                         {title}
                       </option>
                     ))}

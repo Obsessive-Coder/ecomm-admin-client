@@ -16,7 +16,8 @@ import ProductUtil from '../utils/api/ProductUtil';
 
 export default function Actions(props) {
   const {
-    item, categories, removeItem, type = "product", isEdit = true, isDelete = true, handleUpdate
+    item, categories, removeItem, type = "product", isEdit = true,
+    categoryTypes, isDelete = true, handleUpdate
   } = props;
 
   const handleDeleteProduct = () => {
@@ -43,6 +44,7 @@ export default function Actions(props) {
             <AddEditCategory
               buttonContent={<EditIcon />}
               category={item}
+              categoryTypes={categoryTypes}
               updateItem={handleUpdate}
               buttonVariant="link"
               buttonClassName="p-0 mx-2 edit text-secondary"

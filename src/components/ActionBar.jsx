@@ -14,6 +14,7 @@ import AddEditCategory from './AddEditCategory';
 export default function ActionBar(props) {
   const {
     categories = [],
+    categoryTypes = [],
     type,
     isAddVisible = true,
     isSearchVisible = false,
@@ -126,6 +127,7 @@ export default function ActionBar(props) {
           {type === 'category' && (
             <AddEditCategory
               categories={categories}
+              categoryTypes={categoryTypes}
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}

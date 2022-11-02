@@ -9,18 +9,22 @@ import Table from 'react-bootstrap/Table';
 import Actions from '../components/Actions';
 import ActionBar from '../components/ActionBar';
 import ActiveSwitch from '../components/ActiveSwitch';
-import AddEditCategory from '../components/AddEditCategory';
 
 // Styles, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
+import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 
 export async function loader() {
+  const { data: categoryTypes } = await new CategoryTypeUtil().findAll();
   const { data: categories } = await new CategoryUtil().findAll();
-  return { categories };
+  return { categoryTypes, categories };
 }
 
 const tableColumns = [{
   label: 'title',
+  Component: undefined
+}, {
+  label: 'type',
   Component: undefined
 }, {
   label: 'active',
@@ -31,6 +35,7 @@ const tableColumns = [{
 }];
 
 export default function Categories() {
+  const { categoryTypes } = useLoaderData();
   const [categories, setCategories] = useState(useLoaderData().categories);
   const [rowLimit, setRowLimit] = useState(25);
   const [pageCount, setPageCount] = useState(Math.ceil(categories.length / rowLimit));
@@ -117,6 +122,7 @@ export default function Categories() {
         isFilterVisible
         type="category"
         categories={allCategories}
+        categoryTypes={categoryTypes}
         addItem={handleAddCategory}
         getItems={getCategories}
       />
@@ -148,13 +154,18 @@ export default function Categories() {
                       label={label}
                       isActive={category.active}
                       item={category}
+                      categoryTypes={categoryTypes}
                       type="category"
                       removeItem={handleRemoveCategory}
                       handleUpdate={handleUpdateCategory}
                     />
                   ) : (
                     <span key={`${category.id}-${label}-${category[label]}`}>
-                      {category[label] ?? ''}
+                      {label === 'type' ? (
+                        categoryTypes.filter(({ id }) => id === category.type_id)[0]?.title
+                      ) : (
+                        category[label] ?? ''
+                      )}
                     </span>
                   )}
                 </td>
