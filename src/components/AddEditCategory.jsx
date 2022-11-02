@@ -14,6 +14,7 @@ import CategoryUtil from '../utils/api/CategoryUtil';
 export default function AddEditCategory(props) {
   const {
     category = {},
+    categoryTypes = [],
     buttonContent,
     buttonVariant = 'primary',
     buttonClassName = '',
@@ -30,17 +31,17 @@ export default function AddEditCategory(props) {
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { title, active } = event.target;
+    const { title, active, type } = event.target;
 
     const updatedCategory = {
       ...category,
       title: title.value.trim(),
-      active: active.checked
+      active: active.checked,
+      type_id: type.value
     };
 
     if (category.id) {
       // Update the category.
-      // categoryUtil.update(category.id, updatedCategory);
       updateItem(updatedCategory);
     } else {
       // Create a new category.
@@ -86,6 +87,22 @@ export default function AddEditCategory(props) {
               <Col>
                 <FloatingLabel controlId="title" label="Title">
                   <Form.Control type="text" placeholder="Title" defaultValue={category.title} />
+                </FloatingLabel>
+              </Col>
+            </Form.Group>
+
+            <Form.Group as={Row} className="mb-3" controlId="type">
+              <Col>
+                <FloatingLabel controlId="type" label="Type">
+                  <Form.Select aria-label="Category Type" defaultValue={category.type_id ?? null}>
+                    <option>Select One</option>
+
+                    {categoryTypes.map(({ id, title }) => (
+                      <option key={`${title}-type`} value={id}>
+                        {title}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </FloatingLabel>
               </Col>
             </Form.Group>
