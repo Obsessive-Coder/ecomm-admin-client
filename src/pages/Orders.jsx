@@ -47,8 +47,11 @@ const tableColumns = [{
   label: 'status',
   Component: undefined
 }, {
-  label: 'actions',
+  label: 'view',
   Component: ViewLink
+}, {
+  label: 'actions',
+  Component: Actions
 }];
 
 export default function Orders() {
@@ -60,18 +63,70 @@ export default function Orders() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageOrders, setPageOrders] = useState(orders.slice(0, rowLimit));
 
-  const getOrders = async queryParams => { };
+  const orderUtil = new OrderUtil();
 
-  const addOrder = newOrder => { };
+  const getOrders = async queryParams => {
+    const { data: orders } = await orderUtil.findAll(queryParams);
+    setOrders(orders);
 
-  const removeOrder = orderId => { };
+    const updatedPageOrders = orders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + 1);
+    setPageOrders(updatedPageOrders);
 
-  const updateOrder = updatedOrder => { };
+    setPageCount(Math.ceil(orders.length / rowLimit));
+  };
 
-  const updatePageOrders = index => { };
+  const addOrder = newOrder => {
+    const updatedOrders = [...orders, newOrder];
+    setOrders(updatedOrders);
 
-  const getTotal = orderItems => {
-    console.log(orderItems);
+    const updatedPageOrders = updatedOrders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + 1);
+    setPageOrders(updatedPageOrders);
+
+    setPageCount(Math.ceil(updatedOrders.length / rowLimit));
+  };
+
+  const updateOrder = updatedOrder => {
+    console.log(updatedOrder);
+    const { id: updatedId } = updatedOrder;
+    orderUtil.update(updatedId, updatedOrder);
+
+    const updatedOrders = [...orders];
+    for (let i = 0; i < updatedOrders.length; i++) {
+      const order = updatedOrders[i];
+
+      if (order.id === updatedId) {
+        updatedOrders[i] = { ...order, ...updatedOrder };
+      }
+    }
+
+    updatePageOrders(pageIndex, updatedOrders);
+    setOrders([...updatedOrders]);
+  };
+
+  const removeOrder = orderId => {
+    orderUtil.delete(orderId);
+
+    const filteredOrders = orders.filter(({ id }) => id !== orderId);
+    setOrders([...filteredOrders]);
+
+    let updatedPageOrders = filteredOrders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
+    if (updatedPageOrders.length === 0) {
+      updatedPageOrders = filteredOrders.slice((pageIndex - 1) * rowLimit, ((pageIndex - 1) * rowLimit) + rowLimit);
+      setPageIndex(pageIndex - 1);
+    }
+
+    setPageOrders(updatedPageOrders);
+    setPageCount(Math.ceil(filteredOrders.length / rowLimit));
+  };
+
+  const updatePageOrders = (index, updatedOrders) => {
+    if (index < pageCount) {
+      const updatedPageOrders = updatedOrders.slice(index * rowLimit, (index * rowLimit) + rowLimit);
+
+      setPageOrders(updatedPageOrders);
+      setPageIndex(index);
+    }
   };
 
   return (
@@ -101,6 +156,7 @@ export default function Orders() {
                       label={label}
                       item={order}
                       type="order"
+                      statuses={statuses}
                       removeItem={removeOrder}
                       handleUpdate={updateOrder}
                     />

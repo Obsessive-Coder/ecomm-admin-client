@@ -8,6 +8,7 @@ import {
 
 // Custom Components.
 import AddEditCategory from './AddEditCategory';
+import AddEditOrder from './AddEditOrder';
 import AddEditProduct from './AddEditProduct';
 import Confirm from './Confirm';
 
@@ -17,7 +18,7 @@ import ProductUtil from '../utils/api/ProductUtil';
 export default function Actions(props) {
   const {
     item, categories, removeItem, type = "product", isEdit = true,
-    categoryTypes, isDelete = true, handleUpdate
+    categoryTypes, isDelete = true, handleUpdate, statuses
   } = props;
 
   const handleDelete = () => {
@@ -46,6 +47,17 @@ export default function Actions(props) {
               category={item}
               type={type}
               categoryTypes={categoryTypes}
+              updateItem={handleUpdate}
+              buttonVariant="link"
+              buttonClassName="p-0 mx-2 edit text-secondary"
+            />
+          )}
+
+          {type === 'order' && (
+            <AddEditOrder
+              buttonContent={<EditIcon />}
+              order={item}
+              statuses={statuses}
               updateItem={handleUpdate}
               buttonVariant="link"
               buttonClassName="p-0 mx-2 edit text-secondary"
