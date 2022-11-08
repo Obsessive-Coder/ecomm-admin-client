@@ -7,6 +7,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import {
   BagFill as BagFillIcon,
+  Cart as CartIcon,
   List as ListIcon,
   MenuButtonFill as MenuButtonFillIcon
 } from 'react-bootstrap-icons';
@@ -28,6 +29,10 @@ const navItems = [{
   path: '/category-types',
   label: 'category types',
   Icon: ListIcon
+}, {
+  path: '/orders',
+  label: 'orders',
+  Icon: CartIcon
 }];
 
 export default function Sidebar({ isOpen, handleClose }) {

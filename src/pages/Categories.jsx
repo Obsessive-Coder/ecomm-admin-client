@@ -100,7 +100,7 @@ export default function Categories() {
     }
 
     setPageCategories(updatedPageCategories);
-    setPageCount(Math.ceil(filteredCategories.length / rowLimit))
+    setPageCount(Math.ceil(filteredCategories.length / rowLimit));
   };
 
   const updatePageCategories = (index, updatedCategories) => {
