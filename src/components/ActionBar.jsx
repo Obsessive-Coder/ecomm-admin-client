@@ -8,13 +8,15 @@ import Row from 'react-bootstrap/Row';
 import { Plus as PlusIcon } from 'react-bootstrap-icons';
 
 // Custom Components.
-import AddEditProduct from './AddEditProduct';
 import AddEditCategory from './AddEditCategory';
+import AddEditOrder from './AddEditOrder';
+import AddEditProduct from './AddEditProduct';
 
 export default function ActionBar(props) {
   const {
     categories = [],
     categoryTypes = [],
+    statuses = [],
     type,
     isAddVisible = true,
     isSearchVisible = false,
@@ -87,7 +89,7 @@ export default function ActionBar(props) {
                   <option value="0">Select One</option>
 
                   {categories.map(({ id, title }) => (
-                    <option key={`${title}-categoryId`} value={id}>
+                    <option key={`${title}-${id}`} value={id}>
                       {title}
                     </option>
                   ))}
@@ -116,13 +118,13 @@ export default function ActionBar(props) {
           {type === 'product' && (
             <AddEditProduct
               categories={categories}
+              addItem={addItem}
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}
                   Add Product
                 </div>
               )}
-              addItem={addItem}
               buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary"
             />
           )}
@@ -132,6 +134,7 @@ export default function ActionBar(props) {
               categories={categories}
               categoryTypes={categoryTypes}
               type={type}
+              addItem={addItem}
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}
@@ -140,7 +143,23 @@ export default function ActionBar(props) {
                   </span>
                 </div>
               )}
+              buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary"
+            />
+          )}
+
+          {type === 'order' && (
+            <AddEditOrder
+              categories={categories}
+              categoryTypes={[]}
+              statuses={statuses}
+              type={type}
               addItem={addItem}
+              buttonContent={(
+                <div className="d-flex align-items-center justify-content-center">
+                  <PlusIcon size={36} />{' '}
+                  Add Order
+                </div>
+              )}
               buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary"
             />
           )}

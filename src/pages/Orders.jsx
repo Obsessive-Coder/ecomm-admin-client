@@ -7,10 +7,12 @@ import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 
+// Other Components.
+import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-pagination';
+
 // Custom Components.
 import Actions from '../components/Actions';
 import ActionBar from '../components/ActionBar';
-import ActiveSwitch from '../components/ActiveSwitch';
 
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
@@ -132,6 +134,14 @@ export default function Orders() {
     <Container>
       <h1>Orders</h1>
 
+      <ActionBar
+        type="order"
+        categories={orders}
+        statuses={statuses}
+        addItem={addOrder}
+        getItems={getOrders}
+      />
+
       <Table responsive striped bordered hover className="table-light">
         <thead>
           <tr>
@@ -170,6 +180,25 @@ export default function Orders() {
           ))}
         </tbody>
       </Table>
+
+      {pageOrders.length === 0 && (
+        <div className="text-center">
+          <h2>There are no orders to show.</h2>
+          <p>Try adding orders or updating your search criteria</p>
+        </div>
+      )}
+
+      <div>
+        <Pagination
+          {...bootstrap5PaginationPreset}
+          total={pageCount}
+          current={pageIndex + 1}
+          maxWidth={500}
+          previousLabel="<"
+          nextLabel=">"
+          onPageChange={pageNumber => updatePageOrders(pageNumber - 1, orders)}
+        />
+      </div>
     </Container>
   );
 }
