@@ -68,7 +68,7 @@ export default function AddEditCategory(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
-        <Offcanvas.Header closeButton className="bg-dark text-light">
+        <Offcanvas.Header closeButton className="bg-dark">
           <Offcanvas.Title>
             {category.id ? 'Update Category' : 'Create Category'}
           </Offcanvas.Title>
@@ -79,7 +79,7 @@ export default function AddEditCategory(props) {
             <Form.Group as={Row} className="mb-3" controlId="active">
               <Col>
                 <Form.Check
-                  defaultChecked={category.active ?? true}
+                  defaultChecked={category.active}
                   type="switch"
                   id="active"
                   label="Active"
@@ -90,7 +90,7 @@ export default function AddEditCategory(props) {
             <Form.Group as={Row} className="mb-3" controlId="title">
               <Col>
                 <FloatingLabel controlId="title" label="Title">
-                  <Form.Control type="text" placeholder="Title" defaultValue={category.title} />
+                  <Form.Control type="text" placeholder="Title" defaultValue={category.title} className="text-secondary" />
                 </FloatingLabel>
               </Col>
             </Form.Group>
@@ -99,7 +99,11 @@ export default function AddEditCategory(props) {
               <Form.Group as={Row} className="mb-3" controlId="type">
                 <Col>
                   <FloatingLabel controlId="type" label="Type">
-                    <Form.Select aria-label="Category Type" defaultValue={category.type_id ?? null}>
+                    <Form.Select
+                      aria-label="Category Type"
+                      defaultValue={category.type_id ?? null}
+                      className="text-secondary"
+                    >
                       <option>Select One</option>
 
                       {categoryTypes.map(({ id, title }) => (

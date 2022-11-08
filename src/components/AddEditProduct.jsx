@@ -66,7 +66,7 @@ export default function AddEditProduct(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
-        <Offcanvas.Header closeButton className="bg-dark text-light">
+        <Offcanvas.Header closeButton className="bg-dark">
           <Offcanvas.Title>
             {product.id ? 'Update Product' : 'Create Product'}
           </Offcanvas.Title>
@@ -77,7 +77,7 @@ export default function AddEditProduct(props) {
             <Form.Group as={Row} className="mb-3" controlId="active">
               <Col>
                 <Form.Check
-                  defaultChecked={product.active ?? true}
+                  defaultChecked={product.active}
                   type="switch"
                   id="active"
                   label="Active"
@@ -88,7 +88,7 @@ export default function AddEditProduct(props) {
             <Form.Group as={Row} className="mb-3" controlId="title">
               <Col>
                 <FloatingLabel controlId="title" label="Title">
-                  <Form.Control type="text" placeholder="Title" defaultValue={product.title} />
+                  <Form.Control type="text" placeholder="Title" defaultValue={product.title} className="text-secondary" />
                 </FloatingLabel>
               </Col>
             </Form.Group>
@@ -101,6 +101,7 @@ export default function AddEditProduct(props) {
                     placeholder="Description"
                     rows={14}
                     defaultValue={product.description}
+                    className="text-secondary"
                   />
                 </FloatingLabel>
               </Col>
@@ -114,6 +115,7 @@ export default function AddEditProduct(props) {
                     placeholder="Price"
                     min={0}
                     defaultValue={product.price}
+                    className="text-secondary"
                   />
                 </FloatingLabel>
               </Col>
@@ -127,6 +129,7 @@ export default function AddEditProduct(props) {
                     placeholder="Quantity"
                     min={0}
                     defaultValue={product.quantity}
+                    className="text-secondary"
                   />
                 </FloatingLabel>
               </Col>
@@ -135,7 +138,7 @@ export default function AddEditProduct(props) {
             <Form.Group as={Row} className="mb-3" controlId="category">
               <Col>
                 <FloatingLabel controlId="category" label="Category">
-                  <Form.Select aria-label="Category" defaultValue={product.category_id ?? null}>
+                  <Form.Select aria-label="Category" defaultValue={product.category_id ?? null} className="text-secondary">
                     <option>Select One</option>
 
                     {categories.map(({ id, title }) => (

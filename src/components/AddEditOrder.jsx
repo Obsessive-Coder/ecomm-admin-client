@@ -69,7 +69,7 @@ export default function AddEditOrder(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
-        <Offcanvas.Header closeButton className="bg-dark text-light">
+        <Offcanvas.Header closeButton className="bg-dark">
           <Offcanvas.Title>
             {order.id ? 'Update Category' : 'Create Category'}
           </Offcanvas.Title>
@@ -80,7 +80,7 @@ export default function AddEditOrder(props) {
             <Form.Group as={Row} className="mb-3" controlId="address">
               <Col>
                 <FloatingLabel controlId="address" label="Address">
-                  <Form.Control type="text" placeholder="Address" defaultValue={order.address} />
+                  <Form.Control type="text" placeholder="Address" defaultValue={order.address} className="text-secondary" />
                 </FloatingLabel>
               </Col>
             </Form.Group>
@@ -88,7 +88,7 @@ export default function AddEditOrder(props) {
             <Form.Group as={Row} className="mb-3" controlId="phone">
               <Col>
                 <FloatingLabel controlId="phone" label="Phone">
-                  <Form.Control type="text" placeholder="Phone" defaultValue={order.phone} />
+                  <Form.Control type="text" placeholder="Phone" defaultValue={order.phone} className="text-secondary" />
                 </FloatingLabel>
               </Col>
             </Form.Group>
@@ -96,7 +96,7 @@ export default function AddEditOrder(props) {
             <Form.Group as={Row} className="mb-3" controlId="payment">
               <Col>
                 <FloatingLabel controlId="payment" label="Payment Type">
-                  <Form.Select aria-label="Payment Type" defaultValue={order.payment}>
+                  <Form.Select aria-label="Payment Type" defaultValue={order.payment} className="text-secondary">
                     <option>Select One</option>
 
                     {['Card', 'COD'].map(title => (
@@ -112,7 +112,7 @@ export default function AddEditOrder(props) {
             <Form.Group as={Row} className="mb-3" controlId="status">
               <Col>
                 <FloatingLabel controlId="status" label="Status">
-                  <Form.Select aria-label="Status" defaultValue={order.status_id ?? null}>
+                  <Form.Select aria-label="Status" defaultValue={order.status_id ?? null} className="text-secondary">
                     <option>Select One</option>
 
                     {statuses.map(({ id, title }) => (

@@ -12,11 +12,11 @@ export default function MainHeader({ handleOpenSidebar }) {
       <Navbar expand="md" className="border-bottom border-dark" style={{ height: 50 }}>
         <Container fluid className="justify-content-start">
           <Button
-            variant="outline-secondary"
+            variant="outline-primary"
             onClick={handleOpenSidebar}
-            className="d-lg-none border-0"
+            className="d-lg-none border-0 text-secondary"
           >
-            <ListIcon color="dark" size="28" />
+            <ListIcon size="28" />
           </Button>
 
           {/* IMPORTANT: Put additional header items here. */}
