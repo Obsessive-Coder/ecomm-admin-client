@@ -40,12 +40,10 @@ export default function AddEditOrder(props) {
       phone: phone.value.trim(),
       payment: payment.value,
       ...(selectedIndex ? {
-        status_id, status,
+        status_id,
         status: statusOptions[selectedIndex].text
       } : {})
     };
-
-    console.log(updatedOrder);
 
     if (order.id) {
       // Update the order.

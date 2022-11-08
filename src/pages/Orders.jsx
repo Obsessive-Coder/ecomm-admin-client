@@ -86,7 +86,6 @@ export default function Orders() {
   };
 
   const updateOrder = updatedOrder => {
-    console.log(updatedOrder);
     const { id: updatedId } = updatedOrder;
     orderUtil.update(updatedId, updatedOrder);
 
