@@ -27,7 +27,7 @@ export default function Actions(props) {
   };
 
   return (
-    <div>
+    <div className="overflow-hidden">
       {isEdit && (
         <>
           {type === 'product' && (
