@@ -47,23 +47,25 @@ export default function AddEditProduct(props) {
       category_id: category.value
     };
 
+    if (imageData) {
+      const { data: url } = await new FileUtil().create(imageData);
+      updatedProduct.image_url = url;
+    }
+
     if (product.id) {
       // Update the product.
       ProductUtil.update(product.id, updatedProduct);
       updateItem(updatedProduct);
     } else {
       // Create a new product.
-      if (imageData) {
-        const { data: url } = await new FileUtil().create(imageData);
-        updatedProduct.image_url = url;
-      }
-
       const { data } = await ProductUtil.create(updatedProduct);
       addItem(data);
     }
 
     handleHide();
   };
+
+  console.log(product.image_url)
 
   return (
     <>
@@ -88,7 +90,10 @@ export default function AddEditProduct(props) {
             <div className="overflow-scroll h-100 px-3 pt-3" style={{ paddingBottom: 75 }}>
               <Form.Group as={Row} className="mb-3" controlId="image">
                 <Col>
-                  <ImageUpload imageUrl={imageData?.image ?? product.image_url} setImageData={setImageData} />
+                  <ImageUpload
+                    imageUrl={imageData?.image ?? product.image_url}
+                    setImageData={setImageData}
+                  />
                 </Col>
               </Form.Group>
 
