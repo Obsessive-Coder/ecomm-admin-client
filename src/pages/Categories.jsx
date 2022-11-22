@@ -5,6 +5,9 @@ import { useLoaderData } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 
+// Other Components.
+import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-pagination';
+
 // Custom Components.
 import Actions from '../components/Actions';
 import ActionBar from '../components/ActionBar';
@@ -174,6 +177,25 @@ export default function Categories() {
           ))}
         </tbody>
       </Table>
+
+      {pageCategories.length === 0 && (
+        <div className="text-center">
+          <h2>There are no categories to show.</h2>
+          <p>Try adding categories or updating your search criteria</p>
+        </div>
+      )}
+
+      <div>
+        <Pagination
+          {...bootstrap5PaginationPreset}
+          total={pageCount}
+          current={pageIndex + 1}
+          maxWidth={500}
+          previousLabel="<"
+          nextLabel=">"
+          onPageChange={pageNumber => updatePageCategories(pageNumber - 1)}
+        />
+      </div>
     </Container>
   );
 }
