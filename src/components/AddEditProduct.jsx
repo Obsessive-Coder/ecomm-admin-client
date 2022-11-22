@@ -16,6 +16,8 @@ import FileUtil from '../utils/api/FIleUtil';
 import ProductUtil from '../utils/api/ProductUtil';
 
 export default function AddEditProduct(props) {
+  const productUtil = new ProductUtil();
+
   const {
     product = {},
     categories = [],
@@ -54,18 +56,16 @@ export default function AddEditProduct(props) {
 
     if (product.id) {
       // Update the product.
-      ProductUtil.update(product.id, updatedProduct);
+      productUtil.update(product.id, updatedProduct);
       updateItem(updatedProduct);
     } else {
       // Create a new product.
-      const { data } = await ProductUtil.create(updatedProduct);
+      const { data } = await productUtil.create(updatedProduct);
       addItem(data);
     }
 
     handleHide();
   };
-
-  console.log(product.image_url)
 
   return (
     <>
