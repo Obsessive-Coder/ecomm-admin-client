@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { useLoaderData } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
-import { BoxArrowRight as BoxArrowRightIcon } from 'react-bootstrap-icons';
 
 // Other Components.
 import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-pagination';
@@ -14,6 +12,7 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 import Actions from '../components/Actions';
 import ActionBar from '../components/ActionBar';
 import ActiveSwitch from '../components/ActiveSwitch';
+import ViewLink from '../components/ViewLink';
 
 // Style, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
@@ -28,12 +27,6 @@ export async function loader() {
 
   return { categories, products };
 }
-
-const ViewLink = ({ id }) => (
-  <Link to={`/products/${id}`}>
-    <BoxArrowRightIcon />
-  </Link>
-)
 
 const tableColumns = [{
   label: 'title',
@@ -178,6 +171,7 @@ export default function Products() {
                       item={product}
                       categories={categories}
                       type="product"
+                      toUrl={`/products/${product.id}`}
                       removeItem={removeProduct}
                       handleUpdate={updateProduct}
                     />

@@ -13,6 +13,7 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 // Custom Components.
 import Actions from '../components/Actions';
 import ActionBar from '../components/ActionBar';
+import ViewLink from '../components/ViewLink';
 
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
@@ -23,12 +24,6 @@ export async function loader() {
   const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
   return { orders, statuses }
 }
-
-const ViewLink = ({ id }) => (
-  <Link to={`/orders/${id}`}>
-    <BoxArrowRightIcon />
-  </Link>
-)
 
 const tableColumns = [{
   label: 'date',
@@ -165,12 +160,13 @@ export default function Orders() {
                       label={label}
                       item={order}
                       type="order"
+                      toUrl={`/orders/${order.id}`}
                       statuses={statuses}
                       removeItem={removeOrder}
                       handleUpdate={updateOrder}
                     />
                   ) : (
-                    <span key={`${order.id}-${label}-${order[label]}`}>
+                    <span key={`${order.id}- ${label}-${order[label]}`}>
                       {order[label] ?? ''}
                     </span>
                   )}
@@ -181,12 +177,14 @@ export default function Orders() {
         </tbody>
       </Table>
 
-      {pageOrders.length === 0 && (
-        <div className="text-center">
-          <h2>There are no orders to show.</h2>
-          <p>Try adding orders or updating your search criteria</p>
-        </div>
-      )}
+      {
+        pageOrders.length === 0 && (
+          <div className="text-center">
+            <h2>There are no orders to show.</h2>
+            <p>Try adding orders or updating your search criteria</p>
+          </div>
+        )
+      }
 
       <div>
         <Pagination
@@ -199,6 +197,6 @@ export default function Orders() {
           onPageChange={pageNumber => updatePageOrders(pageNumber - 1, orders)}
         />
       </div>
-    </Container>
+    </Container >
   );
 }

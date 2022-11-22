@@ -14,7 +14,6 @@ export default function Product() {
 
   console.log(product);
 
-
   return (
     <div>
       <h1>Product</h1>

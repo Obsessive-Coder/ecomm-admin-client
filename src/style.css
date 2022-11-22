@@ -1,4 +1,5 @@
-.action-button.edit:hover {
+.action-button.edit:hover,
+.view-link:hover {
   color: rgba(var(--bs-info-rgb), var(--bs-text-opacity)) !important;
 }
 
