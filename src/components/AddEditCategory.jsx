@@ -127,7 +127,7 @@ export default function AddEditCategory(props) {
                   Cancel
                 </Button>
 
-                <Button type="submit" variant="outline-primary" className="flex-grow-1 mx-2">
+                <Button type="submit" variant="outline-primary" className="flex-grow-1 mx-2 text-success">
                   {category.id ? 'Update' : 'Create'}
                 </Button>
               </Col>

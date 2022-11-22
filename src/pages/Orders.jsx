@@ -199,6 +199,7 @@ export default function Orders() {
                     />
                   ) : (
                     <span key={`${order.id}- ${label}-${order[label]}`}>
+                      {label === 'total' && '$'}
                       {order[label] ?? ''}
                     </span>
                   )}

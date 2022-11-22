@@ -180,7 +180,10 @@ export default function Products() {
                       {label === 'category' ? (
                         categories.filter(({ id }) => id === product.category_id)[0]?.title
                       ) : (
-                        product[label] ?? ''
+                        <>
+                          {label === 'price' && '$'}
+                          {product[label] ?? ''}
+                        </>
                       )}
                     </span>
                   )}

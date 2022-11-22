@@ -161,7 +161,7 @@ export default function AddEditProduct(props) {
                   Cancel
                 </Button>
 
-                <Button type="submit" variant="outline-primary" className="flex-grow-1 mx-2">
+                <Button type="submit" variant="outline-primary" className="flex-grow-1 mx-2 text-success">
                   {product.id ? 'Update' : 'Create'}
                 </Button>
               </Col>
