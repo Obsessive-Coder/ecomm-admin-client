@@ -22,7 +22,7 @@ export async function loader() {
   const { data: categories } = await new CategoryUtil()
     .findAll({ order: { column: 'title' } });
 
-  const { data: products } = await ProductUtil
+  const { data: products } = await new ProductUtil()
     .findAll({ order: { column: 'title' } });
 
   return { categories, products };
@@ -63,7 +63,7 @@ export default function Products() {
   const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit));
 
   const getProducts = async queryParams => {
-    const { data: products } = await ProductUtil.findAll(queryParams);
+    const { data: products } = await new ProductUtil().findAll(queryParams);
     setProducts(products);
 
     const updatedPageProducts = products.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
@@ -99,7 +99,7 @@ export default function Products() {
   };
 
   const updateProduct = updatedProduct => {
-    ProductUtil.update(updatedProduct.id, updatedProduct);
+    new ProductUtil().update(updatedProduct.id, updatedProduct);
 
     const updatedProducts = [...products];
 
