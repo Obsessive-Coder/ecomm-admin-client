@@ -1,5 +1,3 @@
-import ImageUpload from '../components/ImageUpload';
-
 export default function Dashboard() {
   return (
     <div>
@@ -7,10 +5,6 @@ export default function Dashboard() {
 
       <div>
         <p>COMING SOON!!</p>
-
-        <div>
-          <ImageUpload />
-        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 
 // Styles, utils, and other helpers.
@@ -6,9 +6,7 @@ import FileUtil from '../utils/api/FIleUtil';
 
 const fileTypes = ['JPG', 'PNG'];
 
-export default function ImageUpload() {
-  const [imageUrl, setImageUrl] = useState('');
-
+export default function ImageUpload({ imageUrl, setImageData }) {
   const onSelectFile = async file => {
     const convertedFile = await convertToBase64(file);
     const fileData = {
@@ -17,8 +15,7 @@ export default function ImageUpload() {
       type: file.type
     };
 
-    const { data: url } = await new FileUtil().create(fileData);
-    setImageUrl(url)
+    setImageData(fileData);
   };
 
   const convertToBase64 = file => {
@@ -34,8 +31,11 @@ export default function ImageUpload() {
 
   return (
     <>
-      <img src={imageUrl} alt="product" />
-      <FileUploader handleChange={onSelectFile} types={fileTypes} />
+      <FileUploader handleChange={onSelectFile} types={fileTypes} classes="mb-3" />
+
+      {imageUrl && (
+        <img src={imageUrl} alt="product" className="img-fluid" style={{ maxHeight: 200 }} />
+      )}
     </>
   )
 }
