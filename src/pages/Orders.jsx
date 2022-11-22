@@ -3,6 +3,7 @@ import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
+import Badge from 'react-bootstrap/Badge';
 import Table from 'react-bootstrap/Table';
 
 // Other Components.
@@ -23,6 +24,39 @@ export async function loader() {
   return { orders, statuses }
 }
 
+// Used to show the color coded status of the order.
+const StatusBadge = ({ item: { status } }) => {
+  let badgeColor = 'primary';
+
+  switch (status) {
+    case 'Delivered':
+      badgeColor = "success";
+      break;
+
+    case 'Processing':
+      badgeColor = 'info'
+      break;
+
+    case 'Pending':
+      badgeColor = 'warning';
+      break;
+
+    case 'Cancelled':
+      badgeColor = 'danger';
+      break;
+
+    default:
+      badgeColor = 'primary';
+      break;
+  }
+
+  return (
+    <Badge pill bg={badgeColor}>
+      {status}
+    </Badge>
+  );
+};
+
 const tableColumns = [{
   label: 'date',
   Component: undefined
@@ -40,7 +74,7 @@ const tableColumns = [{
   Component: undefined
 }, {
   label: 'status',
-  Component: undefined
+  Component: StatusBadge
 }, {
   label: 'view',
   Component: ViewLink
