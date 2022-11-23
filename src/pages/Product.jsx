@@ -66,10 +66,20 @@ export default function Product() {
         <Col xs={12} md={6}>
           <div>
             <h2>{title}</h2>
+
             <h4>{`$${price}`}</h4>
-            <span>Quantity: {quantity}</span>
+
+            <div>
+              <span className="fw-bold">Quantity:{' '}</span>
+              {quantity}
+            </div>
+
             <p className="my-3">{description}</p>
-            <span>Category: {category}</span>
+
+            <div>
+              <span className="fw-bold">Category:{' '}</span>
+              {category}
+            </div>
 
             <div className="my-3">
               <AddEditProduct
@@ -89,7 +99,7 @@ export default function Product() {
                 title="Confirm Item Deletion"
                 buttonContent="Delete"
                 handleConfirm={deleteProduct}
-                buttonClassName="mx-3 text-secondary action-button delete"
+                buttonClassName="mx-2 text-secondary action-button delete"
               >
                 <span>Are you sure that you want to delete this item?</span>
               </Confirm>

@@ -1,6 +1,6 @@
 {
   "name": "ecomm-client",
-  "version": "0.27.23",
+  "version": "0.27.24",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
