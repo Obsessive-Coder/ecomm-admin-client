@@ -11,9 +11,10 @@ import MainHeader from '../components/MainHeader';
 import Dashboard from './Dashboard';
 import Categories, { loader as categoriesLoader } from './Categories';
 import CategoryTypes, { loader as categoryTypesLoader } from './CategoryTypes';
+import Order, { loader as orderLoader } from './Order';
 import Orders, { loader as ordersLoader } from './Orders';
-import Products, { loader as productsLoader } from './Products';
 import Product, { loader as productLoader } from './Product';
+import Products, { loader as productsLoader } from './Products';
 import Error404 from './Error404';
 import Sidebar from '../components/Sidebar';
 
@@ -46,11 +47,11 @@ const router = createBrowserRouter([{
   element: <Orders />,
   loader: ordersLoader
 },
-  // {
-  //   path: '/orders/:orderId',
-  //   element: <Product />,
-  //   loader: productLoader
-  // }
+{
+  path: '/orders/:orderId',
+  element: <Order />,
+  loader: orderLoader
+}
 ]);
 
 export default function MasterPage() {

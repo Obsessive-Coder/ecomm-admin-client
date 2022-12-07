@@ -3,7 +3,6 @@ import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
-import Badge from 'react-bootstrap/Badge';
 import Table from 'react-bootstrap/Table';
 
 // Other Components.
@@ -12,6 +11,7 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 // Custom Components.
 import Actions from '../components/Actions';
 import ActionBar from '../components/ActionBar';
+import StatusBadge from '../components/StatusBadge';
 import ViewLink from '../components/ViewLink';
 
 // Styles, utils, and other helpers.
@@ -23,39 +23,6 @@ export async function loader() {
   const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
   return { orders, statuses }
 }
-
-// Used to show the color coded status of the order.
-const StatusBadge = ({ item: { status } }) => {
-  let badgeColor = 'primary';
-
-  switch (status) {
-    case 'Delivered':
-      badgeColor = "success";
-      break;
-
-    case 'Processing':
-      badgeColor = 'info'
-      break;
-
-    case 'Pending':
-      badgeColor = 'warning';
-      break;
-
-    case 'Cancelled':
-      badgeColor = 'danger';
-      break;
-
-    default:
-      badgeColor = 'primary';
-      break;
-  }
-
-  return (
-    <Badge pill bg={badgeColor}>
-      {status}
-    </Badge>
-  );
-};
 
 const tableColumns = [{
   label: 'date',
@@ -193,6 +160,7 @@ export default function Orders() {
                       item={order}
                       type="order"
                       toUrl={`/orders/${order.id}`}
+                      status={order.status}
                       statuses={statuses}
                       removeItem={removeOrder}
                       handleUpdate={updateOrder}

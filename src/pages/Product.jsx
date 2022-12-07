@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom';
 
 // Bootstrap Components.
-import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -13,7 +12,9 @@ import Confirm from '../components/Confirm';
 
 // Style, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
-import ProductUtil from '../utils/api/ProductUtil'
+import ProductUtil from '../utils/api/ProductUtil';
+
+const productUtil = new ProductUtil();
 
 export async function loader({ params: { productId } }) {
   const { data: categories } = await new CategoryUtil()
@@ -25,7 +26,6 @@ export async function loader({ params: { productId } }) {
 
 export default function Product() {
   const navigate = useNavigate();
-  const productUtil = new ProductUtil();
   const categories = useLoaderData().categories;
   const [product, setProduct] = useState(useLoaderData().product);
 
