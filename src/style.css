@@ -1,0 +1,14 @@
+.action-button.edit:hover,
+.view-link:hover {
+  color: rgba(var(--bs-info-rgb), var(--bs-text-opacity)) !important;
+}
+
+.action-button.delete:hover {
+  color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
+}
+
+@media only screen and (min-width: 992px) {
+  .page-content {
+    margin-left: 14rem;
+  }
+}
