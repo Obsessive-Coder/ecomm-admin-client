@@ -37,6 +37,7 @@ const navItems = [{
 
 export default function Sidebar({ isOpen, handleClose }) {
   const isLargeScreen = useMediaQuery({ query: '(min-width: 992px )' });
+  const { pathname } = window.location;
 
   return (
     <Offcanvas
@@ -56,15 +57,18 @@ export default function Sidebar({ isOpen, handleClose }) {
       </Offcanvas.Header>
 
       <Offcanvas.Body>
-        <Nav defaultActiveKey="/" className="flex-column">
-          {navItems.map(({ path, label, Icon }) => (
-            <Nav.Item key={label} className="d-flex align-items-center p-2">
-              <Icon />
-              <Nav.Link href={path} className="p-2 text-capitalize text-secondary">
-                {label}
-              </Nav.Link>
-            </Nav.Item>
-          ))}
+        <Nav defaultActiveKey="/" activeKey={pathname} className="flex-column">
+          {navItems.map(({ path, label, Icon }) => {
+            console.log(pathname, path, pathname === path)
+            return (
+              <Nav.Item key={label} className="d-flex align-items-center p-2">
+                <Icon />
+                <Nav.Link href={path} className="flex-fill p-2 text-capitalize text-secondary">
+                  {label}
+                </Nav.Link>
+              </Nav.Item>
+            )
+          })}
         </Nav>
       </Offcanvas.Body>
     </Offcanvas>
