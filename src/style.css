@@ -7,6 +7,13 @@
   color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
 }
 
+.nav-link.active {
+  border-right: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+  --bs-border-width: 5px;
+  --bs-border-opacity: 1;
+  border-color: rgba(var(--bs-secondary-rgb), var(--bs-border-opacity)) !important;
+}
+
 @media only screen and (min-width: 992px) {
   .page-content {
     margin-left: 14rem;

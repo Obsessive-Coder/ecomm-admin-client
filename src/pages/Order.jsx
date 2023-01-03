@@ -36,7 +36,6 @@ const tableColumns = [{
 
 export async function loader({ params: { orderId } }) {
   const { data: order } = await new OrderUtil().findOne(orderId);
-  console.log(order)
   return { order };
 }
 
