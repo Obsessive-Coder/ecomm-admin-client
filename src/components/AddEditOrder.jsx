@@ -8,6 +8,9 @@ import Form from 'react-bootstrap/Form';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Row from 'react-bootstrap/Row';
 
+// Custom Components.
+import OrderItems from './OrderItems';
+
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
 
@@ -75,59 +78,67 @@ export default function AddEditOrder(props) {
           </Offcanvas.Title>
         </Offcanvas.Header>
 
-        <Offcanvas.Body>
+        <Offcanvas.Body className="overflow-hidden p-0">
           <Form onSubmit={handleSubmit} className="position-relative h-100">
-            <Form.Group as={Row} className="mb-3" controlId="address">
-              <Col>
-                <FloatingLabel controlId="address" label="Address">
-                  <Form.Control type="text" placeholder="Address" defaultValue={order.address} className="text-secondary" />
-                </FloatingLabel>
-              </Col>
-            </Form.Group>
+            <div className="overflow-scroll h-100 px-3 pt-3" style={{ paddingBottom: 75 }}>
+              <Form.Group as={Row} className="mb-3" controlId="address">
+                <Col>
+                  <FloatingLabel controlId="address" label="Address">
+                    <Form.Control type="text" placeholder="Address" defaultValue={order.address} className="text-secondary" />
+                  </FloatingLabel>
+                </Col>
+              </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="phone">
-              <Col>
-                <FloatingLabel controlId="phone" label="Phone">
-                  <Form.Control type="text" placeholder="Phone" defaultValue={order.phone} className="text-secondary" />
-                </FloatingLabel>
-              </Col>
-            </Form.Group>
+              <Form.Group as={Row} className="mb-3" controlId="phone">
+                <Col>
+                  <FloatingLabel controlId="phone" label="Phone">
+                    <Form.Control type="text" placeholder="Phone" defaultValue={order.phone} className="text-secondary" />
+                  </FloatingLabel>
+                </Col>
+              </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="payment">
-              <Col>
-                <FloatingLabel controlId="payment" label="Payment Type">
-                  <Form.Select aria-label="Payment Type" defaultValue={order.payment} className="text-secondary">
-                    <option>Select One</option>
+              <Form.Group as={Row} className="mb-3" controlId="payment">
+                <Col>
+                  <FloatingLabel controlId="payment" label="Payment Type">
+                    <Form.Select aria-label="Payment Type" defaultValue={order.payment} className="text-secondary">
+                      <option>Select One</option>
 
-                    {['Card', 'COD'].map(title => (
-                      <option key={`${title}-type`} value={title}>
-                        {title}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </FloatingLabel>
-              </Col>
-            </Form.Group>
+                      {['Card', 'COD'].map(title => (
+                        <option key={`${title}-type`} value={title}>
+                          {title}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </FloatingLabel>
+                </Col>
+              </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="status">
-              <Col>
-                <FloatingLabel controlId="status" label="Status">
-                  <Form.Select aria-label="Status" defaultValue={order.status_id ?? null} className="text-secondary">
-                    <option>Select One</option>
+              <Form.Group as={Row} className="mb-3" controlId="status">
+                <Col>
+                  <FloatingLabel controlId="status" label="Status">
+                    <Form.Select aria-label="Status" defaultValue={order.status_id ?? null} className="text-secondary">
+                      <option>Select One</option>
 
-                    {statuses.map(({ id, title }) => (
-                      <option key={`${title}-type`} value={id}>
-                        {title}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </FloatingLabel>
-              </Col>
-            </Form.Group>
+                      {statuses.map(({ id, title }) => (
+                        <option key={`${title}-type`} value={id}>
+                          {title}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </FloatingLabel>
+                </Col>
+              </Form.Group>
+
+              <Form.Group as={Row} className="mb-3" controlId="items">
+                <Col>
+                  <OrderItems items={order?.items ?? []} />
+                </Col>
+              </Form.Group>
+            </div>
 
             <Form.Group
               as={Row}
-              className="position-absolute"
+              className="position-absolute py-2 bg-primary"
               style={{ left: 0, right: 0, bottom: 0 }}
             >
               <Col className="d-flex">
@@ -138,6 +149,7 @@ export default function AddEditOrder(props) {
                 <Button type="submit" variant="outline-primary" className="flex-grow-1 mx-2 text-success">
                   {order.id ? 'Update' : 'Create'}
                 </Button>
+
               </Col>
             </Form.Group>
           </Form>

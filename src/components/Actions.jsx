@@ -18,7 +18,7 @@ import ProductUtil from '../utils/api/ProductUtil';
 export default function Actions(props) {
   const {
     item, categories, removeItem, type = "product", isEdit = true,
-    categoryTypes, isDelete = true, handleUpdate, statuses
+    categoryTypes, isDelete = true, handleUpdate, products, statuses
   } = props;
 
   const handleDelete = () => {
@@ -58,6 +58,7 @@ export default function Actions(props) {
               buttonContent={<EditIcon />}
               order={item}
               statuses={statuses}
+              products={products}
               updateItem={handleUpdate}
               buttonVariant="link"
               buttonClassName="p-0 mx-2 edit text-secondary"

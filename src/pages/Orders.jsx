@@ -17,11 +17,13 @@ import ViewLink from '../components/ViewLink';
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
 import OrderStatusUtil from '../utils/api/OrderStatusUtil';
+import ProductUtil from '../utils/api/ProductUtil';
 
 export async function loader() {
-  const { data: statuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
   const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
-  return { orders, statuses }
+  const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
+  const { data: statuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
+  return { orders, products, statuses }
 }
 
 const tableColumns = [{
@@ -51,7 +53,7 @@ const tableColumns = [{
 }];
 
 export default function Orders() {
-  const { statuses } = useLoaderData();
+  const { products, statuses } = useLoaderData();
   const [orders, setOrders] = useState(useLoaderData().orders);
 
   const [rowLimit, setRowLimit] = useState(25);
@@ -162,6 +164,7 @@ export default function Orders() {
                       toUrl={`/orders/${order.id}`}
                       status={order.status}
                       statuses={statuses}
+                      products={products}
                       removeItem={removeOrder}
                       handleUpdate={updateOrder}
                     />
