@@ -134,6 +134,7 @@ export default function Orders() {
         type="order"
         categories={orders}
         statuses={statuses}
+        products={products}
         addItem={addOrder}
         getItems={getOrders}
       />

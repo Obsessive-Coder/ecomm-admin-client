@@ -14,6 +14,10 @@
   border-color: rgba(var(--bs-secondary-rgb), var(--bs-border-opacity)) !important;
 }
 
+.add-item-dropdown::after {
+  display: none !important;
+}
+
 @media only screen and (min-width: 992px) {
   .page-content {
     margin-left: 14rem;

@@ -18,7 +18,7 @@ import ProductUtil from '../utils/api/ProductUtil';
 export default function Actions(props) {
   const {
     item, categories, removeItem, type = "product", isEdit = true,
-    categoryTypes, isDelete = true, handleUpdate, products, statuses
+    categoryTypes, isDelete = true, handleUpdate, products = [], statuses
   } = props;
 
   const handleDelete = () => {

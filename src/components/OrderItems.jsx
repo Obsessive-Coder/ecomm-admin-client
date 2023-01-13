@@ -4,13 +4,15 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { X as XIcon } from 'react-bootstrap-icons';
-import { Plus as PlusIcon } from 'react-bootstrap-icons';
+
+// Custom Components.
+import AddItemDropdown from './AddItemDropdown';
 
 
-export default function OrderItems({ items = [], removeItems }) {
+export default function OrderItems({ items = [], products, addItems, removeItems }) {
   const handleDeleteAllItems = () => {
-    const itemIds = items.map(({ id }) => id);
-    removeItems(itemIds);
+    const productIds = items.map(({ Product: { id } }) => id);
+    removeItems(productIds);
   };
 
   return (
@@ -18,14 +20,13 @@ export default function OrderItems({ items = [], removeItems }) {
       <h5>Items</h5>
 
       <div>
-        <Button
-          type="button"
-          variant="success"
-          size="sm"
-          className="text-primary"
-        >
-          <PlusIcon size={24} />
-        </Button>
+        <AddItemDropdown
+          key={`order-items-${items.length}`}
+          items={items}
+          products={products}
+          addItems={addItems}
+          removeItems={removeItems}
+        />
 
         <Button
           disabled={items.length === 0}
@@ -41,7 +42,7 @@ export default function OrderItems({ items = [], removeItems }) {
       </div>
 
       <ListGroup variant="flush">
-        {items.map(({ id, title, item_price, quantity }) => (
+        {items.map(({ id, title, item_price, quantity, Product }) => (
           <ListGroup.Item
             key={`order-item-${title}`}
             className="d-flex justify-content-between align-items-center px-0 text-secondary border-dark"
@@ -50,7 +51,7 @@ export default function OrderItems({ items = [], removeItems }) {
               type="button"
               variant="outline-danger"
               size="sm"
-              onClick={() => removeItems([id])}
+              onClick={() => removeItems([Product.id])}
               className="p-1 border-0"
             >
               <XIcon size={18} />
