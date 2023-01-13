@@ -19,6 +19,12 @@ export default function OrderItems({ items = [], products, addItems, removeItems
     <div>
       <h5>Items</h5>
 
+      {items.length === 0 && (
+        <small className="invalid-feedback d-block mb-3">
+          Orders require at least 1 item
+        </small>
+      )}
+
       <div>
         <AddItemDropdown
           key={`order-items-${items.length}`}
