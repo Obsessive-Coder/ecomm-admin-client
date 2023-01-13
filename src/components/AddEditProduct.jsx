@@ -111,7 +111,7 @@ export default function AddEditProduct(props) {
               <Form.Group as={Row} className="mb-3" controlId="title">
                 <Col>
                   <FloatingLabel controlId="title" label="Title">
-                    <Form.Control type="text" placeholder="Title" defaultValue={product.title} className="text-secondary" />
+                    <Form.Control type="text" placeholder="Title" defaultValue={product.title} className="bg-dark border-secondary text-secondary" />
                   </FloatingLabel>
                 </Col>
               </Form.Group>
@@ -124,7 +124,7 @@ export default function AddEditProduct(props) {
                       placeholder="Description"
                       rows={14}
                       defaultValue={product.description}
-                      className="text-secondary"
+                      className="bg-dark border-secondary text-secondary"
                     />
                   </FloatingLabel>
                 </Col>
@@ -138,7 +138,7 @@ export default function AddEditProduct(props) {
                       placeholder="Price"
                       min={0}
                       defaultValue={product.price}
-                      className="text-secondary"
+                      className="bg-dark border-secondary text-secondary"
                     />
                   </FloatingLabel>
                 </Col>
@@ -152,7 +152,7 @@ export default function AddEditProduct(props) {
                       placeholder="Quantity"
                       min={0}
                       defaultValue={product.quantity}
-                      className="text-secondary"
+                      className="bg-dark border-secondary text-secondary"
                     />
                   </FloatingLabel>
                 </Col>
@@ -161,7 +161,7 @@ export default function AddEditProduct(props) {
               <Form.Group as={Row} className="mb-3" controlId="category">
                 <Col>
                   <FloatingLabel controlId="category" label="Category">
-                    <Form.Select aria-label="Category" defaultValue={product.category_id ?? null} className="text-secondary">
+                    <Form.Select aria-label="Category" defaultValue={product.category_id ?? null} className="bg-dark border-secondary text-secondary">
                       <option>Select One</option>
 
                       {categories.map(({ id, title }) => (

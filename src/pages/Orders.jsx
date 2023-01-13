@@ -65,7 +65,7 @@ export default function Orders() {
 
   const getOrders = async queryParams => {
     const { data: orders } = await orderUtil.findAll(queryParams);
-    setOrders(orders);
+    setOrders([...orders]);
 
     const updatedPageOrders = orders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + 1);
     setPageOrders(updatedPageOrders);
@@ -169,7 +169,7 @@ export default function Orders() {
                       handleUpdate={updateOrder}
                     />
                   ) : (
-                    <span key={`${order.id}- ${label}-${order[label]}`}>
+                    <span key={`${order.id}-${label}-${order[label]}`}>
                       {label === 'total' && '$'}
                       {order[label] ?? ''}
                     </span>

@@ -13,6 +13,7 @@ import OrderItems from './OrderItems';
 
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
+import OrderItemUtil from '../utils/api/OrderItemUtil';
 
 export default function AddEditOrder(props) {
   const {
@@ -22,14 +23,26 @@ export default function AddEditOrder(props) {
     buttonVariant = 'primary',
     buttonClassName = '',
     addItem,
-    updateItem
+    updateItem,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
+  const handleCancelClick = () => {
+    setOrderItems(order.items);
+    handleHide();
+  }
+
+  const [orderItems, setOrderItems] = useState(order?.items ?? []);
+  const removeItems = itemIds => {
+    const updatedOrderItems = orderItems.filter(({ id }) => !itemIds.includes(id));
+    setOrderItems(updatedOrderItems);
+  };
+
   const orderUtil = new OrderUtil();
+  const orderItemUtil = new OrderItemUtil();
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -41,6 +54,7 @@ export default function AddEditOrder(props) {
       ...order,
       address: address.value.trim(),
       phone: phone.value.trim(),
+      items: [...orderItems],
       payment: payment.value,
       ...(selectedIndex ? {
         status_id,
@@ -50,7 +64,20 @@ export default function AddEditOrder(props) {
 
     if (order.id) {
       // Update the order.
-      updateItem(updatedOrder);
+      updateItem({ ...updatedOrder });
+
+      const updatedOrderItemIds = orderItems.map(({ id }) => id);
+      const deletedItemIds = order.items
+        .filter(({ id }) => !updatedOrderItemIds.includes(id))
+        .map(({ id }) => id);
+
+      if (deletedItemIds.length > 0) {
+        await deletedItemIds.map(itemId => orderItemUtil.delete(itemId));
+
+        if (orderItems.length === 0) {
+          await orderUtil.delete(order.id);
+        }
+      }
     } else {
       // Create a new order.
       const { data } = await orderUtil.create(updatedOrder);
@@ -71,7 +98,7 @@ export default function AddEditOrder(props) {
         {buttonContent}
       </Button>
 
-      <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
+      <Offcanvas show={isOpen} placement="end" onHide={handleCancelClick}>
         <Offcanvas.Header closeButton className="bg-dark">
           <Offcanvas.Title>
             {order.id ? 'Update Order' : 'Create Order'}
@@ -84,7 +111,7 @@ export default function AddEditOrder(props) {
               <Form.Group as={Row} className="mb-3" controlId="address">
                 <Col>
                   <FloatingLabel controlId="address" label="Address">
-                    <Form.Control type="text" placeholder="Address" defaultValue={order.address} className="text-secondary" />
+                    <Form.Control type="text" placeholder="Address" defaultValue={order.address} className="bg-dark border-secondary text-secondary" />
                   </FloatingLabel>
                 </Col>
               </Form.Group>
@@ -92,7 +119,7 @@ export default function AddEditOrder(props) {
               <Form.Group as={Row} className="mb-3" controlId="phone">
                 <Col>
                   <FloatingLabel controlId="phone" label="Phone">
-                    <Form.Control type="text" placeholder="Phone" defaultValue={order.phone} className="text-secondary" />
+                    <Form.Control type="text" placeholder="Phone" defaultValue={order.phone} className="bg-dark border-secondary text-secondary" />
                   </FloatingLabel>
                 </Col>
               </Form.Group>
@@ -100,7 +127,7 @@ export default function AddEditOrder(props) {
               <Form.Group as={Row} className="mb-3" controlId="payment">
                 <Col>
                   <FloatingLabel controlId="payment" label="Payment Type">
-                    <Form.Select aria-label="Payment Type" defaultValue={order.payment} className="text-secondary">
+                    <Form.Select aria-label="Payment Type" defaultValue={order.payment} className="bg-dark border-secondary text-secondary">
                       <option>Select One</option>
 
                       {['Card', 'COD'].map(title => (
@@ -116,7 +143,7 @@ export default function AddEditOrder(props) {
               <Form.Group as={Row} className="mb-3" controlId="status">
                 <Col>
                   <FloatingLabel controlId="status" label="Status">
-                    <Form.Select aria-label="Status" defaultValue={order.status_id ?? null} className="text-secondary">
+                    <Form.Select aria-label="Status" defaultValue={order.status_id ?? null} className="bg-dark border-secondary text-secondary">
                       <option>Select One</option>
 
                       {statuses.map(({ id, title }) => (
@@ -131,7 +158,7 @@ export default function AddEditOrder(props) {
 
               <Form.Group as={Row} className="mb-3" controlId="items">
                 <Col>
-                  <OrderItems items={order?.items ?? []} />
+                  <OrderItems items={orderItems} removeItems={removeItems} />
                 </Col>
               </Form.Group>
             </div>
@@ -142,7 +169,7 @@ export default function AddEditOrder(props) {
               style={{ left: 0, right: 0, bottom: 0 }}
             >
               <Col className="d-flex">
-                <Button variant="outline-secondary" type="button" onClick={handleHide} className="flex-grow-1 mx-2">
+                <Button variant="outline-secondary" type="button" onClick={handleCancelClick} className="flex-grow-1 mx-2">
                   Cancel
                 </Button>
 

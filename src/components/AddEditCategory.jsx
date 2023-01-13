@@ -91,7 +91,7 @@ export default function AddEditCategory(props) {
             <Form.Group as={Row} className="mb-3" controlId="title">
               <Col>
                 <FloatingLabel controlId="title" label="Title">
-                  <Form.Control type="text" placeholder="Title" defaultValue={category.title} className="text-secondary" />
+                  <Form.Control type="text" placeholder="Title" defaultValue={category.title} className="bg-dark border-secondary text-secondary" />
                 </FloatingLabel>
               </Col>
             </Form.Group>
@@ -103,7 +103,7 @@ export default function AddEditCategory(props) {
                     <Form.Select
                       aria-label="Category Type"
                       defaultValue={category.type_id ?? null}
-                      className="text-secondary"
+                      className="bg-dark border-secondary text-secondary"
                     >
                       <option>Select One</option>
 

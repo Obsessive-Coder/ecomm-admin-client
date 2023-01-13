@@ -22,7 +22,8 @@ export default function Actions(props) {
   } = props;
 
   const handleDelete = () => {
-    ProductUtil.delete(item.id);
+    const productUtil = new ProductUtil();
+    productUtil.delete(item.id);
     removeItem(item.id);
   };
 
