@@ -17,6 +17,7 @@ export default function ActionBar(props) {
     categories = [],
     categoryTypes = [],
     statuses = [],
+    products = [],
     type,
     isAddVisible = true,
     isSearchVisible = false,
@@ -152,6 +153,7 @@ export default function ActionBar(props) {
               categories={categories}
               categoryTypes={[]}
               statuses={statuses}
+              products={products}
               type={type}
               addItem={addItem}
               buttonContent={(

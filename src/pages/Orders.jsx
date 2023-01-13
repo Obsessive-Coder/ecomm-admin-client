@@ -17,11 +17,13 @@ import ViewLink from '../components/ViewLink';
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
 import OrderStatusUtil from '../utils/api/OrderStatusUtil';
+import ProductUtil from '../utils/api/ProductUtil';
 
 export async function loader() {
-  const { data: statuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
   const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
-  return { orders, statuses }
+  const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
+  const { data: statuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
+  return { orders, products, statuses }
 }
 
 const tableColumns = [{
@@ -51,7 +53,7 @@ const tableColumns = [{
 }];
 
 export default function Orders() {
-  const { statuses } = useLoaderData();
+  const { products, statuses } = useLoaderData();
   const [orders, setOrders] = useState(useLoaderData().orders);
 
   const [rowLimit, setRowLimit] = useState(25);
@@ -63,7 +65,7 @@ export default function Orders() {
 
   const getOrders = async queryParams => {
     const { data: orders } = await orderUtil.findAll(queryParams);
-    setOrders(orders);
+    setOrders([...orders]);
 
     const updatedPageOrders = orders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + 1);
     setPageOrders(updatedPageOrders);
@@ -132,6 +134,7 @@ export default function Orders() {
         type="order"
         categories={orders}
         statuses={statuses}
+        products={products}
         addItem={addOrder}
         getItems={getOrders}
       />
@@ -162,11 +165,12 @@ export default function Orders() {
                       toUrl={`/orders/${order.id}`}
                       status={order.status}
                       statuses={statuses}
+                      products={products}
                       removeItem={removeOrder}
                       handleUpdate={updateOrder}
                     />
                   ) : (
-                    <span key={`${order.id}- ${label}-${order[label]}`}>
+                    <span key={`${order.id}-${label}-${order[label]}`}>
                       {label === 'total' && '$'}
                       {order[label] ?? ''}
                     </span>
