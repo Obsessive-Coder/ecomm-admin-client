@@ -8,7 +8,7 @@ import { List as ListIcon } from 'react-bootstrap-icons';
 
 export default function MainHeader({ handleOpenSidebar }) {
   return (
-    <header>
+    <header className="no-print">
       <Navbar expand="md" className="border-bottom border-dark" style={{ height: 50 }}>
         <Container fluid className="justify-content-start">
           <Button

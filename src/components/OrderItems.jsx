@@ -64,19 +64,21 @@ export default function OrderItems({ items = [], products, addItems, removeItems
               <XIcon size={18} />
             </Button>
 
-            <span className="flex-fill px-2">{title}</span>
+            <div className="d-flex flex-fill flex-wrap">
+              <span className="flex-fill px-2">{title}</span>
 
-            <Form.Control
-              type="number"
-              name="quantity"
-              placeholder="Quantity"
-              defaultValue={quantity ?? 1}
-              min={1}
-              data-product-id={Product.id}
-              onChange={updateItemQuantity}
-              className="mx-2 form-control-sm bg-dark border-secondary text-secondary"
-              style={{ width: 100 }}
-            />
+              <Form.Control
+                type="number"
+                name="quantity"
+                placeholder="Quantity"
+                defaultValue={quantity ?? 1}
+                min={1}
+                data-product-id={Product.id}
+                onChange={updateItemQuantity}
+                className="mx-2 form-control-sm bg-dark border-secondary text-secondary"
+                style={{ width: 100 }}
+              />
+            </div>
           </ListGroup.Item>
         ))}
       </ListGroup>

@@ -67,7 +67,7 @@ export default function Order() {
 
   return (
     <Container>
-      <h1>Order Details</h1>
+      <h1 className="no-print">Order Details</h1>
 
       <Row className="mt-5">
         <Col xs={12} md={6}>
@@ -174,9 +174,8 @@ export default function Order() {
       </div>
 
       <div>
-        <Button onClick={() => { window.print(); return false }}
-        >
-          Print this page
+        <Button onClick={() => { window.print(); return false }} className="no-print">
+          Print Invoice
         </Button>
       </div>
     </Container>

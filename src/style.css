@@ -18,6 +18,17 @@
   display: none !important;
 }
 
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 0;
+  }
+}
+
 @media only screen and (min-width: 992px) {
   .page-content {
     margin-left: 14rem;
