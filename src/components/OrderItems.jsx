@@ -2,6 +2,7 @@ import React from 'react';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { X as XIcon } from 'react-bootstrap-icons';
 
@@ -9,7 +10,7 @@ import { X as XIcon } from 'react-bootstrap-icons';
 import AddItemDropdown from './AddItemDropdown';
 
 
-export default function OrderItems({ items = [], products, addItems, removeItems }) {
+export default function OrderItems({ items = [], products, addItems, removeItems, updateItemQuantity }) {
   const handleDeleteAllItems = () => {
     const productIds = items.map(({ Product: { id } }) => id);
     removeItems(productIds);
@@ -64,8 +65,18 @@ export default function OrderItems({ items = [], products, addItems, removeItems
             </Button>
 
             <span className="flex-fill px-2">{title}</span>
-            <span className="flex-fill">x{quantity}</span>
-            <span>${quantity * item_price}</span>
+
+            <Form.Control
+              type="number"
+              name="quantity"
+              placeholder="Quantity"
+              defaultValue={quantity ?? 1}
+              min={1}
+              data-product-id={Product.id}
+              onChange={updateItemQuantity}
+              className="mx-2 form-control-sm bg-dark border-secondary text-secondary"
+              style={{ width: 100 }}
+            />
           </ListGroup.Item>
         ))}
       </ListGroup>

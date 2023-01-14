@@ -64,6 +64,24 @@ export default function AddEditOrder(props) {
     setOrderItems(updatedOrderItems);
   };
 
+  const updateItemQuantity = event => {
+    const { target } = event;
+    const productId = target.getAttribute('data-product-id');
+    const quantity = parseInt(target.value);
+
+    const updatedItems = [...orderItems];
+
+    for (let i = 0; i < updatedItems.length; i++) {
+      const item = updatedItems[i];
+
+      if (item.Product.id === productId) {
+        updatedItems[i].quantity = quantity;
+      }
+    }
+
+    setOrderItems(updatedItems);
+  };
+
   const orderUtil = new OrderUtil();
   const orderItemUtil = new OrderItemUtil();
 
@@ -111,6 +129,20 @@ export default function AddEditOrder(props) {
 
       if (newItems.length > 0) {
         await newItems.map(item => orderItemUtil.create(item));
+      }
+
+      if (updatedOrderItemIds.length > 0) {
+        const updatedItems = orderItems
+          .filter(({ id }) => updatedOrderItemIds.includes(id))
+          .map(({ id, quantity, item_price, Product: { id: product_id } }) => ({
+            id,
+            product_id,
+            item_price,
+            quantity,
+            order_id: order.id
+          }));
+
+        await updatedItems.map(item => orderItemUtil.update(item.id, item));
       }
     } else {
       // Create a new order.
@@ -261,6 +293,7 @@ export default function AddEditOrder(props) {
                     products={products}
                     addItems={addItems}
                     removeItems={removeItems}
+                    updateItemQuantity={updateItemQuantity}
                   />
                 </Col>
               </Form.Group>
