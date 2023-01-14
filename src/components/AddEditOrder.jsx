@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -27,11 +28,28 @@ export default function AddEditOrder(props) {
     updateItem,
   } = props;
 
+  const [fields, errors, form] = useFormInputValidation({
+    address: order.address ?? '',
+    phone: order.phone ?? '',
+    payment: order.payment ?? '',
+    status: order.status_id ?? ''
+  }, {
+    address: 'required',
+    phone: 'required',
+    payment: 'required',
+    status: 'required'
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
   const handleCancelClick = () => {
+    fields.address = order.address ?? '';
+    fields.phone = order.phone ?? '';
+    fields.payment = order.payment ?? '';
+    fields.status = order.status_id ?? '';
+
     setOrderItems(order.items);
     handleHide();
   }
@@ -52,18 +70,17 @@ export default function AddEditOrder(props) {
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { address, phone, payment, status } = event.target;
-    const { selectedIndex, options: statusOptions, value: status_id } = status;
+    const { address, phone, payment, status } = fields;
+
+    const isValid = await form.validate(event);
+    if (!isValid || orderItems.length === 0) return;
 
     const updatedOrder = {
       ...order,
-      address: address.value.trim(),
-      phone: phone.value.trim(),
-      payment: payment.value,
-      ...(selectedIndex ? {
-        status_id,
-        status: statusOptions[selectedIndex].text
-      } : {})
+      address,
+      phone,
+      payment,
+      status_id: status
     };
 
     if (order.id) {
@@ -133,29 +150,67 @@ export default function AddEditOrder(props) {
         </Offcanvas.Header>
 
         <Offcanvas.Body className="overflow-hidden p-0">
-          <Form onSubmit={handleSubmit} className="position-relative h-100">
+          <Form
+            noValidate
+            onSubmit={handleSubmit}
+            className="position-relative h-100"
+          >
             <div className="overflow-scroll h-100 px-3 pt-3" style={{ paddingBottom: 75 }}>
-              <Form.Group as={Row} className="mb-3" controlId="address">
+              <Form.Group as={Row} className="mb-3" controlId="addressForm">
                 <Col>
                   <FloatingLabel controlId="address" label="Address">
-                    <Form.Control type="text" placeholder="Address" defaultValue={order.address} className="bg-dark border-secondary text-secondary" />
+                    <Form.Control
+                      type="text"
+                      name="address"
+                      placeholder="Address"
+                      defaultValue={fields.address}
+                      isInvalid={!!errors.address}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
+                    />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.address}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="phone">
+              <Form.Group as={Row} className="mb-3" controlId="phoneForm">
                 <Col>
                   <FloatingLabel controlId="phone" label="Phone">
-                    <Form.Control type="text" placeholder="Phone" defaultValue={order.phone} className="bg-dark border-secondary text-secondary" />
+                    <Form.Control
+                      type="text"
+                      name="phone"
+                      placeholder="Phone"
+                      defaultValue={fields.phone}
+                      isInvalid={!!errors.phone}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
+                    />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.phone}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="payment">
+              <Form.Group as={Row} className="mb-3" controlId="paymentForm">
                 <Col>
                   <FloatingLabel controlId="payment" label="Payment Type">
-                    <Form.Select aria-label="Payment Type" defaultValue={order.payment} className="bg-dark border-secondary text-secondary">
-                      <option>Select One</option>
+                    <Form.Select
+                      aria-label="Payment Type"
+                      name="payment"
+                      defaultValue={fields.payment}
+                      isInvalid={!!errors.payment}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
+                    >
+                      <option value="">Select One</option>
 
                       {['Card', 'COD'].map(title => (
                         <option key={`${title}-type`} value={title}>
@@ -163,15 +218,27 @@ export default function AddEditOrder(props) {
                         </option>
                       ))}
                     </Form.Select>
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.payment}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="status">
+              <Form.Group as={Row} className="mb-3" controlId="statusForm">
                 <Col>
                   <FloatingLabel controlId="status" label="Status">
-                    <Form.Select aria-label="Status" defaultValue={order.status_id ?? null} className="bg-dark border-secondary text-secondary">
-                      <option>Select One</option>
+                    <Form.Select
+                      aria-label="Status"
+                      name="status"
+                      defaultValue={fields.status}
+                      isInvalid={!!errors.status}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
+                    >
+                      <option value="">Select One</option>
 
                       {statuses.map(({ id, title }) => (
                         <option key={`${title}-type`} value={id}>
@@ -179,11 +246,15 @@ export default function AddEditOrder(props) {
                         </option>
                       ))}
                     </Form.Select>
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.status}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="items">
+              <Form.Group as={Row} className="mb-3" controlId="itemsForm">
                 <Col>
                   <OrderItems
                     items={orderItems}
