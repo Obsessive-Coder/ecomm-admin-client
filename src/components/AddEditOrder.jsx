@@ -28,7 +28,7 @@ export default function AddEditOrder(props) {
     updateItem,
   } = props;
 
-  let [fields, errors, form] = useFormInputValidation({
+  const [fields, errors, form] = useFormInputValidation({
     address: order.address ?? '',
     phone: order.phone ?? '',
     payment: order.payment ?? '',

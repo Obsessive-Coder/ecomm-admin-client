@@ -77,6 +77,7 @@ export default function ActionBar(props) {
                   type="text"
                   placeholder="Search by title"
                   onChange={handleTitleOnChange}
+                  className="bg-dark border-secondary text-secondary"
                 />
               </FloatingLabel>
             </Form.Group>
@@ -86,7 +87,11 @@ export default function ActionBar(props) {
           {isFilterVisible && (
             <Form.Group as={Col} sm={6} md={3} controlId="categoryId" className="my-2">
               <FloatingLabel controlId="categoryId" label="Filter Category">
-                <Form.Select arial-label="Category Filter" onChange={handleCategoryOnChange}>
+                <Form.Select
+                  arial-label="Category Filter"
+                  onChange={handleCategoryOnChange}
+                  className="bg-dark border-secondary text-secondary"
+                >
                   <option value="0">Select One</option>
 
                   {categories.map(({ id, title }) => (
@@ -103,7 +108,11 @@ export default function ActionBar(props) {
           {isSortVisible && (
             <Form.Group as={Col} sm={6} md={3} controlId="price" className="my-2">
               <FloatingLabel controlId="price" label="Sort Price">
-                <Form.Select arial-label="Sort Price" onChange={handleSortOnChange}>
+                <Form.Select
+                  arial-label="Sort Price"
+                  onChange={handleSortOnChange}
+                  className="bg-dark border-secondary text-secondary"
+                >
                   <option value="0">Select One</option>
                   <option value="ASC">Low to High</option>
                   <option value='DESC'>High to Low</option>
@@ -126,7 +135,7 @@ export default function ActionBar(props) {
                   Add Product
                 </div>
               )}
-              buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary"
+              buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
             />
           )}
 
@@ -144,7 +153,7 @@ export default function ActionBar(props) {
                   </span>
                 </div>
               )}
-              buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary"
+              buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
             />
           )}
 
@@ -162,7 +171,7 @@ export default function ActionBar(props) {
                   Add Order
                 </div>
               )}
-              buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary"
+              buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
             />
           )}
         </>
