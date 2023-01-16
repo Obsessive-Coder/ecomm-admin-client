@@ -289,7 +289,8 @@ export default function AddEditOrder(props) {
               <Form.Group as={Row} className="mb-3" controlId="itemsForm">
                 <Col>
                   <OrderItems
-                    items={orderItems}
+                    items={orderItems ?? []}
+                    isExistingOrder={order.id !== undefined}
                     products={products}
                     addItems={addItems}
                     removeItems={removeItems}

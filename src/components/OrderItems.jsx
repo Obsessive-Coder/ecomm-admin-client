@@ -10,7 +10,10 @@ import { X as XIcon } from 'react-bootstrap-icons';
 import AddItemDropdown from './AddItemDropdown';
 
 
-export default function OrderItems({ items = [], products, addItems, removeItems, updateItemQuantity }) {
+export default function OrderItems(props) {
+  const {
+    items = [], isExistingOrder, products, addItems, removeItems, updateItemQuantity
+  } = props;
   const handleDeleteAllItems = () => {
     const productIds = items.map(({ Product: { id } }) => id);
     removeItems(productIds);
@@ -75,7 +78,7 @@ export default function OrderItems({ items = [], products, addItems, removeItems
                 className="mx-2 form-select-sm bg-dark border-secondary text-secondary"
                 style={{ width: 100 }}
               >
-                {[...Array(Product.quantity + 1).keys()].map(value => (
+                {[...Array(Product.quantity + quantity + (+isExistingOrder)).keys()].map(value => (
                   (value > 0 && (
                     <option key={`quantity-${value}`}>{value}</option>
                   ))
