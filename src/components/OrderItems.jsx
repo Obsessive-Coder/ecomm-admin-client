@@ -12,12 +12,14 @@ import AddItemDropdown from './AddItemDropdown';
 
 export default function OrderItems(props) {
   const {
-    items = [], isExistingOrder, products, addItems, removeItems, updateItemQuantity
+    items = [], isExistingOrder, products, addItems, removeItems, updateItemQuantity, existingItems = []
   } = props;
   const handleDeleteAllItems = () => {
     const productIds = items.map(({ Product: { id } }) => id);
     removeItems(productIds);
   };
+
+  const isItemExisting = productId => existingItems.filter(({ Product }) => Product.id === productId).length > 0;
 
   return (
     <div>
@@ -78,10 +80,8 @@ export default function OrderItems(props) {
                 className="mx-2 form-select-sm bg-dark border-secondary text-secondary"
                 style={{ width: 100 }}
               >
-                {[...Array(Product.quantity + quantity + (+isExistingOrder)).keys()].map(value => (
-                  (value > 0 && (
-                    <option key={`quantity-${value}`}>{value}</option>
-                  ))
+                {[...Array(Product.quantity + ((isExistingOrder && isItemExisting(Product.id)) ? quantity : 0)).keys()].map(value => (
+                  <option key={`quantity-${value + 1}`}>{value + 1}</option>
                 ))}
               </Form.Select>
             </div>
