@@ -112,7 +112,6 @@ export default function AddEditOrder(props) {
 
       if (deletedItemIds.length > 0) {
         await deletedItemIds.map(itemId => orderItemUtil.delete(itemId));
-
         if (orderItems.length === 0) {
           await orderUtil.delete(order.id);
         }
@@ -289,8 +288,10 @@ export default function AddEditOrder(props) {
               <Form.Group as={Row} className="mb-3" controlId="itemsForm">
                 <Col>
                   <OrderItems
-                    items={orderItems}
+                    items={orderItems ?? []}
+                    isExistingOrder={order.id !== undefined}
                     products={products}
+                    existingItems={order.items ? order.items : []}
                     addItems={addItems}
                     removeItems={removeItems}
                     updateItemQuantity={updateItemQuantity}

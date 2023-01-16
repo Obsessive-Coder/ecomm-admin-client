@@ -10,11 +10,16 @@ import { X as XIcon } from 'react-bootstrap-icons';
 import AddItemDropdown from './AddItemDropdown';
 
 
-export default function OrderItems({ items = [], products, addItems, removeItems, updateItemQuantity }) {
+export default function OrderItems(props) {
+  const {
+    items = [], isExistingOrder, products, addItems, removeItems, updateItemQuantity, existingItems = []
+  } = props;
   const handleDeleteAllItems = () => {
     const productIds = items.map(({ Product: { id } }) => id);
     removeItems(productIds);
   };
+
+  const isItemExisting = productId => existingItems.filter(({ Product }) => Product.id === productId).length > 0;
 
   return (
     <div>
@@ -64,20 +69,21 @@ export default function OrderItems({ items = [], products, addItems, removeItems
               <XIcon size={18} />
             </Button>
 
-            <div className="d-flex flex-fill flex-wrap">
+            <div className="d-flex align-items-center flex-fill flex-wrap">
               <span className="flex-fill px-2">{title}</span>
 
-              <Form.Control
-                type="number"
+              <Form.Select
                 name="quantity"
-                placeholder="Quantity"
                 defaultValue={quantity ?? 1}
-                min={1}
                 data-product-id={Product.id}
                 onChange={updateItemQuantity}
-                className="mx-2 form-control-sm bg-dark border-secondary text-secondary"
+                className="mx-2 form-select-sm bg-dark border-secondary text-secondary"
                 style={{ width: 100 }}
-              />
+              >
+                {[...Array(Product.quantity + ((isExistingOrder && isItemExisting(Product.id)) ? quantity : 0)).keys()].map(value => (
+                  <option key={`quantity-${value + 1}`}>{value + 1}</option>
+                ))}
+              </Form.Select>
             </div>
           </ListGroup.Item>
         ))}
