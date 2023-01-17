@@ -30,6 +30,9 @@ const tableColumns = [{
   label: 'date',
   Component: undefined
 }, {
+  label: 'recipient',
+  Component: undefined
+}, {
   label: 'address',
   Component: undefined
 }, {
