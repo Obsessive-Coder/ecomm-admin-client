@@ -29,11 +29,13 @@ export default function AddEditOrder(props) {
   } = props;
 
   const [fields, errors, form] = useFormInputValidation({
+    recipient: order.recipient_name ?? '',
     address: order.address ?? '',
     phone: order.phone ?? '',
     payment: order.payment ?? '',
     status: order.status_id ?? ''
   }, {
+    recipient: 'required',
     address: 'required',
     phone: 'required',
     payment: 'required',
@@ -88,7 +90,7 @@ export default function AddEditOrder(props) {
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { address, phone, payment, status } = fields;
+    const { address, phone, recipient, payment, status } = fields;
 
     const isValid = await form.validate(event);
     if (!isValid || orderItems.length === 0) return;
@@ -98,6 +100,7 @@ export default function AddEditOrder(props) {
       address,
       phone,
       payment,
+      recipient_name: recipient,
       status_id: status
     };
 
@@ -187,6 +190,27 @@ export default function AddEditOrder(props) {
             className="position-relative h-100"
           >
             <div className="overflow-scroll h-100 px-3 pt-3" style={{ paddingBottom: 75 }}>
+              <Form.Group as={Row} className="mb-3" controlId="recipientForm">
+                <Col>
+                  <FloatingLabel controlId="recipient" label="Recipient">
+                    <Form.Control
+                      type="text"
+                      name="recipient"
+                      placeholder="Recipient"
+                      defaultValue={fields.recipient}
+                      isInvalid={!!errors.recipient}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
+                    />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.recipient}
+                    </Form.Control.Feedback>
+                  </FloatingLabel>
+                </Col>
+              </Form.Group>
+
               <Form.Group as={Row} className="mb-3" controlId="addressForm">
                 <Col>
                   <FloatingLabel controlId="address" label="Address">

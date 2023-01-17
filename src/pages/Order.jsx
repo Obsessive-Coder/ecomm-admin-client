@@ -45,6 +45,7 @@ export default function Order() {
 
   const {
     id: orderId,
+    recipient_name,
     address,
     status,
     date,
@@ -108,7 +109,7 @@ export default function Order() {
           <div className="text-md-end">
             <span className="d-block fw-bold">Invoice To</span>
             <address>
-              <small className="d-block">Recipient Name</small>
+              <small className="d-block">{recipient_name}</small>
               {address.split(',').map(addressLine => (
                 <small key={`address-${addressLine}`} className="d-block">
                   {addressLine}

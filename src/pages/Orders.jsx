@@ -30,7 +30,7 @@ const tableColumns = [{
   label: 'date',
   Component: undefined
 }, {
-  label: 'recipient',
+  label: 'recipient_name',
   Component: undefined
 }, {
   label: 'address',
@@ -87,6 +87,7 @@ export default function Orders() {
   };
 
   const updateOrder = updatedOrder => {
+    console.log(updatedOrder)
     const { id: updatedId } = updatedOrder;
     orderUtil.update(updatedId, updatedOrder);
 
