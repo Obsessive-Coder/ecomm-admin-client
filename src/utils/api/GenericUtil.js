@@ -2,7 +2,8 @@ import axios from 'axios';
 
 export default class GenericUtil {
   constructor(endpoint) {
-    this.baseUrl = `http://localhost:8080/api/${endpoint}`;
+    // this.baseUrl = `http://localhost:8080/api/${endpoint}`;
+    this.baseUrl = `http://ecomm-server-dev-env.eba-nrdkp8bh.us-east-1.elasticbeanstalk.com/api/${endpoint}`;
 
     // Bind class methods.
     this.findAll = this.findAll.bind(this);
