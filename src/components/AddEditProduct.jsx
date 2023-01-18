@@ -129,6 +129,7 @@ export default function AddEditProduct(props) {
                     type="switch"
                     id="active"
                     label="Active"
+                    className="active-switch"
                   />
                 </Col>
               </Form.Group>

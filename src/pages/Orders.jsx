@@ -178,7 +178,11 @@ export default function Orders() {
                   ) : (
                     <span key={`${order.id}-${label}-${order[label]}`}>
                       {label === 'total' && '$'}
-                      {order[label] ?? ''}
+                      {label === 'date' ? (
+                        new Date(order[label]).toLocaleDateString("en-US")
+                      ) : (
+                        order[label] ?? ''
+                      )}
                     </span>
                   )}
                 </td>
@@ -197,17 +201,19 @@ export default function Orders() {
         )
       }
 
-      <div>
-        <Pagination
-          {...bootstrap5PaginationPreset}
-          total={pageCount}
-          current={pageIndex + 1}
-          maxWidth={500}
-          previousLabel="<"
-          nextLabel=">"
-          onPageChange={pageNumber => updatePageOrders(pageNumber - 1, orders)}
-        />
-      </div>
+      {pageCount > 1 && (
+        <div>
+          <Pagination
+            {...bootstrap5PaginationPreset}
+            total={pageCount}
+            current={pageIndex + 1}
+            maxWidth={500}
+            previousLabel="<"
+            nextLabel=">"
+            onPageChange={pageNumber => updatePageOrders(pageNumber - 1, orders)}
+          />
+        </div>
+      )}
     </Container >
   );
 }

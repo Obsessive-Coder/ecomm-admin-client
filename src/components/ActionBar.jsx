@@ -79,7 +79,7 @@ export default function ActionBar(props) {
           {isSearchVisible && (
             <Form.Group as={Col} md={6} controlId="search" className="flex-fill my-2">
               <InputGroup>
-                <FloatingLabel controlId="search" label={type === 'order' ? 'Recipient Search' : 'Title Search'}>
+                <FloatingLabel controlId="search" label={type === 'order' ? 'Recipient Search' : 'Title Search'} className="text-secondary">
                   <Form.Control
                     type="text"
                     placeholder={type === 'order' ? 'Search by recipient' : `Search by title`}

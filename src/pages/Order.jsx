@@ -95,7 +95,7 @@ export default function Order() {
       <Row className="my-5">
         <Col xs={12} md={4}>
           <span className="d-block fw-bold">Date</span>
-          <span>{date}</span>
+          <span>{new Date(date).toLocaleDateString("en-US")}</span>
         </Col>
 
         <Col xs={12} md={4} className="d-flex justify-content-md-center my-3 my-md-0">
@@ -175,7 +175,7 @@ export default function Order() {
       </div>
 
       <div>
-        <Button onClick={() => { window.print(); return false }} className="no-print">
+        <Button onClick={() => { window.print(); return false }} className="no-print text-info">
           Print Invoice
         </Button>
       </div>

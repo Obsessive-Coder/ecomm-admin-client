@@ -101,6 +101,7 @@ export default function AddEditCategory(props) {
                   id="active"
                   label="Active"
                   defaultValue={category.active}
+                  className="active-switch"
                 />
               </Col>
             </Form.Group>

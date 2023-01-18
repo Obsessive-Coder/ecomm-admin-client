@@ -32,13 +32,13 @@ export default function Confirm({ children, title, buttonContent, buttonClassNam
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>
+        <Modal.Body className="text-center">
           {children}
         </Modal.Body>
 
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={hide}>Cancel</Button>
-          <Button variant="outline-primary" onClick={handleConfirmClick}>Confirm</Button>
+          <Button variant="outline-warning" onClick={handleConfirmClick}>Confirm</Button>
         </Modal.Footer>
       </Modal>
     </>
