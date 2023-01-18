@@ -136,6 +136,8 @@ export default function Orders() {
 
       <ActionBar
         type="order"
+        isSearchVisible={true}
+        isSortVisible={true}
         categories={orders}
         statuses={statuses}
         products={products}

@@ -51,11 +51,15 @@ export default function ActionBar(props) {
       ...(categoryId === '0' ? {} : {
         [type === 'product' ? 'category_id' : 'id']: categoryId
       }),
-      ...(title ? { title } : {})
+      ...(title ? {
+        [type === 'order' ? 'recipient_name' : 'title']: title
+      } : {})
     };
 
     getItems({
-      order: { column: 'title' },
+      order: {
+        column: type === 'order' ? 'recipient_name' : 'title'
+      },
       ...queryParams
     })
   };
@@ -72,10 +76,10 @@ export default function ActionBar(props) {
           {/* Search */}
           {isSearchVisible && (
             <Form.Group as={Col} md={6} controlId="search" className="flex-fill my-2">
-              <FloatingLabel controlId="search" label="Title Search">
+              <FloatingLabel controlId="search" label={type === 'order' ? 'Recipient Search' : 'Title Search'}>
                 <Form.Control
                   type="text"
-                  placeholder="Search by title"
+                  placeholder={type === 'order' ? 'Search by recipient' : `Search by title`}
                   onChange={handleTitleOnChange}
                   className="bg-dark border-secondary text-secondary"
                 />
