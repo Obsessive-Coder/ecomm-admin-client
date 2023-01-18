@@ -47,7 +47,7 @@ export default function AddEditProduct(props) {
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
-  const [isActive, setIsActive] = useState(product?.active ?? false)
+  const [isActive, setIsActive] = useState(product?.id ? product?.active ?? false : true)
 
   const fileUtil = new FileUtil();
   const productUtil = new ProductUtil();
@@ -239,10 +239,12 @@ export default function AddEditProduct(props) {
                     >
                       <option value="">Select One</option>
 
-                      {categories.map(({ id, title }) => (
-                        <option key={`${title}-category`} value={id}>
-                          {title}
-                        </option>
+                      {categories.map(({ id, title, active }) => (
+                        active && (
+                          <option key={`${title}-category`} value={id}>
+                            {title}
+                          </option>
+                        )
                       ))}
                     </Form.Select>
 

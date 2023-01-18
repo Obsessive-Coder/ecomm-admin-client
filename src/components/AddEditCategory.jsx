@@ -37,7 +37,7 @@ export default function AddEditCategory(props) {
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
-  const [isActive, setIsActive] = useState(category?.active ?? false)
+  const [isActive, setIsActive] = useState(category?.id ? category?.active ?? false : true)
 
   const categoryUtil = new CategoryUtil();
   const categoryTypeUtil = new CategoryTypeUtil();
@@ -145,10 +145,12 @@ export default function AddEditCategory(props) {
                     >
                       <option value="">Select One</option>
 
-                      {categoryTypes.map(({ id, title }) => (
-                        <option key={`${title}-type`} value={id}>
-                          {title}
-                        </option>
+                      {categoryTypes.map(({ id, title, active }) => (
+                        active && (
+                          <option key={`${title}-type`} value={id}>
+                            {title}
+                          </option>
+                        )
                       ))}
                     </Form.Select>
 

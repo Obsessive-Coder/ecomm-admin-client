@@ -35,7 +35,7 @@ export default function OrderItems(props) {
         <AddItemDropdown
           key={`order-items-${items.length}`}
           items={items}
-          products={products}
+          products={products.filter(({ active }) => active)}
           addItems={addItems}
           removeItems={removeItems}
         />
