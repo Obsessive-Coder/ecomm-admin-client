@@ -136,7 +136,7 @@ export default function ActionBar(props) {
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}
-                  Add
+                  <span style={{ height: 36 }}>Add</span>
                 </div>
               )}
               buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
@@ -153,7 +153,7 @@ export default function ActionBar(props) {
                 <div className="d-flex align-items-center justify-content-center">
                   <div className="d-flex align-items-center justify-content-center">
                     <PlusIcon size={36} />{' '}
-                    Add
+                    <span style={{ height: 36 }}>Add</span>
                   </div>
                 </div>
               )}
@@ -172,7 +172,7 @@ export default function ActionBar(props) {
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}
-                  Add
+                  <span style={{ height: 36 }}>Add</span>
                 </div>
               )}
               buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
