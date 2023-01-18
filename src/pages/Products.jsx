@@ -146,8 +146,8 @@ export default function Products() {
         getItems={getProducts}
       />
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -161,7 +161,7 @@ export default function Products() {
           {pageProducts.map(product => (
             <tr key={`${product.id}`}>
               {tableColumns.map(({ label, Component }, index) => (
-                <td key={`${product.id}-${label}-${product[label]}`} style={{ maxWidth: 200 }} className="text-truncate">
+                <td key={`${product.id}-${label}-${product[label]}`} style={{ maxWidth: 200 }} className="text-truncate text-secondary">
                   {Component ? (
                     <Component
                       id={product.id}

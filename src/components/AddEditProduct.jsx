@@ -100,7 +100,7 @@ export default function AddEditProduct(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
-        <Offcanvas.Header closeButton className="bg-dark">
+        <Offcanvas.Header closeButton closeVariant="white" className="bg-dark">
           <Offcanvas.Title>
             {product.id ? 'Update Product' : 'Create Product'}
           </Offcanvas.Title>

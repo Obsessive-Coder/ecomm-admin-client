@@ -81,7 +81,7 @@ export default function AddEditCategory(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
-        <Offcanvas.Header closeButton className="bg-dark">
+        <Offcanvas.Header closeButton closeVariant="white" className="bg-dark">
           <Offcanvas.Title>
             {category.id ? 'Update Category' : 'Create Category'}
             {type === 'categoryTypes' && ' Type'}

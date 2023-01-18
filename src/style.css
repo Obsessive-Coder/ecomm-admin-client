@@ -18,6 +18,11 @@
   display: none !important;
 }
 
+.active-switch .form-check-input:checked {
+  background-color: #62c462 !important;
+  border-color: #62c462 !important;
+}
+
 @media print {
   .no-print {
     display: none !important;

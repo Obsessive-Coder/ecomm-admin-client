@@ -130,8 +130,8 @@ export default function Categories() {
         getItems={getCategories}
       />
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -148,7 +148,7 @@ export default function Categories() {
                 <td
                   key={`${category.id}-${label}-${category[label]}`}
                   style={{ maxWidth: 200 }}
-                  className="text-truncate"
+                  className="text-truncate text-secondary"
                 >
                   {Component ? (
                     <Component

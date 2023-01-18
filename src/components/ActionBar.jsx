@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 
 // Bootstrap Components.
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
-import { Plus as PlusIcon } from 'react-bootstrap-icons';
+import { Plus as PlusIcon, Search as SearchIcon } from 'react-bootstrap-icons';
 
 // Custom Components.
 import AddEditCategory from './AddEditCategory';
@@ -76,14 +78,20 @@ export default function ActionBar(props) {
           {/* Search */}
           {isSearchVisible && (
             <Form.Group as={Col} md={6} controlId="search" className="flex-fill my-2">
-              <FloatingLabel controlId="search" label={type === 'order' ? 'Recipient Search' : 'Title Search'}>
-                <Form.Control
-                  type="text"
-                  placeholder={type === 'order' ? 'Search by recipient' : `Search by title`}
-                  onChange={handleTitleOnChange}
-                  className="bg-dark border-secondary text-secondary"
-                />
-              </FloatingLabel>
+              <InputGroup>
+                <FloatingLabel controlId="search" label={type === 'order' ? 'Recipient Search' : 'Title Search'}>
+                  <Form.Control
+                    type="text"
+                    placeholder={type === 'order' ? 'Search by recipient' : `Search by title`}
+                    onChange={handleTitleOnChange}
+                    className="bg-dark border-secondary text-secondary"
+                  />
+                </FloatingLabel>
+
+                <Button type="submit" variant="outline-secondary" className="btn-sm bg-dark border-secondary">
+                  <SearchIcon size={24} />
+                </Button>
+              </InputGroup>
             </Form.Group>
           )}
 

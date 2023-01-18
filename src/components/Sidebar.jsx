@@ -48,7 +48,7 @@ export default function Sidebar({ isOpen, handleClose }) {
       style={{ width: '14rem' }}
       className="shadow no-print"
     >
-      <Offcanvas.Header closeButton={!isLargeScreen && isOpen} className="border-bottom border-dark" style={{ height: 50 }}>
+      <Offcanvas.Header closeButton={!isLargeScreen && isOpen} closeVariant="white" className="border-bottom border-dark" style={{ height: 50 }}>
         <Navbar.Brand className="border-0">
           <Nav.Link href="/">
             <Offcanvas.Title>E-comm Site</Offcanvas.Title>

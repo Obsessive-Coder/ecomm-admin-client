@@ -26,7 +26,7 @@ export default function Confirm({ children, title, buttonContent, buttonClassNam
         onHide={hide}
         aria-labelledby="confirm-modal"
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton closeVariant="white">
           <Modal.Title id="confirm-modal">
             {title}
           </Modal.Title>

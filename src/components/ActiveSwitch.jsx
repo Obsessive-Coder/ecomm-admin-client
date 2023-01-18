@@ -19,6 +19,7 @@ export default function ActiveSwitch({ id, label, isActive, handleUpdate }) {
         aria-label={label}
         checked={isChecked}
         onChange={handleOnChange}
+        className="active-switch"
       />
     </Form>
   );

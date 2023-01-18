@@ -177,7 +177,7 @@ export default function AddEditOrder(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleCancelClick}>
-        <Offcanvas.Header closeButton className="bg-dark">
+        <Offcanvas.Header closeButton closeVariant="white" className="bg-dark">
           <Offcanvas.Title>
             {order.id ? 'Update Order' : 'Create Order'}
           </Offcanvas.Title>

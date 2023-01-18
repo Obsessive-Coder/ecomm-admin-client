@@ -121,8 +121,8 @@ export default function CategoryTypes() {
       />
 
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -139,7 +139,7 @@ export default function CategoryTypes() {
                 <td
                   key={`${categoryType.id}-${label}-${categoryType[label]}`}
                   style={{ maxWidth: 200 }}
-                  className="text-truncate"
+                  className="text-truncate text-secondary"
                 >
                   {Component ? (
                     <Component

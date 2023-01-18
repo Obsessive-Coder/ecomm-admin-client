@@ -145,8 +145,8 @@ export default function Orders() {
         getItems={getOrders}
       />
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -160,7 +160,7 @@ export default function Orders() {
           {pageOrders.map(order => (
             <tr key={`${order.id}`}>
               {tableColumns.map(({ label, Component }, index) => (
-                <td key={`${order.id}-${label}-${order[label]}`} style={{ maxWidth: 200 }} className="text-truncate">
+                <td key={`${order.id}-${label}-${order[label]}`} style={{ maxWidth: 200 }} className="text-truncate text-secondary">
                   {Component ? (
                     <Component
                       id={order.id}
