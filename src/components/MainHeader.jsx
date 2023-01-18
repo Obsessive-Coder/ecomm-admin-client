@@ -14,7 +14,7 @@ export default function MainHeader({ handleOpenSidebar }) {
           <Button
             variant="outline-primary"
             onClick={handleOpenSidebar}
-            className="d-lg-none border-0 text-secondary"
+            className="d-lg-none px-0 border-0 text-secondary"
           >
             <ListIcon size="28" />
           </Button>
