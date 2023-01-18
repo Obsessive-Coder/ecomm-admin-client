@@ -47,6 +47,8 @@ export default function AddEditProduct(props) {
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
+  const [isActive, setIsActive] = useState(product?.active ?? false)
+
   const fileUtil = new FileUtil();
   const productUtil = new ProductUtil();
 
@@ -129,6 +131,8 @@ export default function AddEditProduct(props) {
                     type="switch"
                     id="active"
                     label="Active"
+                    checked={isActive}
+                    onChange={() => setIsActive(!isActive)}
                     className="active-switch"
                   />
                 </Col>

@@ -37,6 +37,8 @@ export default function AddEditCategory(props) {
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
+  const [isActive, setIsActive] = useState(category?.active ?? false)
+
   const categoryUtil = new CategoryUtil();
   const categoryTypeUtil = new CategoryTypeUtil();
 
@@ -100,7 +102,8 @@ export default function AddEditCategory(props) {
                   name="active"
                   id="active"
                   label="Active"
-                  defaultValue={category.active}
+                  checked={isActive}
+                  onChange={() => setIsActive(!isActive)}
                   className="active-switch"
                 />
               </Col>
