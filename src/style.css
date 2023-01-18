@@ -31,6 +31,6 @@
 
 @media only screen and (min-width: 992px) {
   .page-content {
-    margin-left: 14rem;
+    padding-left: 14rem;
   }
 }
