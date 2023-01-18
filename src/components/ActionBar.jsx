@@ -71,7 +71,7 @@ export default function ActionBar(props) {
 
   return (
     <div className="d-flex flex-column flex-md-row align-items-center mb-5">
-      <Form onSubmit={handleSubmit} className="flex-fill me-md-3 me-lg-5">
+      <Form onSubmit={handleSubmit} className="flex-fill w-100 me-md-3 me-lg-5">
         <Row>
           {/* Search */}
           {isSearchVisible && (
@@ -89,7 +89,7 @@ export default function ActionBar(props) {
 
           {/* Category Filter */}
           {isFilterVisible && (
-            <Form.Group as={Col} sm={6} md={3} controlId="categoryId" className="my-2">
+            <Form.Group as={Col} sm={6} md={3} controlId="categoryId" className="flex-fill my-2">
               <FloatingLabel controlId="categoryId" label="Filter Category">
                 <Form.Select
                   arial-label="Category Filter"
@@ -110,7 +110,7 @@ export default function ActionBar(props) {
 
           {/* Price Sort */}
           {isSortVisible && (
-            <Form.Group as={Col} sm={6} md={3} controlId="price" className="my-2">
+            <Form.Group as={Col} sm={6} md={3} controlId="price" className="flex-fill my-2">
               <FloatingLabel controlId="price" label="Sort Price">
                 <Form.Select
                   arial-label="Sort Price"
