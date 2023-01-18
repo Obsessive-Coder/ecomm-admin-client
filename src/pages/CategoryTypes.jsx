@@ -110,7 +110,7 @@ export default function CategoryTypes() {
   };
 
   return (
-    <Container className="px-0">
+    <Container fluid className="px-0">
       <h1>Category Types</h1>
 
       <ActionBar

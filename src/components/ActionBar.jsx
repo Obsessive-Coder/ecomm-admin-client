@@ -71,7 +71,7 @@ export default function ActionBar(props) {
 
   return (
     <div className="d-flex flex-column flex-md-row align-items-center mb-5">
-      <Form onSubmit={handleSubmit} className="flex-fill w-100 me-md-3 me-lg-5">
+      <Form onSubmit={handleSubmit} className="flex-fill w-100 me-md-3">
         <Row>
           {/* Search */}
           {isSearchVisible && (

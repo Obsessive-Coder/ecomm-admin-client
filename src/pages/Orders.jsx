@@ -131,7 +131,7 @@ export default function Orders() {
   };
 
   return (
-    <Container className="px-0">
+    <Container fluid className="px-0">
       <h1>Orders</h1>
 
       <ActionBar
