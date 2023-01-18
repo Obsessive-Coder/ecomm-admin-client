@@ -117,7 +117,7 @@ export default function Categories() {
   };
 
   return (
-    <Container>
+    <Container className="px-0">
       <h1>Categories</h1>
 
       <ActionBar

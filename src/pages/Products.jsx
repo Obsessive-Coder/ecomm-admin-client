@@ -133,7 +133,7 @@ export default function Products() {
   };
 
   return (
-    <Container>
+    <Container className="px-0">
       <h1>Products</h1>
 
       <ActionBar

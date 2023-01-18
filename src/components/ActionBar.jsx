@@ -70,7 +70,7 @@ export default function ActionBar(props) {
   };
 
   return (
-    <div className="d-flex flex-column flex-md-row align-items-center my-5 my-md-3">
+    <div className="d-flex flex-column flex-md-row align-items-center mb-5">
       <Form onSubmit={handleSubmit} className="flex-fill me-md-3 me-lg-5">
         <Row>
           {/* Search */}
@@ -136,7 +136,7 @@ export default function ActionBar(props) {
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}
-                  Add Product
+                  Add
                 </div>
               )}
               buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
@@ -151,10 +151,10 @@ export default function ActionBar(props) {
               addItem={addItem}
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
-                  <PlusIcon size={36} />{' '}
-                  <span>
-                    {type === 'categoryTypes' ? ' Add Type' : 'Add Category'}
-                  </span>
+                  <div className="d-flex align-items-center justify-content-center">
+                    <PlusIcon size={36} />{' '}
+                    Add
+                  </div>
                 </div>
               )}
               buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
@@ -172,7 +172,7 @@ export default function ActionBar(props) {
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
                   <PlusIcon size={36} />{' '}
-                  Add Order
+                  Add
                 </div>
               )}
               buttonClassName="align-self-stretch align-self-md-auto btn-block btn-lg btn-primary text-success"
