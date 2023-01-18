@@ -42,6 +42,9 @@ const tableColumns = [{
   label: 'payment',
   Component: undefined
 }, {
+  label: 'shipping',
+  Component: undefined
+}, {
   label: 'total',
   Component: undefined
 }, {
@@ -177,11 +180,14 @@ export default function Orders() {
                     />
                   ) : (
                     <span key={`${order.id}-${label}-${order[label]}`}>
-                      {label === 'total' && '$'}
-                      {label === 'date' ? (
-                        new Date(order[label]).toLocaleDateString("en-US")
+                      {(label === 'total' || label === 'shipping') ? (
+                        `$${Number.parseFloat(order[label]).toFixed(2)}`
                       ) : (
-                        order[label] ?? ''
+                        label === 'date' ? (
+                          new Date(order[label]).toLocaleDateString("en-US")
+                        ) : (
+                          order[label] ?? ''
+                        )
                       )}
                     </span>
                   )}

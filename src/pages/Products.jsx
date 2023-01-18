@@ -181,8 +181,11 @@ export default function Products() {
                         categories.filter(({ id }) => id === product.category_id)[0]?.title
                       ) : (
                         <>
-                          {label === 'price' && '$'}
-                          {product[label] ?? ''}
+                          {label === 'price' ? (
+                            `$${Number.parseFloat(product[label]).toFixed(2)}`
+                          ) : (
+                            product[label] ?? ''
+                          )}
                         </>
                       )}
                     </span>

@@ -30,7 +30,7 @@ export default function AddEditProduct(props) {
   const [fields, errors, form] = useFormInputValidation({
     title: product.title ?? '',
     description: product.description ?? '',
-    price: product.price ?? '',
+    price: Number.parseFloat(product.price ?? 0).toFixed(2),
     quantity: product.quantity ?? '',
     category: product.category_id ?? ''
   }, {

@@ -50,6 +50,7 @@ export default function Order() {
     status,
     date,
     payment,
+    shipping,
     total,
     orderItems = [],
   } = order;
@@ -141,7 +142,7 @@ export default function Order() {
                   ) : (
                     <span className={label === 'total' ? 'fw-bold text-success' : ''}>
                       {(label === 'total' || label === 'item price') && '$'}
-                      {label === 'total' && item.quantity * item.item_price}
+                      {label === 'total' && (item.quantity * item.item_price).toFixed(2)}
                       {item[key] ?? ''}
                     </span>
                   )}
@@ -160,7 +161,7 @@ export default function Order() {
 
         <div className="mx-2 me-auto">
           <span className="d-block fw-bold">Shipping</span>
-          <span>{`$${888.88}`}</span>
+          <span>{`$${shipping.toFixed(2)}`}</span>
         </div>
 
         <div className="mx-2 me-auto">
@@ -170,7 +171,9 @@ export default function Order() {
 
         <div className="mx-2 me-auto">
           <span className="d-block fw-bold">Total</span>
-          <span className="text-success fw-bold" style={{ fontSize: 'large' }}>{`$${total}`}</span>
+          <span className="text-success fw-bold" style={{ fontSize: 'large' }}>
+            {`$${total.toFixed(2)}`}
+          </span>
         </div>
       </div>
 

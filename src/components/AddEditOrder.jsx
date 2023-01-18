@@ -32,12 +32,14 @@ export default function AddEditOrder(props) {
     recipient: order.recipient_name ?? '',
     address: order.address ?? '',
     phone: order.phone ?? '',
+    shipping: Number.parseFloat(order.shipping ?? 0).toFixed(2),
     payment: order.payment ?? '',
     status: order.status_id ?? ''
   }, {
     recipient: 'required',
     address: 'required',
     phone: 'required',
+    shipping: 'required',
     payment: 'required',
     status: 'required'
   });
@@ -90,7 +92,7 @@ export default function AddEditOrder(props) {
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { address, phone, recipient, payment, status } = fields;
+    const { address, phone, shipping, recipient, payment, status } = fields;
 
     const isValid = await form.validate(event);
     if (!isValid || orderItems.length === 0) return;
@@ -99,6 +101,7 @@ export default function AddEditOrder(props) {
       ...order,
       address,
       phone,
+      shipping,
       payment,
       recipient_name: recipient,
       status_id: status
@@ -248,6 +251,29 @@ export default function AddEditOrder(props) {
 
                     <Form.Control.Feedback type="invalid">
                       {errors.phone}
+                    </Form.Control.Feedback>
+                  </FloatingLabel>
+                </Col>
+              </Form.Group>
+
+              <Form.Group as={Row} className="mb-3" controlId="shippingForm">
+                <Col>
+                  <FloatingLabel controlId="shipping" label="Shipping">
+                    <Form.Control
+                      type="number"
+                      name="shipping"
+                      placeholder="Shipping"
+                      step={0.01}
+                      defaultValue={fields.shipping}
+                      isInvalid={!!errors.shipping}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      min={0}
+                      className="bg-dark border-secondary text-secondary"
+                    />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.shipping}
                     </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
