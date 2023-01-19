@@ -2,11 +2,13 @@ import React from 'react'
 import { useMediaQuery } from 'react-responsive';
 
 // Bootstrap Components.
+import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import {
   BagFill as BagFillIcon,
+  BoxArrowInLeft as BoxArrowInLeftIcon,
   Cart as CartIcon,
   List as ListIcon,
   MenuButtonFill as MenuButtonFillIcon
@@ -33,9 +35,13 @@ const navItems = [{
   path: '/orders',
   label: 'orders',
   Icon: CartIcon
+}, {
+  path: '/',
+  label: 'logout',
+  Icon: BoxArrowInLeftIcon
 }];
 
-export default function Sidebar({ isOpen, handleClose }) {
+export default function Sidebar({ isOpen, handleClose, handleLogout }) {
   const isLargeScreen = useMediaQuery({ query: '(min-width: 992px )' });
   const { pathname } = window.location;
 
@@ -61,9 +67,18 @@ export default function Sidebar({ isOpen, handleClose }) {
           {navItems.map(({ path, label, Icon }) => (
             <Nav.Item key={label} className="d-flex align-items-center p-2">
               <Icon />
-              <Nav.Link href={path} className="flex-fill p-2 text-capitalize text-secondary">
-                {label}
-              </Nav.Link>
+              {label === 'logout' ? (
+                <Button
+                  variant="link"
+                  onClick={handleLogout}
+                  className="flex-fill p-2 text-capitalize text-secondary text-decoration-none text-start fs-6">
+                  {label}
+                </Button>
+              ) : (
+                <Nav.Link href={path} className="flex-fill p-2 text-capitalize text-secondary fs-6">
+                  {label}
+                </Nav.Link>
+              )}
             </Nav.Item>
           ))}
         </Nav>

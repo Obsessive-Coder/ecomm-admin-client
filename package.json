@@ -1,6 +1,6 @@
 {
   "name": "ecomm-client",
-  "version": "0.31.39",
+  "version": "0.32.39",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -10,6 +10,7 @@
     "bootstrap": "^5.2.2",
     "bootswatch": "^5.2.2",
     "firebase": "^9.15.0",
+    "firebaseui": "^6.0.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-bootstrap-icons": "^1.9.1",
