@@ -17,15 +17,20 @@ import ViewLink from '../components/ViewLink';
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
 import OrderStatusUtil from '../utils/api/OrderStatusUtil';
+import ProductUtil from '../utils/api/ProductUtil';
 
 export async function loader() {
-  const { data: statuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
   const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
-  return { orders, statuses }
+  const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
+  const { data: statuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
+  return { orders, products, statuses }
 }
 
 const tableColumns = [{
   label: 'date',
+  Component: undefined
+}, {
+  label: 'recipient_name',
   Component: undefined
 }, {
   label: 'address',
@@ -35,6 +40,9 @@ const tableColumns = [{
   Component: undefined
 }, {
   label: 'payment',
+  Component: undefined
+}, {
+  label: 'shipping',
   Component: undefined
 }, {
   label: 'total',
@@ -51,7 +59,7 @@ const tableColumns = [{
 }];
 
 export default function Orders() {
-  const { statuses } = useLoaderData();
+  const { products, statuses } = useLoaderData();
   const [orders, setOrders] = useState(useLoaderData().orders);
 
   const [rowLimit, setRowLimit] = useState(25);
@@ -63,7 +71,7 @@ export default function Orders() {
 
   const getOrders = async queryParams => {
     const { data: orders } = await orderUtil.findAll(queryParams);
-    setOrders(orders);
+    setOrders([...orders]);
 
     const updatedPageOrders = orders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + 1);
     setPageOrders(updatedPageOrders);
@@ -82,6 +90,7 @@ export default function Orders() {
   };
 
   const updateOrder = updatedOrder => {
+    console.log(updatedOrder)
     const { id: updatedId } = updatedOrder;
     orderUtil.update(updatedId, updatedOrder);
 
@@ -125,19 +134,22 @@ export default function Orders() {
   };
 
   return (
-    <Container>
+    <Container fluid className="px-0">
       <h1>Orders</h1>
 
       <ActionBar
         type="order"
+        isSearchVisible={true}
+        isSortVisible={true}
         categories={orders}
         statuses={statuses}
+        products={products}
         addItem={addOrder}
         getItems={getOrders}
       />
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -151,7 +163,7 @@ export default function Orders() {
           {pageOrders.map(order => (
             <tr key={`${order.id}`}>
               {tableColumns.map(({ label, Component }, index) => (
-                <td key={`${order.id}-${label}-${order[label]}`} style={{ maxWidth: 200 }} className="text-truncate">
+                <td key={`${order.id}-${label}-${order[label]}`} style={{ maxWidth: 200 }} className="text-truncate text-secondary">
                   {Component ? (
                     <Component
                       id={order.id}
@@ -162,13 +174,21 @@ export default function Orders() {
                       toUrl={`/orders/${order.id}`}
                       status={order.status}
                       statuses={statuses}
+                      products={products}
                       removeItem={removeOrder}
                       handleUpdate={updateOrder}
                     />
                   ) : (
-                    <span key={`${order.id}- ${label}-${order[label]}`}>
-                      {label === 'total' && '$'}
-                      {order[label] ?? ''}
+                    <span key={`${order.id}-${label}-${order[label]}`}>
+                      {(label === 'total' || label === 'shipping') ? (
+                        `$${Number.parseFloat(order[label]).toFixed(2)}`
+                      ) : (
+                        label === 'date' ? (
+                          new Date(order[label]).toLocaleDateString("en-US")
+                        ) : (
+                          order[label] ?? ''
+                        )
+                      )}
                     </span>
                   )}
                 </td>
@@ -187,17 +207,19 @@ export default function Orders() {
         )
       }
 
-      <div>
-        <Pagination
-          {...bootstrap5PaginationPreset}
-          total={pageCount}
-          current={pageIndex + 1}
-          maxWidth={500}
-          previousLabel="<"
-          nextLabel=">"
-          onPageChange={pageNumber => updatePageOrders(pageNumber - 1, orders)}
-        />
-      </div>
+      {pageCount > 1 && (
+        <div>
+          <Pagination
+            {...bootstrap5PaginationPreset}
+            total={pageCount}
+            current={pageIndex + 1}
+            maxWidth={500}
+            previousLabel="<"
+            nextLabel=">"
+            onPageChange={pageNumber => updatePageOrders(pageNumber - 1, orders)}
+          />
+        </div>
+      )}
     </Container >
   );
 }

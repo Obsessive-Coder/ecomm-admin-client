@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -24,9 +25,19 @@ export default function AddEditCategory(props) {
     updateItem
   } = props;
 
+  const [fields, errors, form] = useFormInputValidation({
+    title: category.title ?? '',
+    type: category.type_id ?? ''
+  }, {
+    title: 'required',
+    type: 'required'
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
+
+  const [isActive, setIsActive] = useState(category?.id ? category?.active ?? false : true)
 
   const categoryUtil = new CategoryUtil();
   const categoryTypeUtil = new CategoryTypeUtil();
@@ -34,13 +45,17 @@ export default function AddEditCategory(props) {
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { title, active, type: typeSelect } = event.target;
+    const { active } = event.target;
+    const { title, type: typeSelect } = fields;
+
+    const isValid = await form.validate(event);
+    if (!isValid) return;
 
     const updatedCategory = {
       ...category,
-      title: title.value.trim(),
-      active: active.checked,
-      ...(typeSelect ? { type_id: typeSelect.value } : {})
+      title: title,
+      active: +active.checked,
+      ...(typeSelect ? { type_id: typeSelect } : {})
     };
 
     if (category.id) {
@@ -68,7 +83,7 @@ export default function AddEditCategory(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
-        <Offcanvas.Header closeButton className="bg-dark">
+        <Offcanvas.Header closeButton closeVariant="white" className="bg-dark">
           <Offcanvas.Title>
             {category.id ? 'Update Category' : 'Create Category'}
             {type === 'categoryTypes' && ' Type'}
@@ -76,43 +91,72 @@ export default function AddEditCategory(props) {
         </Offcanvas.Header>
 
         <Offcanvas.Body>
-          <Form onSubmit={handleSubmit} className="position-relative h-100">
-            <Form.Group as={Row} className="mb-3" controlId="active">
+          <Form noValidate
+            onSubmit={handleSubmit}
+            className="position-relative h-100"
+          >
+            <Form.Group as={Row} className="mb-3" controlId="activeForm">
               <Col>
                 <Form.Check
-                  defaultChecked={category.active}
                   type="switch"
+                  name="active"
                   id="active"
                   label="Active"
+                  checked={isActive}
+                  onChange={() => setIsActive(!isActive)}
+                  className="active-switch"
                 />
               </Col>
             </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="title">
+            <Form.Group as={Row} className="mb-3" controlId="titleForm">
               <Col>
                 <FloatingLabel controlId="title" label="Title">
-                  <Form.Control type="text" placeholder="Title" defaultValue={category.title} className="text-secondary" />
+                  <Form.Control
+                    type="text"
+                    name="title"
+                    placeholder="Title"
+                    defaultValue={fields.title}
+                    isInvalid={!!errors.title}
+                    onBlur={form.handleBlurEvent}
+                    onChange={form.handleChangeEvent}
+                    className="bg-dark border-secondary text-secondary"
+                  />
+
+                  <Form.Control.Feedback type="invalid">
+                    {errors.title}
+                  </Form.Control.Feedback>
                 </FloatingLabel>
               </Col>
             </Form.Group>
 
             {type === 'category' && (
-              <Form.Group as={Row} className="mb-3" controlId="type">
+              <Form.Group as={Row} className="mb-3" controlId="typeForm">
                 <Col>
                   <FloatingLabel controlId="type" label="Type">
                     <Form.Select
                       aria-label="Category Type"
-                      defaultValue={category.type_id ?? null}
-                      className="text-secondary"
+                      name="type"
+                      defaultValue={fields.type}
+                      isInvalid={!!errors.type}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
                     >
-                      <option>Select One</option>
+                      <option value="">Select One</option>
 
-                      {categoryTypes.map(({ id, title }) => (
-                        <option key={`${title}-type`} value={id}>
-                          {title}
-                        </option>
+                      {categoryTypes.map(({ id, title, active }) => (
+                        active && (
+                          <option key={`${title}-type`} value={id}>
+                            {title}
+                          </option>
+                        )
                       ))}
                     </Form.Select>
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.type}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>

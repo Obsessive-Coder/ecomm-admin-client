@@ -110,7 +110,7 @@ export default function CategoryTypes() {
   };
 
   return (
-    <Container>
+    <Container fluid className="px-0">
       <h1>Category Types</h1>
 
       <ActionBar
@@ -121,8 +121,8 @@ export default function CategoryTypes() {
       />
 
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -139,7 +139,7 @@ export default function CategoryTypes() {
                 <td
                   key={`${categoryType.id}-${label}-${categoryType[label]}`}
                   style={{ maxWidth: 200 }}
-                  className="text-truncate"
+                  className="text-truncate text-secondary"
                 >
                   {Component ? (
                     <Component
@@ -172,17 +172,19 @@ export default function CategoryTypes() {
         </div>
       )}
 
-      <div>
-        <Pagination
-          {...bootstrap5PaginationPreset}
-          total={pageCount}
-          current={pageIndex + 1}
-          maxWidth={500}
-          previousLabel="<"
-          nextLabel=">"
-          onPageChange={pageNumber => updatePageTypes(pageNumber - 1)}
-        />
-      </div>
+      {pageCount > 1 && (
+        <div>
+          <Pagination
+            {...bootstrap5PaginationPreset}
+            total={pageCount}
+            current={pageIndex + 1}
+            maxWidth={500}
+            previousLabel="<"
+            nextLabel=">"
+            onPageChange={pageNumber => updatePageTypes(pageNumber - 1)}
+          />
+        </div>
+      )}
     </Container>
   );
 }

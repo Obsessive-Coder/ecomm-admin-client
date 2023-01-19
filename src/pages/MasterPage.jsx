@@ -62,11 +62,11 @@ export default function MasterPage() {
     <Container fluid>
       <MainHeader handleOpenSidebar={toggleSidebarIsOpen} />
 
-      <div id="sidebar">
+      <div id="sidebar no-print">
         <Sidebar isOpen={isSidebarOpen} handleClose={toggleSidebarIsOpen} />
       </div>
 
-      <Container className="page-content">
+      <Container fluid className="page-content mb-5">
         <RouterProvider router={router} />
       </Container>
     </Container>

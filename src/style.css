@@ -7,8 +7,39 @@
   color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
 }
 
+.nav-link.active {
+  border-right: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+  --bs-border-width: 5px;
+  --bs-border-opacity: 1;
+  border-color: rgba(var(--bs-secondary-rgb), var(--bs-border-opacity)) !important;
+}
+
+.add-item-dropdown::after {
+  display: none !important;
+}
+
+.active-switch .form-check-input:checked {
+  background-color: #62c462 !important;
+  border-color: #62c462 !important;
+}
+
+.page-link {
+  color: #7a8288 !important;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 0;
+  }
+}
+
 @media only screen and (min-width: 992px) {
   .page-content {
-    margin-left: 14rem;
+    padding-left: 14rem;
   }
 }

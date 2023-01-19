@@ -36,7 +36,6 @@ const tableColumns = [{
 
 export async function loader({ params: { orderId } }) {
   const { data: order } = await new OrderUtil().findOne(orderId);
-  console.log(order)
   return { order };
 }
 
@@ -46,10 +45,12 @@ export default function Order() {
 
   const {
     id: orderId,
+    recipient_name,
     address,
     status,
     date,
     payment,
+    shipping,
     total,
     orderItems = [],
   } = order;
@@ -68,7 +69,7 @@ export default function Order() {
 
   return (
     <Container>
-      <h1>Order Details</h1>
+      <h1 className="no-print">Order Details</h1>
 
       <Row className="mt-5">
         <Col xs={12} md={6}>
@@ -95,7 +96,7 @@ export default function Order() {
       <Row className="my-5">
         <Col xs={12} md={4}>
           <span className="d-block fw-bold">Date</span>
-          <span>{date}</span>
+          <span>{new Date(date).toLocaleDateString("en-US")}</span>
         </Col>
 
         <Col xs={12} md={4} className="d-flex justify-content-md-center my-3 my-md-0">
@@ -109,7 +110,7 @@ export default function Order() {
           <div className="text-md-end">
             <span className="d-block fw-bold">Invoice To</span>
             <address>
-              <small className="d-block">Recipient Name</small>
+              <small className="d-block">{recipient_name}</small>
               {address.split(',').map(addressLine => (
                 <small key={`address-${addressLine}`} className="d-block">
                   {addressLine}
@@ -141,7 +142,7 @@ export default function Order() {
                   ) : (
                     <span className={label === 'total' ? 'fw-bold text-success' : ''}>
                       {(label === 'total' || label === 'item price') && '$'}
-                      {label === 'total' && item.quantity * item.item_price}
+                      {label === 'total' && (item.quantity * item.item_price).toFixed(2)}
                       {item[key] ?? ''}
                     </span>
                   )}
@@ -160,7 +161,7 @@ export default function Order() {
 
         <div className="mx-2 me-auto">
           <span className="d-block fw-bold">Shipping</span>
-          <span>{`$${888.88}`}</span>
+          <span>{`$${shipping.toFixed(2)}`}</span>
         </div>
 
         <div className="mx-2 me-auto">
@@ -170,14 +171,15 @@ export default function Order() {
 
         <div className="mx-2 me-auto">
           <span className="d-block fw-bold">Total</span>
-          <span className="text-success fw-bold" style={{ fontSize: 'large' }}>{`$${total}`}</span>
+          <span className="text-success fw-bold" style={{ fontSize: 'large' }}>
+            {`$${total.toFixed(2)}`}
+          </span>
         </div>
       </div>
 
       <div>
-        <Button onClick={() => { window.print(); return false }}
-        >
-          Print this page
+        <Button onClick={() => { window.print(); return false }} className="no-print text-info">
+          Print Invoice
         </Button>
       </div>
     </Container>

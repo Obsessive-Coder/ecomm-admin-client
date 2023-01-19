@@ -26,19 +26,19 @@ export default function Confirm({ children, title, buttonContent, buttonClassNam
         onHide={hide}
         aria-labelledby="confirm-modal"
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton closeVariant="white">
           <Modal.Title id="confirm-modal">
             {title}
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>
+        <Modal.Body className="text-center">
           {children}
         </Modal.Body>
 
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={hide}>Cancel</Button>
-          <Button variant="outline-primary" onClick={handleConfirmClick}>Confirm</Button>
+          <Button variant="outline-warning" onClick={handleConfirmClick}>Confirm</Button>
         </Modal.Footer>
       </Modal>
     </>

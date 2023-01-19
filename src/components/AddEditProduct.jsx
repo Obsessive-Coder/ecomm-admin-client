@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -16,8 +17,6 @@ import FileUtil from '../utils/api/FIleUtil';
 import ProductUtil from '../utils/api/ProductUtil';
 
 export default function AddEditProduct(props) {
-  const productUtil = new ProductUtil();
-
   const {
     product = {},
     categories = [],
@@ -28,29 +27,53 @@ export default function AddEditProduct(props) {
     updateItem
   } = props;
 
+  const [fields, errors, form] = useFormInputValidation({
+    title: product.title ?? '',
+    description: product.description ?? '',
+    price: Number.parseFloat(product.price ?? 0).toFixed(2),
+    quantity: product.quantity ?? '',
+    category: product.category_id ?? ''
+  }, {
+    title: 'required',
+    description: 'required',
+    price: 'required',
+    quantity: 'required',
+    category: 'required'
+  });
+
   const [imageData, setImageData] = useState(null);
 
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
+  const [isActive, setIsActive] = useState(product?.id ? product?.active ?? false : true)
+
+  const fileUtil = new FileUtil();
+  const productUtil = new ProductUtil();
+
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { title, description, price, active, category, quantity } = event.target;
+    const { active } = event.target;
+    const { title, description, price, category, quantity } = fields;
+
+    const isValid = await form.validate(event);
+    if (!isValid) return;
 
     const updatedProduct = {
       ...product,
-      title: title.value.trim(),
-      description: description.value.trim(),
-      price: parseFloat(price.value.trim()).toFixed(2),
-      quantity: parseInt(quantity.value.trim()),
-      active: active.checked,
-      category_id: category.value
+      title,
+      description,
+      price: parseFloat(parseFloat(price).toFixed(4)),
+      quantity: parseInt(quantity),
+      active: +active.checked,
+      category_id: category,
+      image_url: 'https://via.placeholder.com/350x150'
     };
 
     if (imageData) {
-      const { data: url } = await new FileUtil().create(imageData);
+      const { data: url } = await fileUtil.create(imageData);
       updatedProduct.image_url = url;
     }
 
@@ -79,16 +102,20 @@ export default function AddEditProduct(props) {
       </Button>
 
       <Offcanvas show={isOpen} placement="end" onHide={handleHide}>
-        <Offcanvas.Header closeButton className="bg-dark">
+        <Offcanvas.Header closeButton closeVariant="white" className="bg-dark">
           <Offcanvas.Title>
             {product.id ? 'Update Product' : 'Create Product'}
           </Offcanvas.Title>
         </Offcanvas.Header>
 
         <Offcanvas.Body className="overflow-hidden p-0">
-          <Form onSubmit={handleSubmit} className="position-relative h-100">
+          <Form
+            noValidate
+            onSubmit={handleSubmit}
+            className="position-relative h-100"
+          >
             <div className="overflow-scroll h-100 px-3 pt-3" style={{ paddingBottom: 75 }}>
-              <Form.Group as={Row} className="mb-3" controlId="image">
+              <Form.Group as={Row} className="mb-3" controlId="imageForm">
                 <Col>
                   <ImageUpload
                     imageUrl={imageData?.image ?? product.image_url}
@@ -97,79 +124,133 @@ export default function AddEditProduct(props) {
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="active">
+              <Form.Group as={Row} className="mb-3" controlId="activeForm">
                 <Col>
                   <Form.Check
-                    defaultChecked={product.active}
+                    name="active"
                     type="switch"
                     id="active"
                     label="Active"
+                    checked={isActive}
+                    onChange={() => setIsActive(!isActive)}
+                    className="active-switch"
                   />
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="title">
+              <Form.Group as={Row} className="mb-3" controlId="titleForm">
                 <Col>
                   <FloatingLabel controlId="title" label="Title">
-                    <Form.Control type="text" placeholder="Title" defaultValue={product.title} className="text-secondary" />
+                    <Form.Control
+                      type="text"
+                      name="title"
+                      placeholder="Title"
+                      defaultValue={fields.title}
+                      isInvalid={!!errors.title}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
+                    />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.title}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="description">
+              <Form.Group as={Row} className="mb-3" controlId="descriptionForm">
                 <Col>
                   <FloatingLabel controlId="description" label="Description">
                     <Form.Control
                       as="textarea"
+                      name="description"
                       placeholder="Description"
+                      defaultValue={fields.description}
+                      isInvalid={!!errors.description}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
                       rows={14}
-                      defaultValue={product.description}
-                      className="text-secondary"
+                      className="bg-dark border-secondary text-secondary"
                     />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.description}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="price">
+              <Form.Group as={Row} className="mb-3" controlId="priceForm">
                 <Col>
                   <FloatingLabel controlId="price" label="Price">
                     <Form.Control
                       type="number"
+                      name="price"
                       placeholder="Price"
+                      defaultValue={fields.price}
+                      isInvalid={!!errors.price}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
                       min={0}
-                      defaultValue={product.price}
-                      className="text-secondary"
+                      className="bg-dark border-secondary text-secondary"
                     />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.price}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="quantity">
+              <Form.Group as={Row} className="mb-3" controlId="quantityForm">
                 <Col>
                   <FloatingLabel controlId="quantity" label="Quantity">
                     <Form.Control
                       type="number"
+                      name="quantity"
                       placeholder="Quantity"
+                      defaultValue={fields.quantity}
+                      isInvalid={!!errors.quantity}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
                       min={0}
-                      defaultValue={product.quantity}
-                      className="text-secondary"
+                      className="bg-dark border-secondary text-secondary"
                     />
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.quantity}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className="mb-3" controlId="category">
+              <Form.Group as={Row} className="mb-3" controlId="categoryForm">
                 <Col>
                   <FloatingLabel controlId="category" label="Category">
-                    <Form.Select aria-label="Category" defaultValue={product.category_id ?? null} className="text-secondary">
-                      <option>Select One</option>
+                    <Form.Select
+                      aria-label="Category"
+                      name="category"
+                      defaultValue={fields.category}
+                      isInvalid={!!errors.category}
+                      onBlur={form.handleBlurEvent}
+                      onChange={form.handleChangeEvent}
+                      className="bg-dark border-secondary text-secondary"
+                    >
+                      <option value="">Select One</option>
 
-                      {categories.map(({ id, title }) => (
-                        <option key={`${title}-category`} value={id}>
-                          {title}
-                        </option>
+                      {categories.map(({ id, title, active }) => (
+                        active && (
+                          <option key={`${title}-category`} value={id}>
+                            {title}
+                          </option>
+                        )
                       ))}
                     </Form.Select>
+
+                    <Form.Control.Feedback type="invalid">
+                      {errors.category}
+                    </Form.Control.Feedback>
                   </FloatingLabel>
                 </Col>
               </Form.Group>

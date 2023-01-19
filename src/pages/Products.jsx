@@ -133,7 +133,7 @@ export default function Products() {
   };
 
   return (
-    <Container>
+    <Container fluid className="px-0">
       <h1>Products</h1>
 
       <ActionBar
@@ -146,8 +146,8 @@ export default function Products() {
         getItems={getProducts}
       />
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -161,7 +161,7 @@ export default function Products() {
           {pageProducts.map(product => (
             <tr key={`${product.id}`}>
               {tableColumns.map(({ label, Component }, index) => (
-                <td key={`${product.id}-${label}-${product[label]}`} style={{ maxWidth: 200 }} className="text-truncate">
+                <td key={`${product.id}-${label}-${product[label]}`} style={{ maxWidth: 200 }} className="text-truncate text-secondary">
                   {Component ? (
                     <Component
                       id={product.id}
@@ -181,8 +181,11 @@ export default function Products() {
                         categories.filter(({ id }) => id === product.category_id)[0]?.title
                       ) : (
                         <>
-                          {label === 'price' && '$'}
-                          {product[label] ?? ''}
+                          {label === 'price' ? (
+                            `$${Number.parseFloat(product[label]).toFixed(2)}`
+                          ) : (
+                            product[label] ?? ''
+                          )}
                         </>
                       )}
                     </span>
@@ -201,17 +204,19 @@ export default function Products() {
         </div>
       )}
 
-      <div>
-        <Pagination
-          {...bootstrap5PaginationPreset}
-          total={pageCount}
-          current={pageIndex + 1}
-          maxWidth={500}
-          previousLabel="<"
-          nextLabel=">"
-          onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
-        />
-      </div>
+      {pageCount > 1 && (
+        <div>
+          <Pagination
+            {...bootstrap5PaginationPreset}
+            total={pageCount}
+            current={pageIndex + 1}
+            maxWidth={500}
+            previousLabel="<"
+            nextLabel=">"
+            onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
+          />
+        </div>
+      )}
     </Container >
   )
 }

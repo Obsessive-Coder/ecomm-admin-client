@@ -117,7 +117,7 @@ export default function Categories() {
   };
 
   return (
-    <Container>
+    <Container fluid className="px-0">
       <h1>Categories</h1>
 
       <ActionBar
@@ -130,8 +130,8 @@ export default function Categories() {
         getItems={getCategories}
       />
 
-      <Table responsive striped bordered hover className="table-light">
-        <thead>
+      <Table responsive striped bordered hover className="table-dark">
+        <thead className="text-secondary">
           <tr>
             {tableColumns.map(({ label }) => (
               <th key={`${label}-heading`} style={{ maxWidth: 200 }}>
@@ -148,7 +148,7 @@ export default function Categories() {
                 <td
                   key={`${category.id}-${label}-${category[label]}`}
                   style={{ maxWidth: 200 }}
-                  className="text-truncate"
+                  className="text-truncate text-secondary"
                 >
                   {Component ? (
                     <Component
@@ -185,17 +185,19 @@ export default function Categories() {
         </div>
       )}
 
-      <div>
-        <Pagination
-          {...bootstrap5PaginationPreset}
-          total={pageCount}
-          current={pageIndex + 1}
-          maxWidth={500}
-          previousLabel="<"
-          nextLabel=">"
-          onPageChange={pageNumber => updatePageCategories(pageNumber - 1)}
-        />
-      </div>
+      {pageCount > 1 && (
+        <div>
+          <Pagination
+            {...bootstrap5PaginationPreset}
+            total={pageCount}
+            current={pageIndex + 1}
+            maxWidth={500}
+            previousLabel="<"
+            nextLabel=">"
+            onPageChange={pageNumber => updatePageCategories(pageNumber - 1)}
+          />
+        </div>
+      )}
     </Container>
   );
 }
