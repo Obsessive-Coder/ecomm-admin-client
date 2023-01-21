@@ -9,10 +9,6 @@ import Form from 'react-bootstrap/Form';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Row from 'react-bootstrap/Row';
 
-// Styles, utils, and other helpers.
-import CategoryUtil from '../utils/api/CategoryUtil';
-import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
-
 export default function AddEditCategory(props) {
   const {
     category = {},
@@ -39,9 +35,6 @@ export default function AddEditCategory(props) {
 
   const [isActive, setIsActive] = useState(category?.id ? category?.active ?? false : true)
 
-  const categoryUtil = new CategoryUtil();
-  const categoryTypeUtil = new CategoryTypeUtil();
-
   const handleSubmit = async event => {
     event.preventDefault();
 
@@ -63,9 +56,7 @@ export default function AddEditCategory(props) {
       updateItem(updatedCategory);
     } else {
       // Create a new category.
-      const apiUtil = type === 'categoryTypes' ? categoryTypeUtil : categoryUtil;
-      const { data } = await apiUtil.create(updatedCategory);
-      addItem(data);
+      addItem(updatedCategory);
     }
 
     handleHide();

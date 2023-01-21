@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 // Router components and helpers.
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -10,8 +10,8 @@ import Container from 'react-bootstrap/Container';
 // Custom Components.
 import MainHeader from '../components/MainHeader';
 import Dashboard from './Dashboard';
-import Categories, { loader as categoriesLoader } from './Categories';
-import CategoryTypes, { loader as categoryTypesLoader } from './CategoryTypes';
+import Categories from './Categories';
+import CategoryTypes from './CategoryTypes';
 import Order, { loader as orderLoader } from './Order';
 import Orders, { loader as ordersLoader } from './Orders';
 import Product, { loader as productLoader } from './Product';
@@ -21,6 +21,7 @@ import Sidebar from '../components/Sidebar';
 
 // Style, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
+import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 import ProductUtil from '../utils/api/ProductUtil';
 
 const router = createBrowserRouter([{
@@ -37,12 +38,10 @@ const router = createBrowserRouter([{
   loader: productLoader
 }, {
   path: '/categories',
-  element: <Categories />,
-  loader: categoriesLoader
+  element: <Categories />
 }, {
   path: '/category-types',
-  element: <CategoryTypes />,
-  loader: categoryTypesLoader
+  element: <CategoryTypes />
 }, {
   path: '/orders',
   element: <Orders />,
@@ -68,6 +67,11 @@ function AuthRoutes(props) {
         .findAll({ order: { column: 'title' } });
 
       dispatch({ type: 'STORE_CATEGORIES', payload: [...categories] });
+
+      const { data: categoryTypes } = await new CategoryTypeUtil()
+        .findAll({ order: { column: 'title' } });
+
+      dispatch({ type: 'STORE_CATEGORY_TYPES', payload: [...categoryTypes] });
 
       const { data: products } = await new ProductUtil()
         .findAll({ order: { column: 'title' } });

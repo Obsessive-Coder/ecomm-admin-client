@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import { connect, useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
@@ -15,13 +16,8 @@ import ActiveSwitch from '../components/ActiveSwitch';
 
 // Styles, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
-import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 
-export async function loader() {
-  const { data: categoryTypes } = await new CategoryTypeUtil().findAll({ order: { column: 'title' } });
-  const { data: categories } = await new CategoryUtil().findAll({ order: { column: 'title' } });
-  return { categoryTypes, categories };
-}
+const categoryUtil = new CategoryUtil();
 
 const tableColumns = [{
   label: 'title',
@@ -37,84 +33,45 @@ const tableColumns = [{
   Component: Actions
 }];
 
-export default function Categories() {
-  const { categoryTypes } = useLoaderData();
-  const [categories, setCategories] = useState(useLoaderData().categories);
+function Categories(props) {
+  const { categories, categoryTypes } = props;
+
+  const dispatch = useDispatch();
+
   const [rowLimit, setRowLimit] = useState(25);
-  const [pageCount, setPageCount] = useState(Math.ceil(categories.length / rowLimit));
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageCategories, setPageCategories] = useState(categories.slice(0, rowLimit));
-
-  const allCategories = useLoaderData().categories;
-
-  const categoryUtil = new CategoryUtil();
 
   const getCategories = async queryParams => {
-    const { data: categories } = await categoryUtil.findAll(queryParams);
-    setCategories(categories);
-
-    const updatedPageCategories = categories.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-    setPageCategories(updatedPageCategories);
-
-    setPageCount(Math.ceil(categories.length / rowLimit));
+    const { data } = await categoryUtil.findAll(queryParams);
+    dispatch({ type: 'STORE_CATEGORIES', payload: data });
   };
 
-  const handleAddCategory = newCategory => {
-    const updatedCategories = [...categories, newCategory];
-    setCategories(updatedCategories);
-
-    const updatedPageCategories = updatedCategories.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-    setPageCategories(updatedPageCategories);
-
-    setPageCount(Math.ceil(updatedCategories.length / rowLimit));
+  const addCategory = async newCategory => {
+    const { data } = await categoryUtil.create(newCategory);
+    dispatch({ type: 'ADD_CATEGORY', payload: data });
   };
 
-  const handleUpdateCategory = updatedCategory => {
-    const { id: updatedId } = updatedCategory;
-    categoryUtil.update(updatedId, updatedCategory);
-
-    const updatedCategories = [...categories];
-    for (let i = 0; i < updatedCategories.length; i++) {
-      const category = updatedCategories[i];
-
-      if (category.id === updatedId) {
-        updatedCategories[i] = { ...category, ...updatedCategory };
-      }
-    }
-
-    updatePageCategories(pageIndex, updatedCategories);
-    setCategories([...updatedCategories]);
+  const updateCategory = updatedCategory => {
+    categoryUtil.update(updatedCategory.id, updatedCategory);
+    dispatch({ type: 'UPDATE_CATEGORY', payload: updatedCategory });
   };
 
-  const handleRemoveCategory = categoryId => {
+  const removeCategory = categoryId => {
     categoryUtil.delete(categoryId);
-
-    const filteredCategories = categories.filter(({ id }) => id !== categoryId);
-    setCategories([...filteredCategories]);
-
-    let updatedPageCategories = filteredCategories
-      .slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-
-    if (updatedPageCategories.length === 0) {
-      updatedPageCategories = filteredCategories
-        .slice((pageIndex - 1) * rowLimit, ((pageIndex - 1) * rowLimit) + rowLimit);
-
-      setPageIndex(pageIndex - 1);
-    }
-
-    setPageCategories(updatedPageCategories);
-    setPageCount(Math.ceil(filteredCategories.length / rowLimit));
+    dispatch({ type: 'REMOVE_CATEGORY', payload: categoryId });
   };
 
-  const updatePageCategories = (index, updatedCategories) => {
+  const updatePageIndex = index => {
     if (index < pageCount) {
-      const updatedPageCategories = updatedCategories
-        .slice(index * rowLimit, (index * rowLimit) + rowLimit);
-
-      setPageCategories(updatedPageCategories);
       setPageIndex(index);
     }
   };
+
+  const pageCategories = categories
+    .slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
+  const pageCount = Math.ceil(categories.length / rowLimit);
+  const allCategories = [...categories];
 
   return (
     <Container fluid className="px-0">
@@ -126,7 +83,7 @@ export default function Categories() {
         type="category"
         categories={allCategories}
         categoryTypes={categoryTypes}
-        addItem={handleAddCategory}
+        addItem={addCategory}
         getItems={getCategories}
       />
 
@@ -159,8 +116,8 @@ export default function Categories() {
                       item={category}
                       categoryTypes={categoryTypes}
                       type="category"
-                      removeItem={handleRemoveCategory}
-                      handleUpdate={handleUpdateCategory}
+                      removeItem={removeCategory}
+                      handleUpdate={updateCategory}
                     />
                   ) : (
                     <span key={`${category.id}-${label}-${category[label]}`}>
@@ -194,10 +151,15 @@ export default function Categories() {
             maxWidth={500}
             previousLabel="<"
             nextLabel=">"
-            onPageChange={pageNumber => updatePageCategories(pageNumber - 1)}
+            onPageChange={pageNumber => updatePageIndex(pageNumber - 1)}
           />
         </div>
       )}
     </Container>
   );
 }
+
+const mapStateToProps = ({ categories, categoryTypes }) => ({ categories, categoryTypes });
+
+export default connect(mapStateToProps)(Categories);
+

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { connect, useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
@@ -16,10 +16,7 @@ import ActiveSwitch from '../components/ActiveSwitch';
 // Styles, utils, and other helpers.
 import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 
-export async function loader() {
-  const { data: categoryTypes } = await new CategoryTypeUtil().findAll({ order: { column: 'title' } });
-  return { categoryTypes };
-}
+const categoryTypeUtil = new CategoryTypeUtil();
 
 const tableColumns = [{
   label: 'title',
@@ -32,82 +29,45 @@ const tableColumns = [{
   Component: Actions
 }];
 
-export default function CategoryTypes() {
-  const [categoryTypes, setCategoryTypes] = useState(useLoaderData().categoryTypes);
-  const [rowLimit, setRowLimit] = useState(25);
-  const [pageCount, setPageCount] = useState(Math.ceil(categoryTypes.length / rowLimit));
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageTypes, setPageTypes] = useState(categoryTypes.slice(0, rowLimit));
+function CategoryTypes(props) {
+  const { categoryTypes } = props;
 
-  const allTypes = useLoaderData().categoryTypes;
-  const categoryTypeUtil = new CategoryTypeUtil();
+  const dispatch = useDispatch();
+
+  const [rowLimit, setRowLimit] = useState(25);
+  const [pageIndex, setPageIndex] = useState(0);
 
   const getTypes = async queryParams => {
-    const { data: categoryTypes } = await categoryTypeUtil.findAll(queryParams);
-    setCategoryTypes(categoryTypes);
-
-    const updatedPageTypes = categoryTypes.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-    setPageTypes(updatedPageTypes);
-
-    setPageCount(Math.ceil(categoryTypes.length / rowLimit));
+    const { data } = await categoryTypeUtil.findAll(queryParams);
+    dispatch({ type: 'STORE_CATEGORY_TYPES', payload: data });
   };
 
-  const addType = newType => {
-    const updatedTypes = [...categoryTypes, newType];
-    setCategoryTypes(updatedTypes);
-
-    const updatedPageTypes = updatedTypes.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-    setPageTypes(updatedPageTypes);
-
-    setPageCount(Math.ceil(updatedTypes.length / rowLimit));
+  const addType = async newType => {
+    const { data } = await categoryTypeUtil.create(newType);
+    dispatch({ type: 'ADD_CATEGORY_TYPE', payload: data });
   };
 
   const updateType = updatedType => {
-    const { id: updatedId } = updatedType;
-    categoryTypeUtil.update(updatedId, updatedType);
-
-    const updatedTypes = [...categoryTypes];
-    for (let i = 0; i < updatedTypes.length; i++) {
-      const categoryType = updatedTypes[i];
-
-      if (categoryType.id === updatedId) {
-        updatedTypes[i] = { ...categoryType, ...updatedType };
-      }
-    }
-
-    updatePageTypes(pageIndex, updatedTypes);
-    setCategoryTypes([...updatedTypes]);
+    categoryTypeUtil.update(updatedType.id, updatedType);
+    dispatch({ type: 'UPDATE_CATEGORY_TYPE', payload: updatedType });
   };
 
   const removeType = typeId => {
     categoryTypeUtil.delete(typeId);
-
-    const filteredTypes = categoryTypes.filter(({ id }) => id !== typeId);
-    setCategoryTypes([...filteredTypes]);
-
-    let updatedPageTypes = filteredTypes
-      .slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-
-    if (updatedPageTypes.length === 0) {
-      updatedPageTypes = filteredTypes
-        .slice((pageIndex - 1) * rowLimit, ((pageIndex - 1) * rowLimit) + rowLimit);
-
-      setPageIndex(pageIndex - 1);
-    }
-
-    setPageTypes(updatedPageTypes);
-    setPageCount(Math.ceil(filteredTypes.length / rowLimit))
+    dispatch({ type: 'REMOVE_CATEGORY_TYPE', payload: typeId });
   };
 
-  const updatePageTypes = (index, updatedTypes) => {
+  const updatePageIndex = index => {
     if (index < pageCount) {
-      const updatedPageTypes = updatedTypes
-        .slice(index * rowLimit, (index * rowLimit) + rowLimit);
-
-      setPageTypes(updatedPageTypes);
       setPageIndex(index);
     }
   };
+
+  const pageTypes = categoryTypes
+    .slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
+  const pageCount = Math.ceil(categoryTypes.length / rowLimit);
+  const allTypes = [...categoryTypes];
 
   return (
     <Container fluid className="px-0">
@@ -181,10 +141,14 @@ export default function CategoryTypes() {
             maxWidth={500}
             previousLabel="<"
             nextLabel=">"
-            onPageChange={pageNumber => updatePageTypes(pageNumber - 1)}
+            onPageChange={pageNumber => updatePageIndex(pageNumber - 1)}
           />
         </div>
       )}
     </Container>
   );
 }
+
+const mapStateToProps = ({ categoryTypes }) => ({ categoryTypes });
+
+export default connect(mapStateToProps)(CategoryTypes);

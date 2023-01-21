@@ -9,10 +9,12 @@ import MasterPage from './pages/MasterPage';
 
 // Reducers.
 import categoriesReducer from './reducers/categories';
+import categoryTypesReducer from './reducers/categoryTypes';
 import productsReducer from './reducers/products';
 
 const rootReducer = combineReducers({
   categories: categoriesReducer,
+  categoryTypes: categoryTypesReducer,
   products: productsReducer,
 });
 

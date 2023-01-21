@@ -63,14 +63,14 @@ function Products(props) {
     dispatch({ type: 'ADD_PRODUCT', payload: data });
   };
 
-  const removeProduct = productId => {
-    productUtil.delete(productId);
-    dispatch({ type: 'REMOVE_PRODUCT', payload: productId });
-  };
-
   const updateProduct = updatedProduct => {
     productUtil.update(updatedProduct.id, updatedProduct);
     dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
+  };
+
+  const removeProduct = productId => {
+    productUtil.delete(productId);
+    dispatch({ type: 'REMOVE_PRODUCT', payload: productId });
   };
 
   const updatePageIndex = index => {
@@ -79,7 +79,9 @@ function Products(props) {
     }
   };
 
-  const pageProducts = products.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit)
+  const pageProducts = products
+    .slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
   const pageCount = Math.ceil(products.length / rowLimit);
 
   return (
