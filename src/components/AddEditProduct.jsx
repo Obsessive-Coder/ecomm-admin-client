@@ -14,7 +14,6 @@ import ImageUpload from './ImageUpload';
 
 // Styles, utils, and other helpers.
 import FileUtil from '../utils/api/FIleUtil';
-import ProductUtil from '../utils/api/ProductUtil';
 
 export default function AddEditProduct(props) {
   const {
@@ -50,7 +49,6 @@ export default function AddEditProduct(props) {
   const [isActive, setIsActive] = useState(product?.id ? product?.active ?? false : true)
 
   const fileUtil = new FileUtil();
-  const productUtil = new ProductUtil();
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -79,12 +77,10 @@ export default function AddEditProduct(props) {
 
     if (product.id) {
       // Update the product.
-      productUtil.update(product.id, updatedProduct);
       updateItem(updatedProduct);
     } else {
       // Create a new product.
-      const { data } = await productUtil.create(updatedProduct);
-      addItem(data);
+      addItem(updatedProduct);
     }
 
     handleHide();

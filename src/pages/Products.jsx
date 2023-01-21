@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLoaderData } from 'react-router-dom';
+import { connect, useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
@@ -15,18 +15,9 @@ import ActiveSwitch from '../components/ActiveSwitch';
 import ViewLink from '../components/ViewLink';
 
 // Style, utils, and other helpers.
-import CategoryUtil from '../utils/api/CategoryUtil';
 import ProductUtil from '../utils/api/ProductUtil';
 
-export async function loader() {
-  const { data: categories } = await new CategoryUtil()
-    .findAll({ order: { column: 'title' } });
-
-  const { data: products } = await new ProductUtil()
-    .findAll({ order: { column: 'title' } });
-
-  return { categories, products };
-}
+const productUtil = new ProductUtil();
 
 const tableColumns = [{
   label: 'title',
@@ -54,83 +45,42 @@ const tableColumns = [{
   Component: Actions
 }];
 
-export default function Products() {
-  const categories = useLoaderData().categories;
-  const [products, setProducts] = useState(useLoaderData().products);
+function Products(props) {
+  const { categories, products } = props;
+
+  const dispatch = useDispatch();
+
   const [rowLimit, setRowLimit] = useState(25);
-  const [pageCount, setPageCount] = useState(Math.ceil(products.length / rowLimit));
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageProducts, setPageProducts] = useState(products.slice(0, rowLimit));
 
   const getProducts = async queryParams => {
-    const { data: products } = await new ProductUtil().findAll(queryParams);
-    setProducts(products);
-
-    const updatedPageProducts = products.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-    setPageProducts(updatedPageProducts);
-
-    setPageCount(Math.ceil(products.length / rowLimit));
+    const { data } = await productUtil.findAll(queryParams);
+    dispatch({ type: 'STORE_PRODUCTS', payload: data });
   }
 
-  const addProduct = newProduct => {
-    const updatedProducts = [...products, newProduct];
-    setProducts(updatedProducts);
-
-    const updatedPageProducts = updatedProducts.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-    setPageProducts(updatedPageProducts);
-
-    setPageCount(Math.ceil(updatedProducts.length / rowLimit));
+  const addProduct = async newProduct => {
+    const { data } = await productUtil.create(newProduct);
+    dispatch({ type: 'ADD_PRODUCT', payload: data });
   };
 
   const removeProduct = productId => {
-    const filteredProducts = products.filter(({ id }) => id !== productId);
-    setProducts([...filteredProducts]);
-
-    let updatedPageProducts = filteredProducts.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-
-    if (updatedPageProducts.length === 0) {
-      updatedPageProducts = filteredProducts.slice((pageIndex - 1) * rowLimit, ((pageIndex - 1) * rowLimit) + rowLimit);
-
-      setPageIndex(pageIndex - 1);
-    }
-
-    setPageProducts(updatedPageProducts);
-    setPageCount(Math.ceil(filteredProducts.length / rowLimit))
+    productUtil.delete(productId);
+    dispatch({ type: 'REMOVE_PRODUCT', payload: productId });
   };
 
   const updateProduct = updatedProduct => {
-    new ProductUtil().update(updatedProduct.id, updatedProduct);
-
-    const updatedProducts = [...products];
-
-    for (let i = 0; i < updatedProducts.length; i++) {
-      const currentProduct = updatedProducts[i];
-
-      if (currentProduct.id === updatedProduct.id) {
-        updatedProducts[i] = { ...currentProduct, ...updatedProduct };
-      }
-    }
-
-    const updatedPageProducts = [...pageProducts];
-    for (let j = 0; j < updatedPageProducts.length; j++) {
-      const pageProduct = updatedPageProducts[j];
-
-      if (pageProduct.id === updatedProduct.id) {
-        updatedPageProducts[j] = { ...pageProduct, ...updatedProduct };
-      }
-    }
-
-    setProducts([...updatedProducts]);
-    setPageProducts([...updatedPageProducts]);
+    productUtil.update(updatedProduct.id, updatedProduct);
+    dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
   };
 
-  const updatePageProducts = index => {
+  const updatePageIndex = index => {
     if (index < pageCount) {
-      const updatedPageProducts = products.slice(index * rowLimit, (index * rowLimit) + rowLimit);
-      setPageProducts(updatedPageProducts);
       setPageIndex(index);
     }
   };
+
+  const pageProducts = products.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit)
+  const pageCount = Math.ceil(products.length / rowLimit);
 
   return (
     <Container fluid className="px-0">
@@ -213,10 +163,14 @@ export default function Products() {
             maxWidth={500}
             previousLabel="<"
             nextLabel=">"
-            onPageChange={pageNumber => updatePageProducts(pageNumber - 1)}
+            onPageChange={pageNumber => updatePageIndex(pageNumber - 1)}
           />
         </div>
       )}
     </Container >
   )
 }
+
+const mapStateToProps = ({ categories, products }) => ({ categories, products });
+
+export default connect(mapStateToProps)(Products);

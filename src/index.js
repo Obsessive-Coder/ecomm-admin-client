@@ -1,14 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import "bootswatch/dist/slate/bootstrap.min.css";
-import reportWebVitals from './reportWebVitals';
+import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
 
+import reportWebVitals from './reportWebVitals';
 import MasterPage from './pages/MasterPage';
 
+// Reducers.
+import categoriesReducer from './reducers/categories';
+import productsReducer from './reducers/products';
+
+const rootReducer = combineReducers({
+  categories: categoriesReducer,
+  products: productsReducer,
+});
+
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <MasterPage />
+    <Provider store={store}>
+      <MasterPage />
+    </Provider>
   </React.StrictMode>
 );
 

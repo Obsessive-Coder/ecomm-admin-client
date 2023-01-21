@@ -12,9 +12,6 @@ import AddEditOrder from './AddEditOrder';
 import AddEditProduct from './AddEditProduct';
 import Confirm from './Confirm';
 
-// Styles, utils, and other helpers.
-import ProductUtil from '../utils/api/ProductUtil';
-
 export default function Actions(props) {
   const {
     item, categories, removeItem, type = "product", isEdit = true,
@@ -22,8 +19,6 @@ export default function Actions(props) {
   } = props;
 
   const handleDelete = () => {
-    const productUtil = new ProductUtil();
-    productUtil.delete(item.id);
     removeItem(item.id);
   };
 
