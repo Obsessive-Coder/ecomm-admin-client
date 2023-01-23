@@ -91,7 +91,7 @@ export default function OrderItems(props) {
                   </Button>
 
                   <Form.Select
-                    key={`quantity-${quantity}`}
+                    key={`quantity-${quantity}-${id}`}
                     name="quantity"
                     defaultValue={quantity}
                     data-product-id={productId}
