@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { connect, useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
@@ -16,15 +16,10 @@ import ViewLink from '../components/ViewLink';
 
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
-import OrderStatusUtil from '../utils/api/OrderStatusUtil';
 import ProductUtil from '../utils/api/ProductUtil';
 
-export async function loader() {
-  const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
-  const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
-  const { data: statuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
-  return { orders, products, statuses }
-}
+const orderUtil = new OrderUtil();
+const productUtil = new ProductUtil();
 
 const tableColumns = [{
   label: 'date',
@@ -58,80 +53,57 @@ const tableColumns = [{
   Component: Actions
 }];
 
-export default function Orders() {
-  const { products, statuses } = useLoaderData();
-  const [orders, setOrders] = useState(useLoaderData().orders);
+function Orders(props) {
+  const { orders, orderStatuses, products } = props;
+
+  const dispatch = useDispatch();
 
   const [rowLimit, setRowLimit] = useState(25);
-  const [pageCount, setPageCount] = useState(Math.ceil(orders.length / rowLimit));
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageOrders, setPageOrders] = useState(orders.slice(0, rowLimit));
 
-  const orderUtil = new OrderUtil();
-
-  const getOrders = async queryParams => {
-    const { data: orders } = await orderUtil.findAll(queryParams);
-    setOrders([...orders]);
-
-    const updatedPageOrders = orders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + 1);
-    setPageOrders(updatedPageOrders);
-
-    setPageCount(Math.ceil(orders.length / rowLimit));
+  const getOrders = async (queryParams = { order: { column: 'updatedAt' } }) => {
+    const { data } = await orderUtil.findAll(queryParams);
+    dispatch({ type: 'STORE_ORDERS', payload: data });
   };
 
-  const addOrder = newOrder => {
-    const updatedOrders = [...orders, newOrder];
-    setOrders(updatedOrders);
+  const getProducts = async () => {
+    setTimeout(async () => {
+      const { data } = await productUtil.findAll({ order: { column: 'title' } });
+      dispatch({ type: 'STORE_PRODUCTS', payload: [...data] });
+    }, 1000);
+  }
 
-    const updatedPageOrders = updatedOrders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + 1);
-    setPageOrders(updatedPageOrders);
-
-    setPageCount(Math.ceil(updatedOrders.length / rowLimit));
+  const addOrder = async newOrder => {
+    // const { data } = await orderUtil.create(newOrder);
+    dispatch({ type: 'ADD_ORDER', payload: newOrder });
+    await getProducts();
+    await getOrders();
   };
 
-  const updateOrder = updatedOrder => {
-    console.log(updatedOrder)
-    const { id: updatedId } = updatedOrder;
-    orderUtil.update(updatedId, updatedOrder);
-
-    const updatedOrders = [...orders];
-    for (let i = 0; i < updatedOrders.length; i++) {
-      const order = updatedOrders[i];
-
-      if (order.id === updatedId) {
-        updatedOrders[i] = { ...order, ...updatedOrder };
-      }
-    }
-
-    updatePageOrders(pageIndex, updatedOrders);
-    setOrders([...updatedOrders]);
+  const updateOrder = async updatedOrder => {
+    //await orderUtil.update(updatedOrder.id, updatedOrder);
+    dispatch({ type: 'UPDATE_ORDER', payload: updatedOrder });
+    getProducts();
+    getOrders();
   };
 
-  const removeOrder = orderId => {
-    orderUtil.delete(orderId);
-
-    const filteredOrders = orders.filter(({ id }) => id !== orderId);
-    setOrders([...filteredOrders]);
-
-    let updatedPageOrders = filteredOrders.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-
-    if (updatedPageOrders.length === 0) {
-      updatedPageOrders = filteredOrders.slice((pageIndex - 1) * rowLimit, ((pageIndex - 1) * rowLimit) + rowLimit);
-      setPageIndex(pageIndex - 1);
-    }
-
-    setPageOrders(updatedPageOrders);
-    setPageCount(Math.ceil(filteredOrders.length / rowLimit));
+  const removeOrder = async orderId => {
+    await orderUtil.delete(orderId);
+    dispatch({ type: 'REMOVE_ORDER', payload: orderId });
+    getProducts();
+    getOrders();
   };
 
-  const updatePageOrders = (index, updatedOrders) => {
+  const updatePageIndex = index => {
     if (index < pageCount) {
-      const updatedPageOrders = updatedOrders.slice(index * rowLimit, (index * rowLimit) + rowLimit);
-
-      setPageOrders(updatedPageOrders);
       setPageIndex(index);
     }
   };
+
+  const pageOrders = orders
+    .slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+
+  const pageCount = Math.ceil(products.length / rowLimit);
 
   return (
     <Container fluid className="px-0">
@@ -142,7 +114,7 @@ export default function Orders() {
         isSearchVisible={true}
         isSortVisible={true}
         categories={orders}
-        statuses={statuses}
+        statuses={orderStatuses}
         products={products}
         addItem={addOrder}
         getItems={getOrders}
@@ -173,7 +145,7 @@ export default function Orders() {
                       type="order"
                       toUrl={`/orders/${order.id}`}
                       status={order.status}
-                      statuses={statuses}
+                      statuses={orderStatuses}
                       products={products}
                       removeItem={removeOrder}
                       handleUpdate={updateOrder}
@@ -216,10 +188,14 @@ export default function Orders() {
             maxWidth={500}
             previousLabel="<"
             nextLabel=">"
-            onPageChange={pageNumber => updatePageOrders(pageNumber - 1, orders)}
+            onPageChange={pageNumber => updatePageIndex(pageNumber - 1, orders)}
           />
         </div>
       )}
     </Container >
   );
 }
+
+const mapStateToProps = ({ orders, orderStatuses, products }) => ({ orders, orderStatuses, products });
+
+export default connect(mapStateToProps)(Orders);

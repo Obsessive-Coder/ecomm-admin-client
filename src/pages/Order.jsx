@@ -52,7 +52,7 @@ export default function Order() {
     payment,
     shipping,
     total,
-    orderItems = [],
+    items = [],
   } = order;
 
   const updateOrder = updatedOrder => {
@@ -133,7 +133,7 @@ export default function Order() {
         </thead>
 
         <tbody>
-          {orderItems.map(({ ...item }) => (
+          {items.map(({ ...item }) => (
             <tr key={`${item.id}`}>
               {tableColumns.map(({ label, key, Component }, index) => (
                 <td key={`${item.id}-${label}`} style={{ maxWidth: 200 }} className="text-truncate">

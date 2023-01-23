@@ -13,7 +13,7 @@ import Dashboard from './Dashboard';
 import Categories from './Categories';
 import CategoryTypes from './CategoryTypes';
 import Order, { loader as orderLoader } from './Order';
-import Orders, { loader as ordersLoader } from './Orders';
+import Orders from './Orders';
 import Product, { loader as productLoader } from './Product';
 import Products from './Products';
 import Error404 from './Error404';
@@ -22,6 +22,8 @@ import Sidebar from '../components/Sidebar';
 // Style, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
 import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
+import OrderUtil from '../utils/api/OrderUtil';
+import OrderStatusUtil from '../utils/api/OrderStatusUtil';
 import ProductUtil from '../utils/api/ProductUtil';
 
 const router = createBrowserRouter([{
@@ -44,8 +46,7 @@ const router = createBrowserRouter([{
   element: <CategoryTypes />
 }, {
   path: '/orders',
-  element: <Orders />,
-  loader: ordersLoader
+  element: <Orders />
 },
 {
   path: '/orders/:orderId',
@@ -73,9 +74,13 @@ function AuthRoutes(props) {
 
       dispatch({ type: 'STORE_CATEGORY_TYPES', payload: [...categoryTypes] });
 
-      const { data: products } = await new ProductUtil()
-        .findAll({ order: { column: 'title' } });
+      const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
+      dispatch({ type: 'STORE_ORDERS', payload: [...orders] });
 
+      const { data: orderStatuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
+      dispatch({ type: 'STORE_ORDER_STATUSES', payload: orderStatuses });
+
+      const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
       dispatch({ type: 'STORE_PRODUCTS', payload: [...products] });
     })();
   });

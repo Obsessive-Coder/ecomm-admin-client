@@ -10,11 +10,15 @@ import MasterPage from './pages/MasterPage';
 // Reducers.
 import categoriesReducer from './reducers/categories';
 import categoryTypesReducer from './reducers/categoryTypes';
+import ordersReducer from './reducers/orders';
+import orderStatusesReducer from './reducers/orderStatuses';
 import productsReducer from './reducers/products';
 
 const rootReducer = combineReducers({
   categories: categoriesReducer,
   categoryTypes: categoryTypesReducer,
+  orders: ordersReducer,
+  orderStatuses: orderStatusesReducer,
   products: productsReducer,
 });
 

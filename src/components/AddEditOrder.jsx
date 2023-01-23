@@ -16,6 +16,9 @@ import OrderItems from './OrderItems';
 import OrderUtil from '../utils/api/OrderUtil';
 import OrderItemUtil from '../utils/api/OrderItemUtil';
 
+const orderUtil = new OrderUtil();
+const orderItemUtil = new OrderItemUtil();
+
 export default function AddEditOrder(props) {
   const {
     order = {},
@@ -38,7 +41,7 @@ export default function AddEditOrder(props) {
   }, {
     recipient: 'required',
     address: 'required',
-    phone: 'required',
+    phone: 'required|numeric|digits_between:10,12',
     shipping: 'required',
     payment: 'required',
     status: 'required'
@@ -48,68 +51,89 @@ export default function AddEditOrder(props) {
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
+  const [orderItems, setOrderItems] = useState(order?.items ?? []);
+
   const handleCancelClick = () => {
     fields.address = order.address ?? '';
     fields.phone = order.phone ?? '';
     fields.payment = order.payment ?? '';
     fields.status = order.status_id ?? '';
+    fields.recipient = order.recipient_name ?? '';
+    fields.shipping = Number.parseFloat(order.shipping ?? 0).toFixed(2);
 
-    setOrderItems(order.items);
+    setOrderItems(order?.items ?? []);
     handleHide();
   }
 
-  const [orderItems, setOrderItems] = useState(order?.items ?? []);
-  const addItems = function (items = []) {
+  const addItems = (items = []) => {
     setOrderItems([...orderItems, ...items]);
   };
 
   const removeItems = productIds => {
-    const updatedOrderItems = orderItems.filter(({ Product: { id } }) => !productIds.includes(id));
+    const updatedOrderItems = orderItems
+      .filter(({ product_id }) => !productIds.includes(product_id));
     setOrderItems(updatedOrderItems);
   };
 
   const updateItemQuantity = event => {
     const { target } = event;
     const productId = target.getAttribute('data-product-id');
-    const quantity = parseInt(target.value);
+    let amount = target.getAttribute('data-amount');
+    const isIncrementDecrement = amount !== null;
+
+    if (!isIncrementDecrement) {
+      amount = target.value
+    }
 
     const updatedItems = [...orderItems];
 
     for (let i = 0; i < updatedItems.length; i++) {
       const item = updatedItems[i];
 
-      if (item.Product.id === productId) {
-        updatedItems[i].quantity = quantity;
+      if (item.product_id === productId) {
+        const { quantity: productQuantity } = products
+          .filter(({ id }) => id === productId)[0];
+
+        const availableQuantity = order?.id === undefined ? productQuantity : productQuantity + item.quantity;
+
+        const newQuantity = isIncrementDecrement ? parseInt(item.quantity) + parseInt(amount) : parseInt(amount);
+
+        if (newQuantity >= 1 && newQuantity <= availableQuantity) {
+          updatedItems[i].quantity = newQuantity;
+        }
       }
     }
 
     setOrderItems(updatedItems);
   };
 
-  const orderUtil = new OrderUtil();
-  const orderItemUtil = new OrderItemUtil();
-
   const handleSubmit = async event => {
     event.preventDefault();
-
-    const { address, phone, shipping, recipient, payment, status } = fields;
 
     const isValid = await form.validate(event);
     if (!isValid || orderItems.length === 0) return;
 
-    const updatedOrder = {
-      ...order,
+    const { address, phone, payment, shipping, recipient: recipient_name, status: status_id } = fields;
+
+    const { id: orderId } = order;
+
+    let updatedOrder = {
       address,
       phone,
-      shipping,
       payment,
-      recipient_name: recipient,
-      status_id: status
+      shipping,
+      recipient_name,
+      status_id,
     };
 
-    if (order.id) {
+    if (orderId) {
       // Update the order.
-      updateItem({ ...updatedOrder });
+      updatedOrder = {
+        ...updatedOrder,
+        id: orderId,
+      };
+
+      await orderUtil.update(updatedOrder.id, updatedOrder);
 
       const updatedOrderItemIds = orderItems.map(({ id }) => id);
       const deletedItemIds = order.items
@@ -117,55 +141,57 @@ export default function AddEditOrder(props) {
         .map(({ id }) => id);
 
       if (deletedItemIds.length > 0) {
-        await deletedItemIds.map(itemId => orderItemUtil.delete(itemId));
-        if (orderItems.length === 0) {
-          await orderUtil.delete(order.id);
-        }
+        await Promise(deletedItemIds.map(async itemId => await orderItemUtil.delete(itemId)));
       }
 
       const newItems = orderItems
         .filter(({ id }) => !id)
-        .map(({ quantity, item_price, Product: { id: product_id } }) => ({
+        .map(({ quantity, item_price, product_id }) => ({
           product_id,
           item_price,
           quantity,
-          order_id: order.id
+          order_id: orderId
         }));
 
       if (newItems.length > 0) {
-        await newItems.map(item => orderItemUtil.create(item));
+        await Promise(newItems.map(async item => await orderItemUtil.create(item)));
       }
 
       if (updatedOrderItemIds.length > 0) {
         const updatedItems = orderItems
           .filter(({ id }) => updatedOrderItemIds.includes(id))
-          .map(({ id, quantity, item_price, Product: { id: product_id } }) => ({
+          .map(({ id, quantity, item_price, product_id }) => ({
             id,
             product_id,
             item_price,
             quantity,
-            order_id: order.id
+            order_id: orderId
           }));
 
-        await updatedItems.map(item => orderItemUtil.update(item.id, item));
+        await Promise.all(updatedItems.map(async item => await orderItemUtil.update(item.id, item)));
       }
+
+      const { data: newOrder } = await orderUtil.findOne(orderId);
+      updateItem(newOrder);
     } else {
       // Create a new order.
       const { data } = await orderUtil.create(updatedOrder);
-      addItem(data);
 
       const newItems = orderItems
-        .map(({ quantity, item_price, Product: { id: product_id } }) => ({
+        .map(({ quantity, item_price, product_id }) => ({
           product_id,
           item_price,
           quantity,
-          order_id: data.id
+          order_id: data.id,
         }));
 
-      await newItems.map(item => orderItemUtil.create(item));
+      await Promise.all(newItems.map(async item => await orderItemUtil.create(item)));
+
+      const { data: newOrder } = await orderUtil.findOne(data.id);
+      addItem(newOrder);
     }
 
-    handleHide();
+    handleCancelClick();
   };
 
   return (
@@ -189,6 +215,7 @@ export default function AddEditOrder(props) {
         <Offcanvas.Body className="overflow-hidden p-0">
           <Form
             noValidate
+            autoComplete="off"
             onSubmit={handleSubmit}
             className="position-relative h-100"
           >
@@ -342,7 +369,7 @@ export default function AddEditOrder(props) {
                     isExistingOrder={order.id !== undefined}
                     products={products}
                     existingItems={order.items ? order.items : []}
-                    addItems={addItems}
+                    addItems={addItems.bind(this)}
                     removeItems={removeItems}
                     updateItemQuantity={updateItemQuantity}
                   />
