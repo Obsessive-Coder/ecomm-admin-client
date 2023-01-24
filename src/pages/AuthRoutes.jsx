@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
 
 // Router components and helpers.
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+// Firebase.
+import firebase from 'firebase/compat/app';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 
 // Custom Components.
-import MainHeader from '../components/MainHeader';
-import Dashboard from './Dashboard';
+// Custom Components.
 import Categories from './Categories';
 import CategoryTypes from './CategoryTypes';
+import Dashboard, { dashboardLoader } from './Dashboard';
+import Error404 from './Error404';
+import Login from './Login';
+import MasterPage, { masterPageLoader } from './MasterPage'
 import Order, { loader as orderLoader } from './Order';
 import Orders from './Orders';
 import Product, { loader as productLoader } from './Product';
 import Products from './Products';
-import Error404 from './Error404';
-import Sidebar from '../components/Sidebar';
-
-// Style, utils, and other helpers.
-import CategoryUtil from '../utils/api/CategoryUtil';
-import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
-import OrderUtil from '../utils/api/OrderUtil';
-import OrderStatusUtil from '../utils/api/OrderStatusUtil';
-import ProductUtil from '../utils/api/ProductUtil';
 
 const router = createBrowserRouter([{
   path: '/',
@@ -32,7 +29,8 @@ const router = createBrowserRouter([{
   errorElement: <Error404 />,
 }, {
   path: '/products',
-  element: <Products />
+  element: <Products />,
+  errorElement: <Error404 />,
 }, {
   path: '/products/:productId',
   element: <Product />,
@@ -40,68 +38,67 @@ const router = createBrowserRouter([{
   loader: productLoader
 }, {
   path: '/categories',
-  element: <Categories />
+  element: <Categories />,
+  errorElement: <Error404 />,
 }, {
   path: '/category-types',
-  element: <CategoryTypes />
+  element: <CategoryTypes />,
+  errorElement: <Error404 />,
 }, {
   path: '/orders',
-  element: <Orders />
+  element: <Orders />,
+  errorElement: <Error404 />,
 },
 {
   path: '/orders/:orderId',
   element: <Order />,
+  errorElement: <Error404 />,
   loader: orderLoader
 }]);
 
-function AuthRoutes(props) {
-  const { handleLogout } = props;
+export default function AuthRoutes(props) {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDNCKU_ztvevPFell0ItLvZHj5LXMXvDrM",
+    authDomain: "admin-site-7045f.firebaseapp.com",
+    projectId: "admin-site-7045f",
+    storageBucket: "admin-site-7045f.appspot.com",
+    messagingSenderId: "132117631723",
+    appId: "1:132117631723:web:0aef2bf89067b71131a4ae",
+    measurementId: "G-KE2FHM4V1P"
+  };
 
-  const dispatch = useDispatch();
+  firebase.initializeApp(firebaseConfig);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const toggleSidebarIsOpen = () => setIsSidebarOpen(!isSidebarOpen);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
+
+  const handleLogout = () => {
+    firebase.auth().signOut();
+    setUser({});
+    localStorage.setItem('user', JSON.stringify({}));
+  };
 
   useEffect(() => {
-    (async () => {
-      const { data: categories } = await new CategoryUtil()
-        .findAll({ order: { column: 'title' } });
+    onAuthStateChanged(firebase.auth(), user => {
+      let sessionUser = {};
 
-      dispatch({ type: 'STORE_CATEGORIES', payload: [...categories] });
+      if (user) {
+        sessionUser = { email: user.email, uid: user.uid };
+      }
 
-      const { data: categoryTypes } = await new CategoryTypeUtil()
-        .findAll({ order: { column: 'title' } });
-
-      dispatch({ type: 'STORE_CATEGORY_TYPES', payload: [...categoryTypes] });
-
-      const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
-      dispatch({ type: 'STORE_ORDERS', payload: [...orders] });
-
-      const { data: orderStatuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
-      dispatch({ type: 'STORE_ORDER_STATUSES', payload: orderStatuses });
-
-      const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
-      dispatch({ type: 'STORE_PRODUCTS', payload: [...products] });
-    })();
-  });
+      setUser(sessionUser);
+      localStorage.setItem('user', JSON.stringify(sessionUser));
+    });
+  }, [user.email]);
 
   return (
-    <div>
-      <MainHeader handleOpenSidebar={toggleSidebarIsOpen} />
-
-      <div id="sidebar no-print">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          handleClose={toggleSidebarIsOpen}
-          handleLogout={handleLogout}
-        />
-      </div>
-
-      <Container fluid className="page-content mb-5">
-        <RouterProvider router={router} />
-      </Container>
-    </div>
+    <Container fluid>
+      {user.email ? (
+        <MasterPage handleLogout={handleLogout}>
+          <RouterProvider router={router} />
+        </MasterPage>
+      ) : (
+        <Login auth={firebase.auth()} />
+      )}
+    </Container>
   );
 }
-
-export default connect()(AuthRoutes);

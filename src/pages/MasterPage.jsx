@@ -1,58 +1,68 @@
 import React, { useEffect, useState } from 'react';
-import firebase from 'firebase/compat/app';
-import { onAuthStateChanged } from 'firebase/auth';
+import { connect, useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 
-// Custom components.
-import AuthRoutes from './AuthRoutes';
-import Login from './Login';
+// Custom Components.
+import MainHeader from '../components/MainHeader';
+import Sidebar from '../components/Sidebar';
 
-// Styles, utils, and other helpers.
+// Style, utils, and other helpers.
+import CategoryUtil from '../utils/api/CategoryUtil';
+import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
+import OrderUtil from '../utils/api/OrderUtil';
+import OrderStatusUtil from '../utils/api/OrderStatusUtil';
+import ProductUtil from '../utils/api/ProductUtil';
+import { storeItems } from '../reducers/categoryTypes';
 import '../style.css';
 
-export default function MasterPage() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyDNCKU_ztvevPFell0ItLvZHj5LXMXvDrM",
-    authDomain: "admin-site-7045f.firebaseapp.com",
-    projectId: "admin-site-7045f",
-    storageBucket: "admin-site-7045f.appspot.com",
-    messagingSenderId: "132117631723",
-    appId: "1:132117631723:web:0aef2bf89067b71131a4ae",
-    measurementId: "G-KE2FHM4V1P"
-  };
+export async function masterPageLoader({ params }) {
+  console.log('HERE - Master Page: ', params);
+  return null;
+}
 
-  firebase.initializeApp(firebaseConfig);
-
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
-
-  const handleLogout = () => {
-    firebase.auth().signOut();
-    setUser({});
-    localStorage.setItem('user', JSON.stringify({}));
-  };
+function MasterPage({ children, handleLogout }) {
+  const dispatch = useDispatch();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebarIsOpen = () => setIsSidebarOpen(!isSidebarOpen);
 
   useEffect(() => {
-    onAuthStateChanged(firebase.auth(), user => {
-      let sessionUser = {};
+    (async () => {
+      const { data: categories } = await new CategoryUtil()
+        .findAll({ order: { column: 'title' } });
+      dispatch({ type: 'STORE_CATEGORIES', payload: [...categories] });
 
-      if (user) {
-        sessionUser = { email: user.email, uid: user.uid };
-      }
+      // const { data: categoryTypes } = await new CategoryTypeUtil()
+      //   .findAll({ order: { column: 'title' } });
+      // dispatch(storeItems(categoryTypes));
 
-      setUser(sessionUser);
-      localStorage.setItem('user', JSON.stringify(sessionUser));
-    });
-  }, [user.email]);
+      const { data: orders } = await new OrderUtil().findAll({ order: { column: 'createdAt' } });
+      dispatch({ type: 'STORE_ORDERS', payload: [...orders] });
+
+      const { data: orderStatuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
+      dispatch({ type: 'STORE_ORDER_STATUSES', payload: orderStatuses });
+
+      const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
+      dispatch({ type: 'STORE_PRODUCTS', payload: [...products] });
+    })();
+  });
 
   return (
     <Container fluid>
-      {user.email ? (
-        <AuthRoutes handleLogout={handleLogout} />
-      ) : (
-        <Login auth={firebase.auth()} />
-      )}
+      <MainHeader handleOpenSidebar={toggleSidebarIsOpen} />
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        handleClose={toggleSidebarIsOpen}
+        handleLogout={handleLogout}
+      />
+
+      <Container fluid className="page-content mb-5">
+        {children}
+      </Container>
     </Container>
   )
 }
+
+export default connect()(MasterPage);

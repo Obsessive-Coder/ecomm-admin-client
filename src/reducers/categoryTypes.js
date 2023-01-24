@@ -1,34 +1,33 @@
-export default function categoryTypesReducer(state = [], action) {
-  const { payload, type } = action;
-  let updatedCategoryTypes = [...state];
+import { createSlice } from '@reduxjs/toolkit'
 
-  switch (type) {
-    case 'STORE_CATEGORY_TYPES':
-      updatedCategoryTypes = [...payload];
-      break;
-    case 'ADD_CATEGORY_TYPE':
-      updatedCategoryTypes = [...state, payload];
-      break;
-    case 'REMOVE_CATEGORY_TYPE':
-      updatedCategoryTypes = updatedCategoryTypes
-        .filter(({ id }) => id !== payload);
-      break;
-    case 'UPDATE_CATEGORY_TYPE':
-      for (let i = 0; i < updatedCategoryTypes.length; i++) {
-        const categoryType = updatedCategoryTypes[i];
-
+export const categoryTypeSlice = createSlice({
+  name: 'categoryTypes',
+  initialState: { value: [] },
+  reducers: {
+    storeItems: (state, action) => {
+      state.value = [...action.payload];
+    },
+    addItem: (state, action) => {
+      state.value = [...state.value, action.payload];
+    },
+    updateItem: (state, { payload }) => {
+      state.value = state.value.map(type => {
+        let categoryType = { ...type };
         if (categoryType.id === payload.id) {
-          updatedCategoryTypes[i] = payload
-          break;
+          categoryType = { ...payload };
         }
-      }
-
-      updatedCategoryTypes = [...updatedCategoryTypes]
-      break;
-    default:
-      updatedCategoryTypes = [...state];
-      break;
+        return { ...categoryType };
+      });
+    },
+    removeItem: (state, { payload }) => {
+      state.value = state.value.filter(({ id }) => id !== payload);
+    }
   }
+})
 
-  return [...updatedCategoryTypes];
-};
+// Action creators are generated for each case reducer function
+export const { storeItems, addItem, updateItem, removeItem } = categoryTypeSlice.actions;
+
+export const { actions: reduxActions } = categoryTypeSlice;
+
+export default categoryTypeSlice.reducer;

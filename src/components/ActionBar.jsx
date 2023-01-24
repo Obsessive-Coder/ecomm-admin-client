@@ -151,7 +151,7 @@ export default function ActionBar(props) {
             />
           )}
 
-          {(type === 'category' || type === 'categoryTypes') && (
+          {(type === 'category' || type === 'category-types') && (
             <AddEditCategory
               categories={categories}
               categoryTypes={categoryTypes}

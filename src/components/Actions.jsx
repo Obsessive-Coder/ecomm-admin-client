@@ -37,7 +37,7 @@ export default function Actions(props) {
             />
           )}
 
-          {(type === 'category' || type === 'categoryTypes') && (
+          {(type === 'category' || type === 'category-types') && (
             <AddEditCategory
               buttonContent={<EditIcon />}
               category={item}
