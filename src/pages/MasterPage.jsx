@@ -10,11 +10,9 @@ import Sidebar from '../components/Sidebar';
 
 // Style, utils, and other helpers.
 import CategoryUtil from '../utils/api/CategoryUtil';
-import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
 import OrderUtil from '../utils/api/OrderUtil';
 import OrderStatusUtil from '../utils/api/OrderStatusUtil';
 import ProductUtil from '../utils/api/ProductUtil';
-import { storeItems } from '../reducers/categoryTypes';
 import '../style.css';
 
 export async function masterPageLoader({ params }) {
@@ -29,22 +27,11 @@ function MasterPage({ children, handleLogout }) {
 
   useEffect(() => {
     (async () => {
-      const { data: categories } = await new CategoryUtil()
-        .findAll({ order: { column: 'title' } });
-      dispatch({ type: 'STORE_CATEGORIES', payload: [...categories] });
-
-      // const { data: categoryTypes } = await new CategoryTypeUtil()
-      //   .findAll({ order: { column: 'title' } });
-      // dispatch(storeItems(categoryTypes));
-
       const { data: orders } = await new OrderUtil().findAll({ order: { column: 'createdAt' } });
       dispatch({ type: 'STORE_ORDERS', payload: [...orders] });
 
       const { data: orderStatuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
       dispatch({ type: 'STORE_ORDER_STATUSES', payload: orderStatuses });
-
-      const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
-      dispatch({ type: 'STORE_PRODUCTS', payload: [...products] });
     })();
   });
 

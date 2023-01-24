@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
@@ -18,7 +19,6 @@ import FileUtil from '../utils/api/FIleUtil';
 export default function AddEditProduct(props) {
   const {
     product = {},
-    categories = [],
     buttonContent,
     buttonVariant = 'primary',
     buttonClassName = '',
@@ -39,6 +39,8 @@ export default function AddEditProduct(props) {
     quantity: 'required',
     category: 'required'
   });
+
+  const categories = useSelector(state => state.categories.value);
 
   const [imageData, setImageData] = useState(null);
 

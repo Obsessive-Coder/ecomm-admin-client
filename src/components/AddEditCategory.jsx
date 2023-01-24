@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
@@ -12,7 +13,6 @@ import Row from 'react-bootstrap/Row';
 export default function AddEditCategory(props) {
   const {
     category = {},
-    categoryTypes = [],
     type,
     buttonContent,
     buttonVariant = 'primary',
@@ -29,6 +29,7 @@ export default function AddEditCategory(props) {
     type: 'required'
   });
 
+  const categoryTypes = useSelector(state => state['category-types'].value);
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
@@ -121,7 +122,7 @@ export default function AddEditCategory(props) {
               </Col>
             </Form.Group>
 
-            {type === 'category' && (
+            {type === 'categories' && (
               <Form.Group as={Row} className="mb-3" controlId="typeForm">
                 <Col>
                   <FloatingLabel controlId="type" label="Type">

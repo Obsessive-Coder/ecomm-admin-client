@@ -1,20 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 // Custom Components.
 import PageContent from '../components/PageContent';
 
 // Styles, utils, and other helpers.
-import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
-import { reduxActions } from '../reducers/categoryTypes';
+import { reduxActions } from '../reducers/categoryType';
 
-const categoryTypeUtil = new CategoryTypeUtil();
-
-const actionBarProps = {
-  isAddVisible: true,
-  isSearchVisible: true,
-  isFilterVisible: false,
-  isSortVisible: false
-};
+const actionBarProps = { isSearchVisible: true };
 
 const tableColumns = [{
   label: 'title',
@@ -27,15 +20,19 @@ const tableColumns = [{
   componentName: 'Actions'
 }];
 
-export default function CategoryTypes(props) {
+export default function CategoryTypes() {
+  const dispatch = useDispatch();
+
+  const pageConfig = {
+    actionBarProps: { ...actionBarProps },
+    tableColumns
+  };
+
+  useEffect(() => {
+    dispatch(reduxActions.storeItems());
+  }, []);
+
   return (
-    <PageContent
-      actionBarProps={actionBarProps}
-      apiUtil={categoryTypeUtil}
-      reduxActions={reduxActions}
-      tableColumns={tableColumns}
-    >
-      Category Types
-    </PageContent>
+    <PageContent config={pageConfig} reduxActions={reduxActions} />
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Bootstrap Components.
@@ -12,33 +12,29 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 import ActionBar from './ActionBar';
 import Actions from './Actions';
 import ActiveSwitch from './ActiveSwitch';
+import ViewLink from './ViewLink';
 
 const components = {
   Actions,
   ActiveSwitch,
+  ViewLink,
   Data: ({ value = '' }) => (<span>{value}</span>),
 };
 
 export default function PageContent(props) {
-  const dispatch = useDispatch();
-
   const handleGetItems = async (queryParams = {}) => {
-    const { data } = await apiUtil.findAll(queryParams);
-    dispatch(reduxActions.storeItems(data));
+    dispatch(reduxActions.storeItems(queryParams));
   }
 
   const handleAddItem = async newItem => {
-    const { data } = await apiUtil.create(newItem);
-    dispatch(reduxActions.addItem(data));
+    dispatch(reduxActions.addItem(newItem));
   }
 
   const handleUpdateItem = async updatedItem => {
-    await apiUtil.update(updatedItem.id, updatedItem);
     dispatch(reduxActions.updateItem(updatedItem));
   }
 
   const handleRemoveItem = async itemId => {
-    await apiUtil.delete(itemId);
     dispatch(reduxActions.removeItem(itemId));
   }
 
@@ -49,43 +45,52 @@ export default function PageContent(props) {
     }
   };
 
+  const getCellValue = (item = {}, label = '') => {
+    const { filterItems } = actionBarProps;
+    let value = item[label];
 
+    switch (label) {
+      case 'category':
+        value = filterItems.filter(({ id }) => id === item.category_id)[0]?.title;
+        break;
+      case 'type':
+        value = filterItems.filter(({ id }) => id === item.type_id)[0]?.title;
+        break;
+      default:
+        break;
+    }
+
+    if (label === 'price' || label === 'total') {
+      value = `$${value}`;
+    }
+
+    return value;
+  };
+
+  const dispatch = useDispatch();
   const [rowLimit, setRowLimit] = useState(25);
   const [pageIndex, setPageIndex] = useState(0);
 
-  const items = useSelector(state => state.categoryTypes.value);
-  const pageItems = items.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-
-  const pathname = window.location.pathname.replace('/', '');
-  const pageCount = Math.ceil(items.length / rowLimit);
-
   const {
-    apiUtil,
-    reduxActions,
-    actionBarProps = {},
-    tableColumns = []
+    config: { actionBarProps = {}, tableColumns = [] },
+    reduxActions
   } = props;
 
+  const pageKey = window.location.pathname.replace('/', '');
 
-  const { isAddVisible, isSearchVisible, isFilterVisible, isSortVisible } = actionBarProps;
-
-
-  useEffect(() => {
-    handleGetItems();
-  }, []);
+  const items = useSelector(state => state[pageKey].value);
+  const pageItems = items.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
+  const pageCount = Math.ceil(items.length / rowLimit);
 
   return (
     <Container fluid>
-      <h1 className="text-capitalize">{pathname.replace('-', ' ')}</h1>
+      <h1 className="text-capitalize">{pageKey.replace('-', ' ')}</h1>
 
       <ActionBar
-        type={pathname}
-        isAddVisible={isAddVisible}
-        isSearchVisible={isSearchVisible}
-        isFilterVisible={isFilterVisible}
-        isSortVisible={isSortVisible}
+        type={pageKey}
         getItems={handleGetItems}
         addItem={handleAddItem}
+        {...actionBarProps}
       />
 
       <Table responsive striped bordered hover className="table-dark">
@@ -111,16 +116,16 @@ export default function PageContent(props) {
                     className="text-truncate text-secondary"
                   >
                     <DataContent
-                      value={item[label]}
+                      value={getCellValue(item, label)}
                       id={item.id}
                       index={index}
-                      type={pathname}
+                      type={pageKey}
                       label={label}
                       isActive={item.active}
                       item={item}
+                      toUrl={`/${pageKey}/${item.id}`}
                       handleUpdate={handleUpdateItem}
                       removeItem={handleRemoveItem}
-                      categoryTypes={items}
                     />
                   </td>
                 );
@@ -132,7 +137,7 @@ export default function PageContent(props) {
 
       {pageItems.length === 0 && (
         <div className="text-center">
-          <h2>{`There are no ${pathname.replace('-', ' ')} to show.`}</h2>
+          <h2>{`There are no ${pageKey.replace('-', ' ')} to show.`}</h2>
         </div>
       )}
 

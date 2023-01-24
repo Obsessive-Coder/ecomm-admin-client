@@ -14,10 +14,10 @@ import Container from 'react-bootstrap/Container';
 // Custom Components.
 import Categories from './Categories';
 import CategoryTypes from './CategoryTypes';
-import Dashboard, { dashboardLoader } from './Dashboard';
+import Dashboard from './Dashboard';
 import Error404 from './Error404';
 import Login from './Login';
-import MasterPage, { masterPageLoader } from './MasterPage'
+import MasterPage from './MasterPage'
 import Order, { loader as orderLoader } from './Order';
 import Orders from './Orders';
 import Product, { loader as productLoader } from './Product';

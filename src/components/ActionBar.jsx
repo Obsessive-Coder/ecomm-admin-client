@@ -16,14 +16,12 @@ import AddEditProduct from './AddEditProduct';
 
 export default function ActionBar(props) {
   const {
-    categories = [],
-    categoryTypes = [],
+    filterItems = [],
     statuses = [],
     products = [],
     type,
     isAddVisible = true,
     isSearchVisible = false,
-    isFilterVisible = false,
     isSortVisible = false,
     addItem,
     getItems
@@ -51,7 +49,8 @@ export default function ActionBar(props) {
         order: { column: 'price', direction }
       }),
       ...(categoryId === '0' ? {} : {
-        [type === 'product' ? 'category_id' : 'id']: categoryId
+        ...(type === 'products' ? { category_id: categoryId } : {}),
+        ...(type === 'categories' ? { type_id: categoryId } : {})
       }),
       ...(title ? {
         [type === 'order' ? 'recipient_name' : 'title']: title
@@ -77,7 +76,7 @@ export default function ActionBar(props) {
         <Row>
           {/* Search */}
           {isSearchVisible && (
-            <Form.Group as={Col} md={6} controlId="search" className="flex-fill my-2">
+            <Form.Group as={Col} md={6} controlId="searchForm" className="flex-fill my-2">
               <InputGroup>
                 <FloatingLabel controlId="search" label={type === 'order' ? 'Recipient Search' : 'Title Search'} className="text-secondary">
                   <Form.Control
@@ -96,18 +95,18 @@ export default function ActionBar(props) {
           )}
 
           {/* Category Filter */}
-          {isFilterVisible && (
-            <Form.Group as={Col} sm={6} md={3} controlId="categoryId" className="flex-fill my-2">
-              <FloatingLabel controlId="categoryId" label="Filter Category">
+          {filterItems.length > 0 && (
+            <Form.Group as={Col} sm={6} md={3} controlId="filterForm" className="flex-fill my-2">
+              <FloatingLabel controlId="filter" label="Filter Items">
                 <Form.Select
-                  arial-label="Category Filter"
+                  arial-label="Filter Items"
                   onChange={handleCategoryOnChange}
                   className="bg-dark border-secondary text-secondary"
                 >
                   <option value="0">Select One</option>
 
-                  {categories.map(({ id, title }) => (
-                    <option key={`${title}-${id}`} value={id}>
+                  {filterItems.map(({ id, title }) => (
+                    <option key={`filter-item-${id}`} value={id}>
                       {title}
                     </option>
                   ))}
@@ -118,7 +117,7 @@ export default function ActionBar(props) {
 
           {/* Price Sort */}
           {isSortVisible && (
-            <Form.Group as={Col} sm={6} md={3} controlId="price" className="flex-fill my-2">
+            <Form.Group as={Col} sm={6} md={3} controlId="priceForm" className="flex-fill my-2">
               <FloatingLabel controlId="price" label="Sort Price">
                 <Form.Select
                   arial-label="Sort Price"
@@ -137,9 +136,8 @@ export default function ActionBar(props) {
 
       {isAddVisible && (
         <>
-          {type === 'product' && (
+          {type === 'products' && (
             <AddEditProduct
-              categories={categories}
               addItem={addItem}
               buttonContent={(
                 <div className="d-flex align-items-center justify-content-center">
@@ -151,10 +149,8 @@ export default function ActionBar(props) {
             />
           )}
 
-          {(type === 'category' || type === 'category-types') && (
+          {(type === 'categories' || type === 'category-types') && (
             <AddEditCategory
-              categories={categories}
-              categoryTypes={categoryTypes}
               type={type}
               addItem={addItem}
               buttonContent={(
@@ -171,8 +167,7 @@ export default function ActionBar(props) {
 
           {type === 'order' && (
             <AddEditOrder
-              categories={categories}
-              categoryTypes={[]}
+              categories={filterItems}
               statuses={statuses}
               products={products}
               type={type}

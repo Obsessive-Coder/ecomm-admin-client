@@ -1,14 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 // Reducers.
-import categoryTypeReducer from './reducers/categoryTypes';
+import categoryReducer from './reducers/category';
+import categoryTypeReducer from './reducers/categoryType';
+import productReducer from './reducers/product';
 
 export default configureStore({
   reducer: {
-    //   categories: categoriesReducer,
-    categoryTypes: categoryTypeReducer,
-    //   orders: ordersReducer,
-    //   orderStatuses: orderStatusesReducer,
-    //   products: productsReducer
+    categories: categoryReducer,
+    ['category-types']: categoryTypeReducer,
+    //   orders: orderReducer,
+    //   orderStatuses: orderStatusReducer,
+    products: productReducer
   }
 })
