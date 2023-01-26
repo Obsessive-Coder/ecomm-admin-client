@@ -46,20 +46,21 @@ export default function ActionBar(props) {
   const handleSearch = (direction, categoryId) => {
     const queryParams = {
       ...(direction === '0' ? {} : {
-        order: { column: 'price', direction }
+        order: { column: type === 'orders' ? 'updatedAt' : 'price', direction }
       }),
       ...(categoryId === '0' ? {} : {
         ...(type === 'products' ? { category_id: categoryId } : {}),
-        ...(type === 'categories' ? { type_id: categoryId } : {})
+        ...(type === 'categories' ? { type_id: categoryId } : {}),
+        ...(type === 'orders' ? { status_id: categoryId } : {})
       }),
       ...(title ? {
-        [type === 'order' ? 'recipient_name' : 'title']: title
+        [type === 'orders' ? 'recipient_name' : 'title']: title
       } : {})
     };
 
     getItems({
       order: {
-        column: type === 'order' ? 'recipient_name' : 'title'
+        column: type === 'orders' ? 'recipient_name' : 'title'
       },
       ...queryParams
     })
@@ -118,15 +119,19 @@ export default function ActionBar(props) {
           {/* Price Sort */}
           {isSortVisible && (
             <Form.Group as={Col} sm={6} md={3} controlId="priceForm" className="flex-fill my-2">
-              <FloatingLabel controlId="price" label="Sort Price">
+              <FloatingLabel controlId="price" label={type === 'orders' ? 'Sort By Date' : 'Sort By Price'}>
                 <Form.Select
-                  arial-label="Sort Price"
+                  arial-label={type === 'orders' ? 'Sort by date' : 'Sort by price'}
                   onChange={handleSortOnChange}
                   className="bg-dark border-secondary text-secondary"
                 >
                   <option value="0">Select One</option>
-                  <option value="ASC">Low to High</option>
-                  <option value='DESC'>High to Low</option>
+                  <option value="ASC">
+                    {type === 'orders' ? 'New to Old' : 'Low to High'}
+                  </option>
+                  <option value='DESC'>
+                    {type === 'orders' ? 'Old to New' : 'High to Low'}
+                  </option>
                 </Form.Select>
               </FloatingLabel>
             </Form.Group>
@@ -165,11 +170,8 @@ export default function ActionBar(props) {
             />
           )}
 
-          {type === 'order' && (
+          {type === 'orders' && (
             <AddEditOrder
-              categories={filterItems}
-              statuses={statuses}
-              products={products}
               type={type}
               addItem={addItem}
               buttonContent={(

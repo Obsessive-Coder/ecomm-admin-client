@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 // Router components and helpers.
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -11,50 +12,16 @@ import { onAuthStateChanged } from 'firebase/auth';
 import Container from 'react-bootstrap/Container';
 
 // Custom Components.
-// Custom Components.
 import Categories from './Categories';
 import CategoryTypes from './CategoryTypes';
 import Dashboard from './Dashboard';
 import Error404 from './Error404';
 import Login from './Login';
-import MasterPage from './MasterPage'
+import MasterPage from './MasterPage';
 import Order, { loader as orderLoader } from './Order';
 import Orders from './Orders';
 import Product, { loader as productLoader } from './Product';
 import Products from './Products';
-
-const router = createBrowserRouter([{
-  path: '/',
-  element: <Dashboard />,
-  errorElement: <Error404 />,
-}, {
-  path: '/products',
-  element: <Products />,
-  errorElement: <Error404 />,
-}, {
-  path: '/products/:productId',
-  element: <Product />,
-  errorElement: <Error404 />,
-  loader: productLoader
-}, {
-  path: '/categories',
-  element: <Categories />,
-  errorElement: <Error404 />,
-}, {
-  path: '/category-types',
-  element: <CategoryTypes />,
-  errorElement: <Error404 />,
-}, {
-  path: '/orders',
-  element: <Orders />,
-  errorElement: <Error404 />,
-},
-{
-  path: '/orders/:orderId',
-  element: <Order />,
-  errorElement: <Error404 />,
-  loader: orderLoader
-}]);
 
 export default function AuthRoutes(props) {
   const firebaseConfig = {
@@ -77,6 +44,53 @@ export default function AuthRoutes(props) {
     localStorage.setItem('user', JSON.stringify({}));
   };
 
+  const router = createBrowserRouter([{
+    path: '/',
+    element: (
+      <MasterPage handleLogout={handleLogout}><Dashboard /></MasterPage>
+    ),
+    errorElement: <Error404 />,
+  }, {
+    path: '/products',
+    element: (
+      <MasterPage handleLogout={handleLogout}><Products /></MasterPage>
+    ),
+    errorElement: <Error404 />,
+  }, {
+    path: '/products/:productId',
+    element: (
+      <MasterPage handleLogout={handleLogout}><Product /></MasterPage>
+    ),
+    errorElement: <Error404 />,
+    loader: productLoader
+  }, {
+    path: '/categories',
+    element: (
+      <MasterPage handleLogout={handleLogout}><Categories /></MasterPage>
+    ),
+    errorElement: <Error404 />,
+  }, {
+    path: '/category-types',
+    element: (
+      <MasterPage handleLogout={handleLogout}><CategoryTypes /></MasterPage>
+    ),
+    errorElement: <Error404 />,
+  }, {
+    path: '/orders',
+    element: (
+      <MasterPage handleLogout={handleLogout}><Orders /></MasterPage>
+    ),
+    errorElement: <Error404 />,
+  },
+  {
+    path: '/orders/:orderId',
+    element: (
+      <MasterPage handleLogout={handleLogout}><Order /></MasterPage>
+    ),
+    errorElement: <Error404 />,
+    loader: orderLoader
+  }]);
+
   useEffect(() => {
     onAuthStateChanged(firebase.auth(), user => {
       let sessionUser = {};
@@ -93,9 +107,7 @@ export default function AuthRoutes(props) {
   return (
     <Container fluid>
       {user.email ? (
-        <MasterPage handleLogout={handleLogout}>
-          <RouterProvider router={router} />
-        </MasterPage>
+        <RouterProvider router={router} />
       ) : (
         <Login auth={firebase.auth()} />
       )}

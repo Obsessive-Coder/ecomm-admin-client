@@ -1,33 +1,69 @@
-export default function orderStatusesReducer(state = [], action) {
-  const { payload, type } = action;
-  let updatedOrderStatuses = [...state];
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import OrderstatusUtil from '../utils/api/OrderStatusUtil';
 
-  switch (type) {
-    case 'STORE_ORDER_STATUSES':
-      updatedOrderStatuses = [...payload];
-      break;
-    case 'ADD_ORDER_STATUS':
-      updatedOrderStatuses = [...state, payload];
-      break;
-    case 'REMOVE_ORDER_STATUS':
-      updatedOrderStatuses = updatedOrderStatuses.filter(({ id }) => id !== payload);
-      break;
-    case 'UPDATE_ORDER_STATUS':
-      for (let i = 0; i < updatedOrderStatuses.length; i++) {
-        const orderStatus = updatedOrderStatuses[i];
+const apiUtil = new OrderstatusUtil();
 
-        if (orderStatus.id === payload.id) {
-          updatedOrderStatuses[i] = payload
-          break;
-        }
-      }
-
-      updatedOrderStatuses = [...updatedOrderStatuses]
-      break;
-    default:
-      updatedOrderStatuses = [...state];
-      break;
+export const storeItems = createAsyncThunk(
+  'order-statuses/storeItems',
+  async (params = {}, thunkAPI) => {
+    const { data } = await apiUtil.findAll(params);
+    return data;
   }
+);
 
-  return [...updatedOrderStatuses];
-};
+export const addItem = createAsyncThunk(
+  'order-statuses/addItem',
+  async (newItem, thunkAPI) => {
+    const { data } = await apiUtil.create(newItem);
+    return data;
+  }
+);
+
+export const updateItem = createAsyncThunk(
+  'order-statuses/updateItem',
+  async (updatedItem, thunkAPI) => {
+    await apiUtil.update(updatedItem.id, updatedItem);
+    return updatedItem;
+  }
+);
+
+export const removeItem = createAsyncThunk(
+  'order-statuses/removeItem',
+  async (itemId, thunkAPI) => {
+    await apiUtil.delete(itemId);
+    return itemId;
+  }
+);
+
+export const orderStatusSlice = createSlice({
+  name: 'order-statuses',
+  initialState: { value: [] },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(storeItems.fulfilled, (state, action) => {
+      state.value = action.payload;
+    });
+
+    builder.addCase(addItem.fulfilled, (state, action) => {
+      state.value = [...state.value, action.payload];
+    });
+
+    builder.addCase(updateItem.fulfilled, (state, { payload }) => {
+      state.value = state.value.map(value => {
+        let item = { ...value };
+        if (item.id === payload.id) {
+          item = { ...payload };
+        }
+        return { ...item };
+      });
+    });
+
+    builder.addCase(removeItem.fulfilled, (state, action) => {
+      state.value = state.value.filter(({ id }) => id !== action.payload);
+    });
+  }
+});
+
+export const reduxActions = { storeItems, addItem, updateItem, removeItem };
+
+export default orderStatusSlice.reducer;

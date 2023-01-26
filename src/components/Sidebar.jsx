@@ -1,5 +1,6 @@
 import React from 'react'
 import { useMediaQuery } from 'react-responsive';
+import { Link } from 'react-router-dom';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -56,7 +57,7 @@ export default function Sidebar({ isOpen, handleClose, handleLogout }) {
     >
       <Offcanvas.Header closeButton={!isLargeScreen && isOpen} closeVariant="white" className="border-bottom border-dark" style={{ height: 50 }}>
         <Navbar.Brand className="border-0">
-          <Nav.Link href="/">
+          <Nav.Link as={Link} to="/">
             <Offcanvas.Title>Admin Site</Offcanvas.Title>
           </Nav.Link>
         </Navbar.Brand>
@@ -75,7 +76,7 @@ export default function Sidebar({ isOpen, handleClose, handleLogout }) {
                   {label}
                 </Button>
               ) : (
-                <Nav.Link href={path} className="flex-fill p-2 text-capitalize text-secondary fs-6">
+                <Nav.Link as={Link} to={path} className="flex-fill p-2 text-capitalize text-secondary fs-6">
                   {label}
                 </Nav.Link>
               )}

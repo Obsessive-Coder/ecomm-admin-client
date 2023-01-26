@@ -53,8 +53,5 @@ export default function Products() {
     dispatch(storeCategories());
   }, []);
 
-  return (<PageContent config={pageConfig} reduxActions={reduxActions}>
-
-  </PageContent>
-  )
+  return (<PageContent config={pageConfig} reduxActions={reduxActions} />)
 }

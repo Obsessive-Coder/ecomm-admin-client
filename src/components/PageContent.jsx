@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Bootstrap Components.
-import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 
 // Other Components.
@@ -12,11 +11,13 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 import ActionBar from './ActionBar';
 import Actions from './Actions';
 import ActiveSwitch from './ActiveSwitch';
+import StatusBadge from './StatusBadge';
 import ViewLink from './ViewLink';
 
 const components = {
   Actions,
   ActiveSwitch,
+  StatusBadge,
   ViewLink,
   Data: ({ value = '' }) => (<span>{value}</span>),
 };
@@ -56,14 +57,19 @@ export default function PageContent(props) {
       case 'type':
         value = filterItems.filter(({ id }) => id === item.type_id)[0]?.title;
         break;
+      case 'status':
+        value = filterItems.filter(({ id }) => id === item.status_id)[0]?.title;
+        break;
+      case 'date':
+        value = new Date(value).toLocaleDateString("en-US");
+        break;
       default:
         break;
     }
 
-    if (label === 'price' || label === 'total') {
+    if (label === 'price' || label === 'total' || label === 'shipping') {
       value = `$${value}`;
     }
-
     return value;
   };
 
@@ -72,8 +78,8 @@ export default function PageContent(props) {
   const [pageIndex, setPageIndex] = useState(0);
 
   const {
-    config: { actionBarProps = {}, tableColumns = [] },
-    reduxActions
+    config: { actionBarProps = {}, tableColumns = [] } = {},
+    reduxActions = {}
   } = props;
 
   const pageKey = window.location.pathname.replace('/', '');
@@ -83,7 +89,7 @@ export default function PageContent(props) {
   const pageCount = Math.ceil(items.length / rowLimit);
 
   return (
-    <Container fluid>
+    <div>
       <h1 className="text-capitalize">{pageKey.replace('-', ' ')}</h1>
 
       <ActionBar
@@ -123,6 +129,7 @@ export default function PageContent(props) {
                       label={label}
                       isActive={item.active}
                       item={item}
+                      status={actionBarProps?.filterItems?.filter(({ id }) => id === item.status_id)[0]?.title}
                       toUrl={`/${pageKey}/${item.id}`}
                       handleUpdate={handleUpdateItem}
                       removeItem={handleRemoveItem}
@@ -154,6 +161,6 @@ export default function PageContent(props) {
           />
         </div>
       )}
-    </Container>
+    </div>
   );
 }
