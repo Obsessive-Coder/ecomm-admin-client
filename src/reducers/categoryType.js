@@ -38,7 +38,11 @@ export const removeItem = createAsyncThunk(
 export const categoryTypeSlice = createSlice({
   name: 'category-types',
   initialState: { value: [] },
-  reducers: {},
+  reducers: {
+    clearItems(state) {
+      state.value = [];
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(storeItems.fulfilled, (state, action) => {
       state.value = action.payload;
@@ -64,6 +68,7 @@ export const categoryTypeSlice = createSlice({
   }
 });
 
-export const reduxActions = { storeItems, addItem, updateItem, removeItem };
+export const { clearItems } = categoryTypeSlice.actions;
+export const reduxActions = { storeItems, addItem, updateItem, removeItem, clearItems };
 
 export default categoryTypeSlice.reducer;

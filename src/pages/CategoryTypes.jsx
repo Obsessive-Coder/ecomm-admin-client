@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 
 // Custom Components.
 import PageContent from '../components/PageContent';
@@ -20,18 +19,14 @@ const tableColumns = [{
   componentName: 'Actions'
 }];
 
+const pageConfig = {
+  actionBarProps: { ...actionBarProps },
+  loadFunctions: [reduxActions.storeItems],
+  unloadFunctions: [reduxActions.clearItems],
+  tableColumns: [...tableColumns]
+};
+
 export default function CategoryTypes() {
-  const dispatch = useDispatch();
-
-  const pageConfig = {
-    actionBarProps: { ...actionBarProps },
-    tableColumns
-  };
-
-  useEffect(() => {
-    dispatch(reduxActions.storeItems());
-  }, []);
-
   return (
     <PageContent config={pageConfig} reduxActions={reduxActions} />
   );

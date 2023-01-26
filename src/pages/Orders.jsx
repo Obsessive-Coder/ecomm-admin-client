@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react'
+import { useSelector } from 'react-redux';
 
 // Custom Components.
 import PageContent from '../components/PageContent';
 
 // Styles, utils, and other helpers.
 import { reduxActions } from '../reducers/order';
-import { storeItems as storeStatuses } from '../reducers/orderStatus';
-import { storeItems as storeProducts } from '../reducers/product';
+import { clearItems as clearStatuses, storeItems as storeStatuses } from '../reducers/orderStatus';
+import { clearItems as clearProducts, storeItems as storeProducts } from '../reducers/product';
 
 const actionBarProps = { isSearchVisible: true, isSortVisible: true };
 
@@ -44,23 +44,16 @@ const tableColumns = [{
   componentName: 'Actions'
 }];
 
+const pageConfig = {
+  actionBarProps: { ...actionBarProps },
+  loadFunctions: [reduxActions.storeItems, storeStatuses, storeProducts],
+  unloadFunctions: [reduxActions.clearItems, clearStatuses, clearProducts],
+  tableColumns: [...tableColumns]
+};
+
 export default function Orders(props) {
-  const dispatch = useDispatch();
-
   const filterItems = useSelector(state => state['order-statuses'].value);
-  const pageConfig = {
-    actionBarProps: {
-      ...actionBarProps,
-      filterItems
-    },
-    tableColumns,
-  };
+  pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems };
 
-
-  useEffect(() => {
-    dispatch(reduxActions.storeItems());
-    dispatch(storeStatuses());
-    dispatch(storeProducts());
-  }, []);
   return (<PageContent config={pageConfig} reduxActions={reduxActions} />);
 }

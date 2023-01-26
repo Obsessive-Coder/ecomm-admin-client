@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react'
+import { useSelector } from 'react-redux';
 
 // Custom Components.
 import PageContent from '../components/PageContent';
 
 // Style, utils, and other helpers.
 import { reduxActions } from '../reducers/product';
-import { storeItems as storeCategories } from '../reducers/category';
+import { clearItems as clearCategories, storeItems as storeCategories } from '../reducers/category';
 
 const actionBarProps = { isSearchVisible: true, isSortVisible: true };
 
@@ -36,22 +36,16 @@ const tableColumns = [{
   componentName: 'Actions'
 }];
 
+const pageConfig = {
+  actionBarProps: { ...actionBarProps },
+  loadFunctions: [reduxActions.storeItems, storeCategories],
+  unloadFunctions: [reduxActions.clearItems, clearCategories],
+  tableColumns: [...tableColumns],
+};
+
 export default function Products() {
-  const dispatch = useDispatch();
-
   const filterItems = useSelector(state => state.categories.value);
-  const pageConfig = {
-    actionBarProps: {
-      ...actionBarProps,
-      filterItems
-    },
-    tableColumns,
-  };
-
-  useEffect(() => {
-    dispatch(reduxActions.storeItems());
-    dispatch(storeCategories());
-  }, []);
+  pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems }
 
   return (<PageContent config={pageConfig} reduxActions={reduxActions} />)
 }

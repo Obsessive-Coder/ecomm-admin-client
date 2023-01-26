@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Bootstrap Components.
@@ -78,7 +78,12 @@ export default function PageContent(props) {
   const [pageIndex, setPageIndex] = useState(0);
 
   const {
-    config: { actionBarProps = {}, tableColumns = [] } = {},
+    config: {
+      actionBarProps = {},
+      tableColumns = [],
+      loadFunctions = [],
+      unloadFunctions = []
+    } = {},
     reduxActions = {}
   } = props;
 
@@ -87,6 +92,15 @@ export default function PageContent(props) {
   const items = useSelector(state => state[pageKey].value);
   const pageItems = items.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
   const pageCount = Math.ceil(items.length / rowLimit);
+
+  useEffect(() => {
+    loadFunctions.forEach(fn => dispatch(fn()));
+
+    return () => {
+      unloadFunctions.forEach(fn => dispatch(fn()));
+    }
+  }, []);
+
 
   return (
     <div>

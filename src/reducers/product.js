@@ -38,7 +38,11 @@ export const removeItem = createAsyncThunk(
 export const productSlice = createSlice({
   name: 'products',
   initialState: { value: [] },
-  reducers: {},
+  reducers: {
+    clearItems(state) {
+      state.value = [];
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(storeItems.fulfilled, (state, action) => {
       state.value = action.payload;
@@ -64,6 +68,8 @@ export const productSlice = createSlice({
   }
 });
 
-export const reduxActions = { storeItems, addItem, updateItem, removeItem };
+export const { clearItems } = productSlice.actions;
+export const reduxActions = { storeItems, addItem, updateItem, removeItem, clearItems };
+
 
 export default productSlice.reducer;
