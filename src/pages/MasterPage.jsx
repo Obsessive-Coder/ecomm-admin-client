@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
@@ -9,9 +9,14 @@ import MainHeader from '../components/MainHeader';
 import Sidebar from '../components/Sidebar';
 
 // Style, utils, and other helpers.
+import { logOut } from '../reducers/user';
 import '../style.css';
 
-function MasterPage({ children, handleLogout }) {
+export default function MasterPage({ children }) {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => dispatch(logOut());
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebarIsOpen = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -31,5 +36,3 @@ function MasterPage({ children, handleLogout }) {
     </Container>
   )
 }
-
-export default connect()(MasterPage);

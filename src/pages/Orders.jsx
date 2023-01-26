@@ -51,7 +51,7 @@ const pageConfig = {
   tableColumns: [...tableColumns]
 };
 
-export default function Orders(props) {
+export default function Orders() {
   const filterItems = useSelector(state => state['order-statuses'].value);
   pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems };
 
