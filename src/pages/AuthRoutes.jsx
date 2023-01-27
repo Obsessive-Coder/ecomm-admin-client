@@ -67,7 +67,8 @@ export default function AuthRoutes() {
 
   return (
     <Container fluid>
-      <RouterProvider router={router} />
+      {/* <RouterProvider router={router} /> */}
+      <h1>WELL THEN...</h1>
     </Container>
   );
 }
