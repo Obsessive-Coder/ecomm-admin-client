@@ -20,7 +20,7 @@ import Products from './Products';
 import Error404 from './Error404';
 import Login from './Login';
 
-const pages = () => ([
+const getPages = () => ([
   Categories,
   CategoryTypes,
   Dashboard,
@@ -48,7 +48,7 @@ export default function AuthRoutes() {
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
     errorElement: <Error404 />
   }]
-    .concat(pages().map(PageComponent => ({
+    .concat(getPages().map(PageComponent => ({
       path: getPathname(PageComponent.name),
       element: isAuthenticated ? (
         <MasterPage><PageComponent /></MasterPage>
