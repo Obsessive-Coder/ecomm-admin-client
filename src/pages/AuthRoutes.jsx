@@ -43,25 +43,25 @@ export default function AuthRoutes() {
   const { uid: userId } = useSelector(({ user }) => user.value);
   const isAuthenticated = !!userId;
 
-  const routes = [{
-    path: '/',
-    element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
-    errorElement: <Error404 />
-  }]
-    .concat(pages.map(PageComponent => ({
-      path: getPathname(PageComponent.name),
-      element: isAuthenticated ? (
-        <MasterPage><PageComponent /></MasterPage>
-      ) : (
-        <Navigate to="/login" />
-      ),
-      errorElement: <Error404 />
-    })))
-    .concat([{
-      path: '/login',
-      element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
-      errorElement: <Error404 />
-    }]);
+  // const routes = [{
+  //   path: '/',
+  //   element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
+  //   errorElement: <Error404 />
+  // }]
+  //   .concat(pages.map(PageComponent => ({
+  //     path: getPathname(PageComponent.name),
+  //     element: isAuthenticated ? (
+  //       <MasterPage><PageComponent /></MasterPage>
+  //     ) : (
+  //       <Navigate to="/login" />
+  //     ),
+  //     errorElement: <Error404 />
+  //   })))
+  //   .concat([{
+  //     path: '/login',
+  //     element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
+  //     errorElement: <Error404 />
+  //   }]);
 
   // const router = createBrowserRouter(routes);;
 

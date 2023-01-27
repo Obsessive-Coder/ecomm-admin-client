@@ -32,7 +32,7 @@ export const logIn = createAsyncThunk(
 
       return user;
     } catch (error) {
-      alert(error.message);
+      console.log(error.message);
       return {};
     }
   }
