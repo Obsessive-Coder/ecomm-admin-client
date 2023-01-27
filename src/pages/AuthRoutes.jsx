@@ -20,7 +20,7 @@ import Products from './Products';
 import Error404 from './Error404';
 import Login from './Login';
 
-const pages = [
+const pages = () => ([
   Categories,
   CategoryTypes,
   Dashboard,
@@ -28,7 +28,7 @@ const pages = [
   Orders,
   Product,
   Products,
-];
+]);
 
 const getPathname = str => {
   // Taken from https://plainenglish.io/blog/convert-string-to-different-case-styles-snake-kebab-camel-and-pascal-case-in-javascript-da724b7220d7
@@ -48,7 +48,7 @@ export default function AuthRoutes() {
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
     errorElement: <Error404 />
   }]
-    .concat(pages.map(PageComponent => ({
+    .concat(pages().map(PageComponent => ({
       path: getPathname(PageComponent.name),
       element: isAuthenticated ? (
         <MasterPage><PageComponent /></MasterPage>
