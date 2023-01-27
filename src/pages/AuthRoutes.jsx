@@ -40,8 +40,11 @@ const getPathname = str => {
 };
 
 export default function AuthRoutes() {
-  const { uid: userId } = useSelector(({ user }) => user.value);
+  const user = useSelector(({ user }) => user.value);
+  const { uid: userId } = user;
   const isAuthenticated = !!userId;
+
+  console.log(isAuthenticated, user)
 
   // const routes = [{
   //   path: '/',
