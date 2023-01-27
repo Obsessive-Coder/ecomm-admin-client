@@ -1,5 +1,6 @@
 import React from 'react'
 import { useMediaQuery } from 'react-responsive';
+import { Link } from 'react-router-dom';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -16,7 +17,7 @@ import {
 
 // TODO: Put into constants file.
 const navItems = [{
-  path: '/',
+  path: '/dashboard',
   label: 'dashboard',
   Icon: MenuButtonFillIcon,
 }, {
@@ -36,7 +37,7 @@ const navItems = [{
   label: 'orders',
   Icon: CartIcon
 }, {
-  path: '/',
+  path: '/login',
   label: 'logout',
   Icon: BoxArrowInLeftIcon
 }];
@@ -56,7 +57,7 @@ export default function Sidebar({ isOpen, handleClose, handleLogout }) {
     >
       <Offcanvas.Header closeButton={!isLargeScreen && isOpen} closeVariant="white" className="border-bottom border-dark" style={{ height: 50 }}>
         <Navbar.Brand className="border-0">
-          <Nav.Link href="/">
+          <Nav.Link as={Link} to="/">
             <Offcanvas.Title>Admin Site</Offcanvas.Title>
           </Nav.Link>
         </Navbar.Brand>
@@ -67,18 +68,14 @@ export default function Sidebar({ isOpen, handleClose, handleLogout }) {
           {navItems.map(({ path, label, Icon }) => (
             <Nav.Item key={label} className="d-flex align-items-center p-2">
               <Icon />
-              {label === 'logout' ? (
-                <Button
-                  variant="link"
-                  onClick={handleLogout}
-                  className="flex-fill p-2 text-capitalize text-secondary text-decoration-none text-start fs-6">
-                  {label}
-                </Button>
-              ) : (
-                <Nav.Link href={path} className="flex-fill p-2 text-capitalize text-secondary fs-6">
-                  {label}
-                </Nav.Link>
-              )}
+              <Nav.Link
+                as={Link}
+                to={path}
+                onClick={label === 'logout' ? handleLogout : null}
+                className="flex-fill p-2 text-capitalize text-secondary fs-6"
+              >
+                {label}
+              </Nav.Link>
             </Nav.Item>
           ))}
         </Nav>

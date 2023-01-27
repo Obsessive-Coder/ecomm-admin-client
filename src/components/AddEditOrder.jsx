@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
@@ -13,17 +14,13 @@ import Row from 'react-bootstrap/Row';
 import OrderItems from './OrderItems';
 
 // Styles, utils, and other helpers.
-import OrderUtil from '../utils/api/OrderUtil';
-import OrderItemUtil from '../utils/api/OrderItemUtil';
-
-const orderUtil = new OrderUtil();
-const orderItemUtil = new OrderItemUtil();
+import { storeItems as storeProducts } from '../reducers/product';
 
 export default function AddEditOrder(props) {
+  const dispatch = useDispatch();
+
   const {
     order = {},
-    statuses = [],
-    products = [],
     buttonContent,
     buttonVariant = 'primary',
     buttonClassName = '',
@@ -46,6 +43,9 @@ export default function AddEditOrder(props) {
     payment: 'required',
     status: 'required'
   });
+
+  const products = useSelector(state => state.products.value);
+  const statuses = useSelector(state => state['order-statuses'].value);
 
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
@@ -88,7 +88,7 @@ export default function AddEditOrder(props) {
     const updatedItems = [...orderItems];
 
     for (let i = 0; i < updatedItems.length; i++) {
-      const item = updatedItems[i];
+      let item = updatedItems[i];
 
       if (item.product_id === productId) {
         const { quantity: productQuantity } = products
@@ -99,12 +99,14 @@ export default function AddEditOrder(props) {
         const newQuantity = isIncrementDecrement ? parseInt(item.quantity) + parseInt(amount) : parseInt(amount);
 
         if (newQuantity >= 1 && newQuantity <= availableQuantity) {
-          updatedItems[i].quantity = newQuantity;
+          item = { ...item, quantity: newQuantity };
+          updatedItems[i] = { ...item };
+          setOrderItems(updatedItems);
         }
+
+        break;
       }
     }
-
-    setOrderItems(updatedItems);
   };
 
   const handleSubmit = async event => {
@@ -127,22 +129,10 @@ export default function AddEditOrder(props) {
     };
 
     if (orderId) {
-      // Update the order.
-      updatedOrder = {
-        ...updatedOrder,
-        id: orderId,
-      };
-
-      await orderUtil.update(updatedOrder.id, updatedOrder);
-
       const updatedOrderItemIds = orderItems.map(({ id }) => id);
       const deletedItemIds = order.items
         .filter(({ id }) => !updatedOrderItemIds.includes(id))
         .map(({ id }) => id);
-
-      if (deletedItemIds.length > 0) {
-        await Promise(deletedItemIds.map(async itemId => await orderItemUtil.delete(itemId)));
-      }
 
       const newItems = orderItems
         .filter(({ id }) => !id)
@@ -153,13 +143,11 @@ export default function AddEditOrder(props) {
           order_id: orderId
         }));
 
-      if (newItems.length > 0) {
-        await Promise(newItems.map(async item => await orderItemUtil.create(item)));
-      }
 
+      let updatedItems = [];
       if (updatedOrderItemIds.length > 0) {
-        const updatedItems = orderItems
-          .filter(({ id }) => updatedOrderItemIds.includes(id))
+        updatedItems = orderItems
+          .filter(({ id }) => id && updatedOrderItemIds.includes(id))
           .map(({ id, quantity, item_price, product_id }) => ({
             id,
             product_id,
@@ -167,29 +155,31 @@ export default function AddEditOrder(props) {
             quantity,
             order_id: orderId
           }));
-
-        await Promise.all(updatedItems.map(async item => await orderItemUtil.update(item.id, item)));
       }
 
-      const { data: newOrder } = await orderUtil.findOne(orderId);
-      updateItem(newOrder);
+      // Update the order.
+      updatedOrder = {
+        ...updatedOrder,
+        id: orderId,
+      };
+
+      updateItem({ updatedOrder, deletedItemIds, newItems, updatedItems });
     } else {
       // Create a new order.
-      const { data } = await orderUtil.create(updatedOrder);
-
-      const newItems = orderItems
+      const items = orderItems
         .map(({ quantity, item_price, product_id }) => ({
           product_id,
           item_price,
-          quantity,
-          order_id: data.id,
+          quantity
         }));
 
-      await Promise.all(newItems.map(async item => await orderItemUtil.create(item)));
-
-      const { data: newOrder } = await orderUtil.findOne(data.id);
-      addItem(newOrder);
+      addItem({ newItem: updatedOrder, items })
+      handleCancelClick();
     }
+
+    setTimeout(() => {
+      dispatch(storeProducts());
+    }, 300);
 
     handleHide();
   };

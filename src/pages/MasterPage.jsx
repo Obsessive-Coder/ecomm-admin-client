@@ -1,58 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import firebase from 'firebase/compat/app';
-import { onAuthStateChanged } from 'firebase/auth';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 
-// Custom components.
-import AuthRoutes from './AuthRoutes';
-import Login from './Login';
+// Custom Components.
+import MainHeader from '../components/MainHeader';
+import Sidebar from '../components/Sidebar';
 
-// Styles, utils, and other helpers.
+// Style, utils, and other helpers.
+import { logOut } from '../reducers/user';
 import '../style.css';
 
-export default function MasterPage() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyDNCKU_ztvevPFell0ItLvZHj5LXMXvDrM",
-    authDomain: "admin-site-7045f.firebaseapp.com",
-    projectId: "admin-site-7045f",
-    storageBucket: "admin-site-7045f.appspot.com",
-    messagingSenderId: "132117631723",
-    appId: "1:132117631723:web:0aef2bf89067b71131a4ae",
-    measurementId: "G-KE2FHM4V1P"
-  };
+export default function MasterPage({ children }) {
+  const dispatch = useDispatch();
 
-  firebase.initializeApp(firebaseConfig);
+  const handleLogout = () => dispatch(logOut());
 
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
-
-  const handleLogout = () => {
-    firebase.auth().signOut();
-    setUser({});
-    localStorage.setItem('user', JSON.stringify({}));
-  };
-
-  useEffect(() => {
-    onAuthStateChanged(firebase.auth(), user => {
-      let sessionUser = {};
-
-      if (user) {
-        sessionUser = { email: user.email, uid: user.uid };
-      }
-
-      setUser(sessionUser);
-      localStorage.setItem('user', JSON.stringify(sessionUser));
-    });
-  }, [user.email]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebarIsOpen = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <Container fluid>
-      {user.email ? (
-        <AuthRoutes handleLogout={handleLogout} />
-      ) : (
-        <Login auth={firebase.auth()} />
-      )}
+      <MainHeader handleOpenSidebar={toggleSidebarIsOpen} />
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        handleClose={toggleSidebarIsOpen}
+        handleLogout={handleLogout}
+      />
+
+      <Container fluid className="page-content mb-5">
+        {children}
+      </Container>
     </Container>
   )
 }

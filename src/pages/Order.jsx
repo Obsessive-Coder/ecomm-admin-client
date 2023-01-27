@@ -172,7 +172,7 @@ export default function Order() {
         <div className="mx-2 me-auto">
           <span className="d-block fw-bold">Total</span>
           <span className="text-success fw-bold" style={{ fontSize: 'large' }}>
-            {`$${total.toFixed(2)}`}
+            {total}
           </span>
         </div>
       </div>

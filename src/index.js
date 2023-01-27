@@ -1,38 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import "bootswatch/dist/slate/bootstrap.min.css";
-import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
+import "bootswatch/dist/slate/bootstrap.min.css";
 
+import store from './store';
 import reportWebVitals from './reportWebVitals';
-import MasterPage from './pages/MasterPage';
-
-// Reducers.
-import categoriesReducer from './reducers/categories';
-import categoryTypesReducer from './reducers/categoryTypes';
-import ordersReducer from './reducers/orders';
-import orderStatusesReducer from './reducers/orderStatuses';
-import productsReducer from './reducers/products';
-
-const rootReducer = combineReducers({
-  categories: categoriesReducer,
-  categoryTypes: categoryTypesReducer,
-  orders: ordersReducer,
-  orderStatuses: orderStatusesReducer,
-  products: productsReducer,
-});
-
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+import AuthRoutes from './pages/AuthRoutes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <MasterPage />
+      <AuthRoutes />
     </Provider>
   </React.StrictMode>
 );

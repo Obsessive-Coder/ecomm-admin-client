@@ -14,8 +14,8 @@ import Confirm from './Confirm';
 
 export default function Actions(props) {
   const {
-    item, categories, removeItem, type = "product", isEdit = true,
-    categoryTypes, isDelete = true, handleUpdate, products = [], statuses
+    item, removeItem, type = "product", isEdit = true,
+    isDelete = true, handleUpdate, products = [], statuses
   } = props;
 
   const handleDelete = () => {
@@ -26,30 +26,28 @@ export default function Actions(props) {
     <div className="overflow-hidden">
       {isEdit && (
         <>
-          {type === 'product' && (
+          {type === 'products' && (
             <AddEditProduct
               buttonContent={<EditIcon />}
               product={item}
-              categories={categories}
               updateItem={handleUpdate}
               buttonVariant="link"
               buttonClassName="p-0 mx-2 edit text-secondary"
             />
           )}
 
-          {(type === 'category' || type === 'categoryTypes') && (
+          {(type === 'categories' || type === 'category-types') && (
             <AddEditCategory
               buttonContent={<EditIcon />}
               category={item}
               type={type}
-              categoryTypes={categoryTypes}
               updateItem={handleUpdate}
               buttonVariant="link"
               buttonClassName="p-0 mx-2 edit text-secondary"
             />
           )}
 
-          {type === 'order' && (
+          {type === 'orders' && (
             <AddEditOrder
               buttonContent={<EditIcon />}
               order={item}

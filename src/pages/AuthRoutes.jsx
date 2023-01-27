@@ -1,107 +1,73 @@
-import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 // Router components and helpers.
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 
 // Custom Components.
-import MainHeader from '../components/MainHeader';
-import Dashboard from './Dashboard';
 import Categories from './Categories';
 import CategoryTypes from './CategoryTypes';
+import Dashboard from './Dashboard';
+import MasterPage from './MasterPage';
 import Order, { loader as orderLoader } from './Order';
 import Orders from './Orders';
 import Product, { loader as productLoader } from './Product';
 import Products from './Products';
+
 import Error404 from './Error404';
-import Sidebar from '../components/Sidebar';
+import Login from './Login';
 
-// Style, utils, and other helpers.
-import CategoryUtil from '../utils/api/CategoryUtil';
-import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
-import OrderUtil from '../utils/api/OrderUtil';
-import OrderStatusUtil from '../utils/api/OrderStatusUtil';
-import ProductUtil from '../utils/api/ProductUtil';
+const pages = [
+  Categories,
+  CategoryTypes,
+  Dashboard,
+  Order,
+  Orders,
+  Product,
+  Products,
+];
 
-const router = createBrowserRouter([{
-  path: '/',
-  element: <Dashboard />,
-  errorElement: <Error404 />,
-}, {
-  path: '/products',
-  element: <Products />
-}, {
-  path: '/products/:productId',
-  element: <Product />,
-  errorElement: <Error404 />,
-  loader: productLoader
-}, {
-  path: '/categories',
-  element: <Categories />
-}, {
-  path: '/category-types',
-  element: <CategoryTypes />
-}, {
-  path: '/orders',
-  element: <Orders />
-},
-{
-  path: '/orders/:orderId',
-  element: <Order />,
-  loader: orderLoader
-}]);
+const getPathname = str => {
+  // Taken from https://plainenglish.io/blog/convert-string-to-different-case-styles-snake-kebab-camel-and-pascal-case-in-javascript-da724b7220d7
 
-function AuthRoutes(props) {
-  const { handleLogout } = props;
+  return `/${str.match(
+    /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map(char => char.toLowerCase())
+    .join('-')}`
+};
 
-  const dispatch = useDispatch();
+export default function AuthRoutes() {
+  const { uid: userId } = useSelector(({ user }) => user.value);
+  const isAuthenticated = !!userId;
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const toggleSidebarIsOpen = () => setIsSidebarOpen(!isSidebarOpen);
+  const routes = [{
+    path: '/',
+    element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
+    errorElement: <Error404 />
+  }]
+    .concat(pages.map(PageComponent => ({
+      path: getPathname(PageComponent.name),
+      element: isAuthenticated ? (
+        <MasterPage><PageComponent /></MasterPage>
+      ) : (
+        <Navigate to="/login" />
+      ),
+      errorElement: <Error404 />
+    })))
+    .concat([{
+      path: '/login',
+      element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
+      errorElement: <Error404 />
+    }]);
 
-  useEffect(() => {
-    (async () => {
-      const { data: categories } = await new CategoryUtil()
-        .findAll({ order: { column: 'title' } });
-
-      dispatch({ type: 'STORE_CATEGORIES', payload: [...categories] });
-
-      const { data: categoryTypes } = await new CategoryTypeUtil()
-        .findAll({ order: { column: 'title' } });
-
-      dispatch({ type: 'STORE_CATEGORY_TYPES', payload: [...categoryTypes] });
-
-      const { data: orders } = await new OrderUtil().findAll({ order: { column: 'updatedAt' } });
-      dispatch({ type: 'STORE_ORDERS', payload: [...orders] });
-
-      const { data: orderStatuses } = await new OrderStatusUtil().findAll({ order: { column: 'title' } });
-      dispatch({ type: 'STORE_ORDER_STATUSES', payload: orderStatuses });
-
-      const { data: products } = await new ProductUtil().findAll({ order: { column: 'title' } });
-      dispatch({ type: 'STORE_PRODUCTS', payload: [...products] });
-    })();
-  });
+  const router = createBrowserRouter(routes);;
 
   return (
-    <div>
-      <MainHeader handleOpenSidebar={toggleSidebarIsOpen} />
-
-      <div id="sidebar no-print">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          handleClose={toggleSidebarIsOpen}
-          handleLogout={handleLogout}
-        />
-      </div>
-
-      <Container fluid className="page-content mb-5">
-        <RouterProvider router={router} />
-      </Container>
-    </div>
+    <Container fluid>
+      <RouterProvider router={router} />
+    </Container>
   );
 }
-
-export default connect()(AuthRoutes);
