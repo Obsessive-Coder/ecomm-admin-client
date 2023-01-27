@@ -63,12 +63,11 @@ export default function AuthRoutes() {
       errorElement: <Error404 />
     }]);
 
-  // const router = createBrowserRouter(routes);;
+  const router = createBrowserRouter(routes);;
 
   return (
     <Container fluid>
-      {/* <RouterProvider router={router} /> */}
-      <h1>WELL THEN...</h1>
+      <RouterProvider router={router} />
     </Container>
   );
 }
