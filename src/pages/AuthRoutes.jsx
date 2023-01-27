@@ -63,7 +63,7 @@ export default function AuthRoutes() {
       errorElement: <Error404 />
     }]);
 
-  const router = createBrowserRouter(routes);;
+  // const router = createBrowserRouter(routes);;
 
   return (
     <Container fluid>
