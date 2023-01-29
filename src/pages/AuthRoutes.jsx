@@ -53,7 +53,7 @@ export default function AuthRoutes() {
     Products,
   ];
 
-  console.los(pages)
+  console.log(pages)
 
   const routes = [{
     path: '/',
