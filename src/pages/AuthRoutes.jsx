@@ -33,8 +33,6 @@ const pages = [
 const getPathname = str => {
   // Taken from https://plainenglish.io/blog/convert-string-to-different-case-styles-snake-kebab-camel-and-pascal-case-in-javascript-da724b7220d7
 
-  console.log(str)
-
   return `/${str.match(
     /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
     .map(char => char.toLowerCase())
