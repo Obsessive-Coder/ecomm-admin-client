@@ -53,6 +53,8 @@ export default function AuthRoutes() {
     errorElement: <Error404 />
   }));
 
+  console.log(authRoutes)
+
   const routes = [{
     path: '/',
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
