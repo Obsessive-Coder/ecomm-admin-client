@@ -53,6 +53,8 @@ export default function AuthRoutes() {
     Products,
   ];
 
+  console.los(pages)
+
   const routes = [{
     path: '/',
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
