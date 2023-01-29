@@ -21,13 +21,13 @@ import Error404 from './Error404';
 import Login from './Login';
 
 const pages = [
-  Categories,
-  CategoryTypes,
+  // Categories,
+  // CategoryTypes,
   Dashboard,
-  Order,
-  Orders,
-  Product,
-  Products,
+  // Order,
+  // Orders,
+  // Product,
+  // Products,
 ];
 
 const getPathname = str => {
@@ -44,37 +44,22 @@ export default function AuthRoutes() {
   const { uid: userId } = useSelector(({ user }) => user.value);
   const isAuthenticated = !!userId;
 
-  const x = [{
-    path: '/dashboard',
-    element: Dashboard,
-    errorElement: <Error404 />
-  }];
-
-  // const authRoutes = x.map(x => ({
-  //   ...x,
-  //   element: <MasterPage><x.element /></MasterPage>
-  // }))
-
-  const authRoutes = pages.map(PageComponent => {
-    return ({
-      path: getPathname(PageComponent.name),
-      element: isAuthenticated ? (
-        <MasterPage><PageComponent /></MasterPage>
-      ) : (
-        <Navigate to="/login" />
-      ),
-      errorElement: <Error404 />
-    })
-  });
-
-  console.log(authRoutes)
-
   const routes = [{
     path: '/',
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
     errorElement: <Error404 />
   }]
-    .concat([...authRoutes])
+    .concat(pages.map(PageComponent => {
+      return ({
+        path: getPathname(PageComponent.name),
+        element: isAuthenticated ? (
+          <MasterPage><PageComponent /></MasterPage>
+        ) : (
+          <Navigate to="/login" />
+        ),
+        errorElement: <Error404 />
+      })
+    }))
     .concat([{
       path: '/login',
       element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
