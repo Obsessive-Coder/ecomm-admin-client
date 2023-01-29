@@ -39,7 +39,7 @@ export async function loader({ params: { orderId } }) {
   return { order };
 }
 
-export default function Order() {
+function Order() {
   const [order, setOrder] = useState(useLoaderData().order);
   const navigate = useNavigate();
 
@@ -185,3 +185,6 @@ export default function Order() {
     </Container>
   );
 }
+
+Order.displayName = 'Order';
+export default Order;

@@ -21,13 +21,13 @@ import Error404 from './Error404';
 import Login from './Login';
 
 const pages = [
-  // Categories,
-  // CategoryTypes,
+  Categories,
+  CategoryTypes,
   Dashboard,
-  // Order,
-  // Orders,
-  // Product,
-  // Products,
+  Order,
+  Orders,
+  Product,
+  Products,
 ];
 
 const getPathname = str => {
@@ -41,7 +41,7 @@ const getPathname = str => {
     .join('-')}`
 };
 
-export default function AuthRoutes() {
+function AuthRoutes() {
   const { uid: userId } = useSelector(({ user }) => user.value);
   const isAuthenticated = !!userId;
 
@@ -75,3 +75,7 @@ export default function AuthRoutes() {
     </Container>
   );
 }
+
+AuthRoutes.displayName = 'AuthRoutes';
+export default AuthRoutes;
+

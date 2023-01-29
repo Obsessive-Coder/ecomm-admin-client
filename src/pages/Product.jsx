@@ -24,7 +24,7 @@ export async function loader({ params: { productId } }) {
   return { categories, product };
 }
 
-export default function Product() {
+function Product() {
   const navigate = useNavigate();
   const categories = useLoaderData().categories;
   const [product, setProduct] = useState(useLoaderData().product);
@@ -110,3 +110,6 @@ export default function Product() {
     </Container>
   )
 }
+
+Product.displayName = 'Product';
+export default Product;

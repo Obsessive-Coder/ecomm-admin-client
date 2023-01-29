@@ -31,9 +31,13 @@ const pageConfig = {
   tableColumns: [...tableColumns]
 };
 
-export default function Categories() {
+function Categories() {
   const filterItems = useSelector(state => state['category-types'].value);
   pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems };
 
   return (<PageContent config={pageConfig} reduxActions={reduxActions} />);
 }
+
+Categories.displayName = 'Categories';
+export default Categories;
+

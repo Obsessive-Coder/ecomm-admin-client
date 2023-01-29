@@ -51,9 +51,12 @@ const pageConfig = {
   tableColumns: [...tableColumns]
 };
 
-export default function Orders() {
+function Orders() {
   const filterItems = useSelector(state => state['order-statuses'].value);
   pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems };
 
   return (<PageContent config={pageConfig} reduxActions={reduxActions} />);
 }
+
+Orders.displayName = 'Orders';
+export default Orders;

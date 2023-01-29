@@ -26,8 +26,11 @@ const pageConfig = {
   tableColumns: [...tableColumns]
 };
 
-export default function CategoryTypes() {
+function CategoryTypes() {
   return (
     <PageContent config={pageConfig} reduxActions={reduxActions} />
   );
 }
+CategoryTypes.displayName = 'CategoryTypes';
+export default CategoryTypes;
+
