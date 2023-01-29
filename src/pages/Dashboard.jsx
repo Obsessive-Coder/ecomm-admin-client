@@ -1,4 +1,4 @@
-export default function Dashboard() {
+function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
@@ -9,3 +9,6 @@ export default function Dashboard() {
     </div>
   );
 }
+
+Dashboard.displayName = 'Dashboard';
+export default Dashboard;
