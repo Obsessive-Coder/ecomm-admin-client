@@ -49,20 +49,20 @@ export default function AuthRoutes() {
     errorElement: <Error404 />
   }];
 
-  const authRoutes = x.map(x => ({
-    ...x,
-    element: <MasterPage><x.element /></MasterPage>
-  }))
+  // const authRoutes = x.map(x => ({
+  //   ...x,
+  //   element: <MasterPage><x.element /></MasterPage>
+  // }))
 
-  // const authRoutes = pages.map(PageComponent => ({
-  //   path: getPathname(PageComponent.name),
-  //   element: isAuthenticated ? (
-  //     <MasterPage><PageComponent /></MasterPage>
-  //   ) : (
-  //     <Navigate to="/login" />
-  //   ),
-  //   errorElement: <Error404 />
-  // }));
+  const authRoutes = pages.map(PageComponent => ({
+    path: getPathname(PageComponent.name),
+    element: isAuthenticated ? (
+      <MasterPage><PageComponent /></MasterPage>
+    ) : (
+      <Navigate to="/login" />
+    ),
+    errorElement: <Error404 />
+  }));
 
   console.log(authRoutes)
 
