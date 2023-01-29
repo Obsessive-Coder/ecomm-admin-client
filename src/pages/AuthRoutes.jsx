@@ -58,6 +58,11 @@ export default function AuthRoutes() {
     //   errorElement: <Error404 />
     // })))
     .concat([{
+      path: '/dashboard',
+      element: <MasterPage><Dashboard /></MasterPage>,
+      errorElement: <Error404 />
+    }])
+    .concat([{
       path: '/login',
       element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
       errorElement: <Error404 />
