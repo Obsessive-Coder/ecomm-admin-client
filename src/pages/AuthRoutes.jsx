@@ -21,19 +21,20 @@ import Error404 from './Error404';
 import Login from './Login';
 
 const pages = [
-  // Categories,
-  // CategoryTypes,
+  Categories,
+  CategoryTypes,
   Dashboard,
-  // Order,
-  // Orders,
-  // Product,
-  // Products,
+  Order,
+  Orders,
+  Product,
+  Products,
 ];
 
 const getPathname = str => {
   // Taken from https://plainenglish.io/blog/convert-string-to-different-case-styles-snake-kebab-camel-and-pascal-case-in-javascript-da724b7220d7
 
-  console.log('HERE: ', str);
+  console.log(str)
+
   return `/${str.match(
     /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
     .map(char => char.toLowerCase())
@@ -51,7 +52,7 @@ export default function AuthRoutes() {
   }]
     .concat(pages.map(PageComponent => {
       return ({
-        path: getPathname(PageComponent.name),
+        path: getPathname(PageComponent.displayName || PageComponent.name || 'Component'),
         element: isAuthenticated ? (
           <MasterPage><PageComponent /></MasterPage>
         ) : (
