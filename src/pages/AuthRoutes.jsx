@@ -21,13 +21,13 @@ import Error404 from './Error404';
 import Login from './Login';
 
 const pages = [
-  Categories,
-  CategoryTypes,
+  // Categories,
+  // CategoryTypes,
   Dashboard,
-  Order,
-  Orders,
-  Product,
-  Products,
+  // Order,
+  // Orders,
+  // Product,
+  // Products,
 ];
 
 const getPathname = str => {
@@ -52,7 +52,7 @@ export default function AuthRoutes() {
   }]
     .concat(pages.map(PageComponent => {
       return ({
-        path: getPathname(PageComponent.displayName || PageComponent.name || 'Component'),
+        path: getPathname(PageComponent.displayName),
         element: isAuthenticated ? (
           <MasterPage><PageComponent /></MasterPage>
         ) : (
