@@ -48,15 +48,15 @@ export default function AuthRoutes() {
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
     errorElement: <Error404 />
   }]
-    .concat(getPages().map(PageComponent => ({
-      path: getPathname(PageComponent.name),
-      element: isAuthenticated ? (
-        <MasterPage><PageComponent /></MasterPage>
-      ) : (
-        <Navigate to="/login" />
-      ),
-      errorElement: <Error404 />
-    })))
+    // .concat(getPages().map(PageComponent => ({
+    //   path: getPathname(PageComponent.name),
+    //   element: isAuthenticated ? (
+    //     <MasterPage><PageComponent /></MasterPage>
+    //   ) : (
+    //     <Navigate to="/login" />
+    //   ),
+    //   errorElement: <Error404 />
+    // })))
     .concat([{
       path: '/login',
       element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
