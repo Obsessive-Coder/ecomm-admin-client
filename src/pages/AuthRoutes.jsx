@@ -20,7 +20,7 @@ import Products from './Products';
 import Error404 from './Error404';
 import Login from './Login';
 
-const getPages = () => ([
+const pages = [
   Categories,
   CategoryTypes,
   Dashboard,
@@ -28,7 +28,7 @@ const getPages = () => ([
   Orders,
   Product,
   Products,
-]);
+];
 
 const getPathname = str => {
   // Taken from https://plainenglish.io/blog/convert-string-to-different-case-styles-snake-kebab-camel-and-pascal-case-in-javascript-da724b7220d7
@@ -43,41 +43,31 @@ export default function AuthRoutes() {
   const { uid: userId } = useSelector(({ user }) => user.value);
   const isAuthenticated = !!userId;
 
-  const pages = [
-    Categories,
-    CategoryTypes,
-    Dashboard,
-    Order,
-    Orders,
-    Product,
-    Products,
-  ];
-
-  console.log(pages)
+  const X = pages[2];
 
   const routes = [{
     path: '/',
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
     errorElement: <Error404 />
   }]
-    .concat(pages.map(PageComponent => ({
-      path: getPathname(PageComponent.name),
-      element: isAuthenticated ? (
-        <MasterPage><PageComponent /></MasterPage>
-      ) : (
-        <Navigate to="/login" />
-      ),
-      errorElement: <Error404 />
-    })))
-    // .concat([{
-    //   path: '/dashboard',
+    // .concat(pages.map(PageComponent => ({
+    //   path: getPathname(PageComponent.name),
     //   element: isAuthenticated ? (
-    //     <MasterPage><Dashboard /></MasterPage>
+    //     <MasterPage><PageComponent /></MasterPage>
     //   ) : (
     //     <Navigate to="/login" />
     //   ),
     //   errorElement: <Error404 />
-    // }])
+    // })))
+    .concat([{
+      path: '/dashboard',
+      element: isAuthenticated ? (
+        <MasterPage><X /></MasterPage>
+      ) : (
+        <Navigate to="/login" />
+      ),
+      errorElement: <Error404 />
+    }])
     .concat([{
       path: '/login',
       element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
