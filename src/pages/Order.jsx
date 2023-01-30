@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import React from 'react'
+import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -14,12 +14,10 @@ import StatusBadge from '../components/StatusBadge';
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
 
-const orderUtil = new OrderUtil();
-
 const tableColumns = [{
   label: 'product',
   Component: undefined,
-  key: 'title'
+  key: 'Product.title'
 }, {
   label: 'quantity',
   Component: undefined,
@@ -34,17 +32,22 @@ const tableColumns = [{
   key: 'total'
 }];
 
+function getValue(st, obj) {
+  // Taken from : https://stackoverflow.com/a/38640223.
+  return st.replace(/\[([^\]]+)]/g, '.$1').split('.').reduce(function (o, p) {
+    return o[p];
+  }, obj);
+}
+
 export async function loader({ params: { id } }) {
   const { data: order } = await new OrderUtil().findOne(id);
   return { order };
 }
 
 function Order() {
-  const [order, setOrder] = useState(useLoaderData().order);
-  const navigate = useNavigate();
+  const order = useLoaderData().order;
 
   const {
-    id: orderId,
     recipient_name,
     address,
     status,
@@ -54,18 +57,6 @@ function Order() {
     total,
     items = [],
   } = order;
-
-  const updateOrder = updatedOrder => {
-    setOrder({
-      ...order,
-      ...updatedOrder
-    });
-  };
-
-  const deleteOrder = async () => {
-    await orderUtil.delete(orderId);
-    navigate('/orders');
-  };
 
   return (
     <Container>
@@ -111,7 +102,7 @@ function Order() {
             <span className="d-block fw-bold">Invoice To</span>
             <address>
               <small className="d-block">{recipient_name}</small>
-              {address.split(',').map(addressLine => (
+              {address.split('/').map(addressLine => (
                 <small key={`address-${addressLine}`} className="d-block">
                   {addressLine}
                 </small>
@@ -138,12 +129,12 @@ function Order() {
               {tableColumns.map(({ label, key, Component }, index) => (
                 <td key={`${item.id}-${label}`} style={{ maxWidth: 200 }} className="text-truncate">
                   {Component ? (
-                    <div>COMPONENT</div>
+                    <Component />
                   ) : (
                     <span className={label === 'total' ? 'fw-bold text-success' : ''}>
                       {(label === 'total' || label === 'item price') && '$'}
-                      {label === 'total' && (item.quantity * item.item_price).toFixed(2)}
-                      {item[key] ?? ''}
+                      {(label === 'total') && (item.quantity * item.item_price).toFixed(2)}
+                      {getValue(key, item) ?? ''}
                     </span>
                   )}
                 </td>

@@ -369,15 +369,24 @@ export default function AddEditOrder(props) {
 
             <Form.Group
               as={Row}
-              className="position-absolute py-2 bg-primary"
-              style={{ left: 0, right: 0, bottom: 0 }}
+              className="position-absolute py-2 bg-dark"
+              style={{ left: 0, right: 0, bottom: 0, zIndex: 10 }}
             >
               <Col className="d-flex">
-                <Button variant="outline-secondary" type="button" onClick={handleCancelClick} className="flex-grow-1 mx-2">
+                <Button
+                  type="button"
+                  variant="outline-secondary"
+                  onClick={handleCancelClick}
+                  className="flex-grow-1 btn-sm mx-2"
+                >
                   Cancel
                 </Button>
 
-                <Button type="submit" variant="outline-primary" className="flex-grow-1 mx-2 text-success">
+                <Button
+                  type="submit"
+                  variant="outline-success"
+                  className="flex-grow-1 btn-sm mx-2"
+                >
                   {order.id ? 'Update' : 'Create'}
                 </Button>
 

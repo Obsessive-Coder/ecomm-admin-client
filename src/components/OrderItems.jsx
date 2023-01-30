@@ -5,7 +5,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { X as XIcon } from 'react-bootstrap-icons';
+import {
+  Dash as DashIcon,
+  Plus as PlusIcon,
+  X as XIcon
+} from 'react-bootstrap-icons';
 
 // Custom Components.
 import AddItemDropdown from './AddItemDropdown';
@@ -87,7 +91,7 @@ export default function OrderItems(props) {
                     data-amount={-1}
                     onClick={updateItemQuantity}
                   >
-                    -
+                    <DashIcon size={18} className="no-click-events" />
                   </Button>
 
                   <Form.Select
@@ -96,8 +100,7 @@ export default function OrderItems(props) {
                     defaultValue={quantity}
                     data-product-id={productId}
                     onChange={updateItemQuantity}
-                    className="mx-2 form-select-sm bg-dark border-secondary text-secondary"
-                    style={{ width: 100 }}
+                    className="form-select-sm bg-dark border-dark text-secondary"
                   >
                     {quantityOptions.map(value => (
                       <option key={`quantity-${value + 1}`}>{value + 1}</option>
@@ -105,12 +108,12 @@ export default function OrderItems(props) {
                   </Form.Select>
 
                   <Button
-                    variant="outline-danger"
+                    variant="outline-success"
                     data-product-id={productId}
                     data-amount={1}
                     onClick={updateItemQuantity}
                   >
-                    +
+                    <PlusIcon size={18} className="no-click-events" />
                   </Button>
                 </InputGroup>
               </div>

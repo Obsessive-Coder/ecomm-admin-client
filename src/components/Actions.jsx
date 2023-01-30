@@ -32,7 +32,7 @@ export default function Actions(props) {
               product={item}
               updateItem={handleUpdate}
               buttonVariant="link"
-              buttonClassName="p-0 mx-2 edit text-secondary"
+              buttonClassName="btn-sm edit text-secondary"
             />
           )}
 
@@ -43,7 +43,7 @@ export default function Actions(props) {
               type={type}
               updateItem={handleUpdate}
               buttonVariant="link"
-              buttonClassName="p-0 mx-2 edit text-secondary"
+              buttonClassName="btn-sm edit text-secondary"
             />
           )}
 
@@ -55,7 +55,7 @@ export default function Actions(props) {
               products={products}
               updateItem={handleUpdate}
               buttonVariant="link"
-              buttonClassName="p-0 mx-2 edit text-secondary"
+              buttonClassName="btn-sm edit text-secondary"
             />
           )}
         </>
