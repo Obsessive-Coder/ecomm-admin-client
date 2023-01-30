@@ -64,13 +64,14 @@ export default function Sidebar({ isOpen, handleClose, handleLogout }) {
       </Offcanvas.Header>
 
       <Offcanvas.Body>
-        <Nav defaultActiveKey="/" activeKey={pathname} className="flex-column">
+        <Nav defaultActiveKey="/dashboard" activeKey={pathname} className="flex-column">
           {navItems.map(({ path, label, Icon }) => (
-            <Nav.Item key={label} className="d-flex align-items-center p-2">
+            <Nav.Item key={`nav-item-${label}`} className="d-flex align-items-center p-2">
               <Icon />
               <Nav.Link
                 as={Link}
                 to={path}
+                active={path === pathname}
                 onClick={label === 'logout' ? handleLogout : null}
                 className="flex-fill p-2 text-capitalize text-secondary fs-6"
               >

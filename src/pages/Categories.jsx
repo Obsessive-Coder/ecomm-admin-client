@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 // Custom Components.
 import PageContent from '../components/PageContent';
@@ -28,13 +27,11 @@ const pageConfig = {
   actionBarProps: { ...actionBarProps },
   loadFunctions: [reduxActions.storeItems, storeCategoryTypes],
   unloadFunctions: [reduxActions.clearItems, clearCategoryTypes],
-  tableColumns: [...tableColumns]
+  tableColumns: [...tableColumns],
+  filterField: 'category-types'
 };
 
 function Categories() {
-  const filterItems = useSelector(state => state['category-types'].value);
-  pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems };
-
   return (<PageContent config={pageConfig} reduxActions={reduxActions} />);
 }
 

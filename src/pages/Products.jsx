@@ -44,9 +44,6 @@ const pageConfig = {
 };
 
 function Products() {
-  const filterItems = useSelector(state => state.categories.value);
-  pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems }
-
   return (<PageContent config={pageConfig} reduxActions={reduxActions} />)
 }
 

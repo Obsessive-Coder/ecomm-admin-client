@@ -48,13 +48,11 @@ const pageConfig = {
   actionBarProps: { ...actionBarProps },
   loadFunctions: [reduxActions.storeItems, storeStatuses, storeProducts],
   unloadFunctions: [reduxActions.clearItems, clearStatuses, clearProducts],
-  tableColumns: [...tableColumns]
+  tableColumns: [...tableColumns],
+  filterField: 'order-statuses'
 };
 
 function Orders() {
-  const filterItems = useSelector(state => state['order-statuses'].value);
-  pageConfig.actionBarProps = { ...pageConfig.actionBarProps, filterItems };
-
   return (<PageContent config={pageConfig} reduxActions={reduxActions} />);
 }
 

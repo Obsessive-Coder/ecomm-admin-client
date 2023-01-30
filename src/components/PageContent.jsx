@@ -47,7 +47,6 @@ export default function PageContent(props) {
   };
 
   const getCellValue = (item = {}, label = '') => {
-    const { filterItems } = actionBarProps;
     let value = item[label];
 
     switch (label) {
@@ -82,12 +81,15 @@ export default function PageContent(props) {
       actionBarProps = {},
       tableColumns = [],
       loadFunctions = [],
-      unloadFunctions = []
+      unloadFunctions = [],
+      filterField = ''
     } = {},
     reduxActions = {}
   } = props;
 
   const pageKey = window.location.pathname.replace('/', '');
+
+  const filterItems = useSelector(state => state[filterField]?.value ?? []);
 
   const items = useSelector(state => state[pageKey].value);
   const pageItems = items.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
@@ -101,6 +103,7 @@ export default function PageContent(props) {
     }
   }, []);
 
+  console.log(props)
 
   return (
     <div>
@@ -108,6 +111,7 @@ export default function PageContent(props) {
 
       <ActionBar
         type={pageKey}
+        filterItems={filterItems}
         getItems={handleGetItems}
         addItem={handleAddItem}
         {...actionBarProps}
@@ -143,7 +147,7 @@ export default function PageContent(props) {
                       label={label}
                       isActive={item.active}
                       item={item}
-                      status={actionBarProps?.filterItems?.filter(({ id }) => id === item.status_id)[0]?.title}
+                      status={filterItems?.filter(({ id }) => id === item.status_id)[0]?.title}
                       toUrl={`/${pageKey}/${item.id}`}
                       handleUpdate={handleUpdateItem}
                       removeItem={handleRemoveItem}

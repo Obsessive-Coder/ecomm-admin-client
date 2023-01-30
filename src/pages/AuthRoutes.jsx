@@ -8,38 +8,45 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 import Container from 'react-bootstrap/Container';
 
 // Custom Components.
-import Categories from './Categories';
-import CategoryTypes from './CategoryTypes';
 import Dashboard from './Dashboard';
 import MasterPage from './MasterPage';
 import Order, { loader as orderLoader } from './Order';
-import Orders from './Orders';
 import Product, { loader as productLoader } from './Product';
-import Products from './Products';
 
 import Error404 from './Error404';
 import Login from './Login';
+import PageContent from '../components/PageContent';
 
-const pages = [
-  Categories,
-  CategoryTypes,
-  Dashboard,
-  Order,
-  Orders,
-  Product,
-  Products,
-];
+import pageConfigs from '../utils/pageConfigs';
 
-const getPathname = str => {
-  // Taken from https://plainenglish.io/blog/convert-string-to-different-case-styles-snake-kebab-camel-and-pascal-case-in-javascript-da724b7220d7
-
-  return `/${str.match(
-    /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-    .map(char => char.toLowerCase())
-    .join('-')}`
+const otherPages = {
+  dashboard: { loader: () => null, component: Dashboard },
+  'orders/:id': { loader: orderLoader, component: Order },
+  'products/:id': { loader: productLoader, component: Product }
 };
 
 function AuthRoutes() {
+  const withMasterPage = (Component, props = {}) => (
+    isAuthenticated ? (
+      <MasterPage><Component {...props} /></MasterPage>
+    ) : (
+      <Navigate to="/login" />
+    )
+  );
+
+  const getRoute = (Component, path, props = {}, loader = () => null) => ({
+    path: `/${path.toLowerCase()}`,
+    errorElement: <Error404 />,
+    element: withMasterPage(Component, { key: path, ...props }),
+    loader
+  });
+
+  const configRoutes = Object.keys(pageConfigs)
+    .map(key => getRoute(PageContent, key, pageConfigs[key]));
+
+  const otherRoutes = Object.keys(otherPages)
+    .map(key => getRoute(otherPages[key].component, key, {}, otherPages[key].loader));
+
   const { uid: userId } = useSelector(({ user }) => user.value);
   const isAuthenticated = !!userId;
 
@@ -48,17 +55,8 @@ function AuthRoutes() {
     element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
     errorElement: <Error404 />
   }]
-    .concat(pages.map(PageComponent => {
-      return ({
-        path: getPathname(PageComponent.displayName),
-        element: isAuthenticated ? (
-          <MasterPage><PageComponent /></MasterPage>
-        ) : (
-          <Navigate to="/login" />
-        ),
-        errorElement: <Error404 />
-      })
-    }))
+    .concat(configRoutes)
+    .concat(otherRoutes)
     .concat([{
       path: '/login',
       element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,

@@ -16,11 +16,11 @@ import ProductUtil from '../utils/api/ProductUtil';
 
 const productUtil = new ProductUtil();
 
-export async function loader({ params: { productId } }) {
+export async function loader({ params: { id } }) {
   const { data: categories } = await new CategoryUtil()
     .findAll({ order: { column: 'title' } });
 
-  const { data: product } = await new ProductUtil().findOne(productId);
+  const { data: product } = await new ProductUtil().findOne(id);
   return { categories, product };
 }
 

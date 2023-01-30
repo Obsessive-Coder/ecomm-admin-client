@@ -34,8 +34,8 @@ const tableColumns = [{
   key: 'total'
 }];
 
-export async function loader({ params: { orderId } }) {
-  const { data: order } = await new OrderUtil().findOne(orderId);
+export async function loader({ params: { id } }) {
+  const { data: order } = await new OrderUtil().findOne(id);
   return { order };
 }
 
