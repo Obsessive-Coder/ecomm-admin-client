@@ -26,6 +26,9 @@ const otherPages = {
 };
 
 function AuthRoutes() {
+  const { uid: userId } = useSelector(({ user }) => user.value);
+  const isAuthenticated = !!userId;
+
   const withMasterPage = (Component, props = {}) => (
     isAuthenticated ? (
       <MasterPage><Component {...props} /></MasterPage>
@@ -46,9 +49,6 @@ function AuthRoutes() {
 
   const otherRoutes = Object.keys(otherPages)
     .map(key => getRoute(otherPages[key].component, key, {}, otherPages[key].loader));
-
-  const { uid: userId } = useSelector(({ user }) => user.value);
-  const isAuthenticated = !!userId;
 
   const routes = [{
     path: '/',
