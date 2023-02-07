@@ -30,6 +30,7 @@ export default function AddEditCategory(props) {
   });
 
   const categoryTypes = useSelector(state => state['category-types'].value);
+
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
