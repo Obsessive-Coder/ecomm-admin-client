@@ -27,6 +27,14 @@
   color: #7a8288 !important;
 }
 
+.firebaseui-title {
+  text-shadow: none;
+}
+
+.no-click-events {
+  pointer-events: none;
+}
+
 @media print {
   .no-print {
     display: none !important;

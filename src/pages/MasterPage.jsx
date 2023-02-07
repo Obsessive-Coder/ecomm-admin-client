@@ -1,60 +1,22 @@
 import React, { useState } from 'react';
-
-// Router components and helpers.
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useDispatch } from 'react-redux';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
 
-// Custom components.
+// Custom Components.
 import MainHeader from '../components/MainHeader';
-import Dashboard from './Dashboard';
-import Categories, { loader as categoriesLoader } from './Categories';
-import CategoryTypes, { loader as categoryTypesLoader } from './CategoryTypes';
-import Order, { loader as orderLoader } from './Order';
-import Orders, { loader as ordersLoader } from './Orders';
-import Product, { loader as productLoader } from './Product';
-import Products, { loader as productsLoader } from './Products';
-import Error404 from './Error404';
 import Sidebar from '../components/Sidebar';
 
-// Styles, utils, and other helpers.
+// Style, utils, and other helpers.
+import { logOut } from '../reducers/user';
 import '../style.css';
 
-const router = createBrowserRouter([{
-  path: '/',
-  element: <Dashboard />,
-  errorElement: <Error404 />,
-}, {
-  path: '/products',
-  element: <Products />,
-  loader: productsLoader
-}, {
-  path: '/products/:productId',
-  element: <Product />,
-  errorElement: <Error404 />,
-  loader: productLoader
-}, {
-  path: '/categories',
-  element: <Categories />,
-  loader: categoriesLoader
-}, {
-  path: '/category-types',
-  element: <CategoryTypes />,
-  loader: categoryTypesLoader
-}, {
-  path: '/orders',
-  element: <Orders />,
-  loader: ordersLoader
-},
-{
-  path: '/orders/:orderId',
-  element: <Order />,
-  loader: orderLoader
-}
-]);
+export default function MasterPage({ children }) {
+  const dispatch = useDispatch();
 
-export default function MasterPage() {
+  const handleLogout = () => dispatch(logOut());
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebarIsOpen = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -62,12 +24,14 @@ export default function MasterPage() {
     <Container fluid>
       <MainHeader handleOpenSidebar={toggleSidebarIsOpen} />
 
-      <div id="sidebar no-print">
-        <Sidebar isOpen={isSidebarOpen} handleClose={toggleSidebarIsOpen} />
-      </div>
+      <Sidebar
+        isOpen={isSidebarOpen}
+        handleClose={toggleSidebarIsOpen}
+        handleLogout={handleLogout}
+      />
 
       <Container fluid className="page-content mb-5">
-        <RouterProvider router={router} />
+        {children}
       </Container>
     </Container>
   )

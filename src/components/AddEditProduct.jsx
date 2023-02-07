@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
@@ -14,12 +15,10 @@ import ImageUpload from './ImageUpload';
 
 // Styles, utils, and other helpers.
 import FileUtil from '../utils/api/FIleUtil';
-import ProductUtil from '../utils/api/ProductUtil';
 
 export default function AddEditProduct(props) {
   const {
     product = {},
-    categories = [],
     buttonContent,
     buttonVariant = 'primary',
     buttonClassName = '',
@@ -41,6 +40,8 @@ export default function AddEditProduct(props) {
     category: 'required'
   });
 
+  const categories = useSelector(state => state.categories.value);
+
   const [imageData, setImageData] = useState(null);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +51,6 @@ export default function AddEditProduct(props) {
   const [isActive, setIsActive] = useState(product?.id ? product?.active ?? false : true)
 
   const fileUtil = new FileUtil();
-  const productUtil = new ProductUtil();
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -79,12 +79,10 @@ export default function AddEditProduct(props) {
 
     if (product.id) {
       // Update the product.
-      productUtil.update(product.id, updatedProduct);
       updateItem(updatedProduct);
     } else {
       // Create a new product.
-      const { data } = await productUtil.create(updatedProduct);
-      addItem(data);
+      addItem(updatedProduct);
     }
 
     handleHide();

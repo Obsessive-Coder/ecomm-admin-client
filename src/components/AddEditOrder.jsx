@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
@@ -13,14 +14,13 @@ import Row from 'react-bootstrap/Row';
 import OrderItems from './OrderItems';
 
 // Styles, utils, and other helpers.
-import OrderUtil from '../utils/api/OrderUtil';
-import OrderItemUtil from '../utils/api/OrderItemUtil';
+import { storeItems as storeProducts } from '../reducers/product';
 
 export default function AddEditOrder(props) {
+  const dispatch = useDispatch();
+
   const {
     order = {},
-    statuses = [],
-    products = [],
     buttonContent,
     buttonVariant = 'primary',
     buttonClassName = '',
@@ -38,132 +38,148 @@ export default function AddEditOrder(props) {
   }, {
     recipient: 'required',
     address: 'required',
-    phone: 'required',
+    phone: 'required|numeric|digits_between:10,12',
     shipping: 'required',
     payment: 'required',
     status: 'required'
   });
 
+  const products = useSelector(state => state.products.value);
+  const statuses = useSelector(state => state['order-statuses'].value);
+
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
+
+  const [orderItems, setOrderItems] = useState(order?.items ?? []);
 
   const handleCancelClick = () => {
     fields.address = order.address ?? '';
     fields.phone = order.phone ?? '';
     fields.payment = order.payment ?? '';
     fields.status = order.status_id ?? '';
+    fields.recipient = order.recipient_name ?? '';
+    fields.shipping = Number.parseFloat(order.shipping ?? 0).toFixed(2);
 
-    setOrderItems(order.items);
+    setOrderItems(order?.items ?? []);
     handleHide();
   }
 
-  const [orderItems, setOrderItems] = useState(order?.items ?? []);
-  const addItems = function (items = []) {
+  const addItems = (items = []) => {
     setOrderItems([...orderItems, ...items]);
   };
 
   const removeItems = productIds => {
-    const updatedOrderItems = orderItems.filter(({ Product: { id } }) => !productIds.includes(id));
+    const updatedOrderItems = orderItems
+      .filter(({ product_id }) => !productIds.includes(product_id));
     setOrderItems(updatedOrderItems);
   };
 
   const updateItemQuantity = event => {
     const { target } = event;
     const productId = target.getAttribute('data-product-id');
-    const quantity = parseInt(target.value);
+    let amount = target.getAttribute('data-amount');
+    const isIncrementDecrement = amount !== null;
+
+    if (!isIncrementDecrement) {
+      amount = target.value
+    }
 
     const updatedItems = [...orderItems];
 
     for (let i = 0; i < updatedItems.length; i++) {
-      const item = updatedItems[i];
+      let item = updatedItems[i];
 
-      if (item.Product.id === productId) {
-        updatedItems[i].quantity = quantity;
+      if (item.product_id === productId) {
+        const { quantity: productQuantity } = products
+          .filter(({ id }) => id === productId)[0];
+
+        const availableQuantity = order?.id === undefined ? productQuantity : productQuantity + item.quantity;
+
+        const newQuantity = isIncrementDecrement ? parseInt(item.quantity) + parseInt(amount) : parseInt(amount);
+
+        if (newQuantity >= 1 && newQuantity <= availableQuantity) {
+          item = { ...item, quantity: newQuantity };
+          updatedItems[i] = { ...item };
+          setOrderItems(updatedItems);
+        }
+
+        break;
       }
     }
-
-    setOrderItems(updatedItems);
   };
-
-  const orderUtil = new OrderUtil();
-  const orderItemUtil = new OrderItemUtil();
 
   const handleSubmit = async event => {
     event.preventDefault();
 
-    const { address, phone, shipping, recipient, payment, status } = fields;
-
     const isValid = await form.validate(event);
     if (!isValid || orderItems.length === 0) return;
 
-    const updatedOrder = {
-      ...order,
+    const { address, phone, payment, shipping, recipient: recipient_name, status: status_id } = fields;
+
+    const { id: orderId } = order;
+
+    let updatedOrder = {
       address,
       phone,
-      shipping,
       payment,
-      recipient_name: recipient,
-      status_id: status
+      shipping,
+      recipient_name,
+      status_id,
     };
 
-    if (order.id) {
-      // Update the order.
-      updateItem({ ...updatedOrder });
-
+    if (orderId) {
       const updatedOrderItemIds = orderItems.map(({ id }) => id);
       const deletedItemIds = order.items
         .filter(({ id }) => !updatedOrderItemIds.includes(id))
         .map(({ id }) => id);
 
-      if (deletedItemIds.length > 0) {
-        await deletedItemIds.map(itemId => orderItemUtil.delete(itemId));
-        if (orderItems.length === 0) {
-          await orderUtil.delete(order.id);
-        }
-      }
-
       const newItems = orderItems
         .filter(({ id }) => !id)
-        .map(({ quantity, item_price, Product: { id: product_id } }) => ({
+        .map(({ quantity, item_price, product_id }) => ({
           product_id,
           item_price,
           quantity,
-          order_id: order.id
+          order_id: orderId
         }));
 
-      if (newItems.length > 0) {
-        await newItems.map(item => orderItemUtil.create(item));
-      }
 
+      let updatedItems = [];
       if (updatedOrderItemIds.length > 0) {
-        const updatedItems = orderItems
-          .filter(({ id }) => updatedOrderItemIds.includes(id))
-          .map(({ id, quantity, item_price, Product: { id: product_id } }) => ({
+        updatedItems = orderItems
+          .filter(({ id }) => id && updatedOrderItemIds.includes(id))
+          .map(({ id, quantity, item_price, product_id }) => ({
             id,
             product_id,
             item_price,
             quantity,
-            order_id: order.id
+            order_id: orderId
           }));
-
-        await updatedItems.map(item => orderItemUtil.update(item.id, item));
       }
+
+      // Update the order.
+      updatedOrder = {
+        ...updatedOrder,
+        id: orderId,
+      };
+
+      updateItem({ updatedOrder, deletedItemIds, newItems, updatedItems });
     } else {
       // Create a new order.
-      const { data } = await orderUtil.create(updatedOrder);
-      addItem(data);
-
-      const newItems = orderItems
-        .map(({ quantity, item_price, Product: { id: product_id } }) => ({
+      const items = orderItems
+        .map(({ quantity, item_price, product_id }) => ({
           product_id,
           item_price,
-          quantity,
-          order_id: data.id
+          quantity
         }));
 
-      await newItems.map(item => orderItemUtil.create(item));
+      addItem({ newItem: updatedOrder, items })
+      handleCancelClick();
     }
+
+    setTimeout(() => {
+      dispatch(storeProducts());
+    }, 300);
 
     handleHide();
   };
@@ -189,6 +205,7 @@ export default function AddEditOrder(props) {
         <Offcanvas.Body className="overflow-hidden p-0">
           <Form
             noValidate
+            autoComplete="off"
             onSubmit={handleSubmit}
             className="position-relative h-100"
           >
@@ -342,7 +359,7 @@ export default function AddEditOrder(props) {
                     isExistingOrder={order.id !== undefined}
                     products={products}
                     existingItems={order.items ? order.items : []}
-                    addItems={addItems}
+                    addItems={addItems.bind(this)}
                     removeItems={removeItems}
                     updateItemQuantity={updateItemQuantity}
                   />
@@ -352,15 +369,24 @@ export default function AddEditOrder(props) {
 
             <Form.Group
               as={Row}
-              className="position-absolute py-2 bg-primary"
-              style={{ left: 0, right: 0, bottom: 0 }}
+              className="position-absolute py-2 bg-dark"
+              style={{ left: 0, right: 0, bottom: 0, zIndex: 10 }}
             >
               <Col className="d-flex">
-                <Button variant="outline-secondary" type="button" onClick={handleCancelClick} className="flex-grow-1 mx-2">
+                <Button
+                  type="button"
+                  variant="outline-secondary"
+                  onClick={handleCancelClick}
+                  className="flex-grow-1 btn-sm mx-2"
+                >
                   Cancel
                 </Button>
 
-                <Button type="submit" variant="outline-primary" className="flex-grow-1 mx-2 text-success">
+                <Button
+                  type="submit"
+                  variant="outline-success"
+                  className="flex-grow-1 btn-sm mx-2"
+                >
                   {order.id ? 'Update' : 'Create'}
                 </Button>
 

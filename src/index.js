@@ -1,14 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
 import "bootswatch/dist/slate/bootstrap.min.css";
-import reportWebVitals from './reportWebVitals';
 
-import MasterPage from './pages/MasterPage';
+import store from './store';
+import reportWebVitals from './reportWebVitals';
+import AuthRoutes from './pages/AuthRoutes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <MasterPage />
+    <Provider store={store}>
+      <AuthRoutes />
+    </Provider>
   </React.StrictMode>
 );
 

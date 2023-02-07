@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
@@ -9,14 +10,9 @@ import Form from 'react-bootstrap/Form';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Row from 'react-bootstrap/Row';
 
-// Styles, utils, and other helpers.
-import CategoryUtil from '../utils/api/CategoryUtil';
-import CategoryTypeUtil from '../utils/api/CategoryTypeUtil';
-
 export default function AddEditCategory(props) {
   const {
     category = {},
-    categoryTypes = [],
     type,
     buttonContent,
     buttonVariant = 'primary',
@@ -33,14 +29,13 @@ export default function AddEditCategory(props) {
     type: 'required'
   });
 
+  const categoryTypes = useSelector(state => state['category-types'].value);
+
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);
   const handleHide = () => setIsOpen(false);
 
   const [isActive, setIsActive] = useState(category?.id ? category?.active ?? false : true)
-
-  const categoryUtil = new CategoryUtil();
-  const categoryTypeUtil = new CategoryTypeUtil();
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -63,9 +58,7 @@ export default function AddEditCategory(props) {
       updateItem(updatedCategory);
     } else {
       // Create a new category.
-      const apiUtil = type === 'categoryTypes' ? categoryTypeUtil : categoryUtil;
-      const { data } = await apiUtil.create(updatedCategory);
-      addItem(data);
+      addItem(updatedCategory);
     }
 
     handleHide();
@@ -86,7 +79,7 @@ export default function AddEditCategory(props) {
         <Offcanvas.Header closeButton closeVariant="white" className="bg-dark">
           <Offcanvas.Title>
             {category.id ? 'Update Category' : 'Create Category'}
-            {type === 'categoryTypes' && ' Type'}
+            {type === 'category-types' && ' Type'}
           </Offcanvas.Title>
         </Offcanvas.Header>
 
@@ -130,7 +123,7 @@ export default function AddEditCategory(props) {
               </Col>
             </Form.Group>
 
-            {type === 'category' && (
+            {type === 'categories' && (
               <Form.Group as={Row} className="mb-3" controlId="typeForm">
                 <Col>
                   <FloatingLabel controlId="type" label="Type">

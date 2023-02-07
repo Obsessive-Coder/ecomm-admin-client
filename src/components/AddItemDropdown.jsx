@@ -19,6 +19,7 @@ const CustomMenu = React.forwardRef(
         <Form.Control
           autoFocus
           type="text"
+          name="product-filter"
           placeholder="Filter Products"
           defaultValue={value}
           onChange={(e) => setValue(e.target.value)}
@@ -37,7 +38,7 @@ const CustomMenu = React.forwardRef(
 );
 
 export default function AddItemDropdown({ items = [], products = [], addItems, removeItems }) {
-  const [selectedIds, setSelectedIds] = useState(items.map(({ Product }) => Product.id));
+  const [selectedIds, setSelectedIds] = useState(items.map(({ product_id }) => product_id));
 
   const handleItemClick = (event) => {
     const itemId = event.target.getAttribute('data-id');
@@ -56,7 +57,7 @@ export default function AddItemDropdown({ items = [], products = [], addItems, r
         title: selectedProduct.title,
         item_price: selectedProduct.price,
         quantity: 1,
-        Product: selectedProduct
+        product_id: selectedProduct.id
       }]);
     }
 

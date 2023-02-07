@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import React from 'react'
+import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -14,12 +14,10 @@ import StatusBadge from '../components/StatusBadge';
 // Styles, utils, and other helpers.
 import OrderUtil from '../utils/api/OrderUtil';
 
-const orderUtil = new OrderUtil();
-
 const tableColumns = [{
   label: 'product',
   Component: undefined,
-  key: 'title'
+  key: 'Product.title'
 }, {
   label: 'quantity',
   Component: undefined,
@@ -34,17 +32,22 @@ const tableColumns = [{
   key: 'total'
 }];
 
-export async function loader({ params: { orderId } }) {
-  const { data: order } = await new OrderUtil().findOne(orderId);
+function getValue(st, obj) {
+  // Taken from : https://stackoverflow.com/a/38640223.
+  return st.replace(/\[([^\]]+)]/g, '.$1').split('.').reduce(function (o, p) {
+    return o[p];
+  }, obj);
+}
+
+export async function loader({ params: { id } }) {
+  const { data: order } = await new OrderUtil().findOne(id);
   return { order };
 }
 
-export default function Order() {
-  const [order, setOrder] = useState(useLoaderData().order);
-  const navigate = useNavigate();
+function Order() {
+  const order = useLoaderData().order;
 
   const {
-    id: orderId,
     recipient_name,
     address,
     status,
@@ -52,20 +55,8 @@ export default function Order() {
     payment,
     shipping,
     total,
-    orderItems = [],
+    items = [],
   } = order;
-
-  const updateOrder = updatedOrder => {
-    setOrder({
-      ...order,
-      ...updatedOrder
-    });
-  };
-
-  const deleteOrder = async () => {
-    await orderUtil.delete(orderId);
-    navigate('/orders');
-  };
 
   return (
     <Container>
@@ -111,7 +102,7 @@ export default function Order() {
             <span className="d-block fw-bold">Invoice To</span>
             <address>
               <small className="d-block">{recipient_name}</small>
-              {address.split(',').map(addressLine => (
+              {address.split('/').map(addressLine => (
                 <small key={`address-${addressLine}`} className="d-block">
                   {addressLine}
                 </small>
@@ -133,17 +124,17 @@ export default function Order() {
         </thead>
 
         <tbody>
-          {orderItems.map(({ ...item }) => (
+          {items.map(({ ...item }) => (
             <tr key={`${item.id}`}>
               {tableColumns.map(({ label, key, Component }, index) => (
                 <td key={`${item.id}-${label}`} style={{ maxWidth: 200 }} className="text-truncate">
                   {Component ? (
-                    <div>COMPONENT</div>
+                    <Component />
                   ) : (
                     <span className={label === 'total' ? 'fw-bold text-success' : ''}>
                       {(label === 'total' || label === 'item price') && '$'}
-                      {label === 'total' && (item.quantity * item.item_price).toFixed(2)}
-                      {item[key] ?? ''}
+                      {(label === 'total') && (item.quantity * item.item_price).toFixed(2)}
+                      {getValue(key, item) ?? ''}
                     </span>
                   )}
                 </td>
@@ -172,7 +163,7 @@ export default function Order() {
         <div className="mx-2 me-auto">
           <span className="d-block fw-bold">Total</span>
           <span className="text-success fw-bold" style={{ fontSize: 'large' }}>
-            {`$${total.toFixed(2)}`}
+            {total}
           </span>
         </div>
       </div>
@@ -185,3 +176,6 @@ export default function Order() {
     </Container>
   );
 }
+
+Order.displayName = 'Order';
+export default Order;

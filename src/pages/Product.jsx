@@ -16,15 +16,15 @@ import ProductUtil from '../utils/api/ProductUtil';
 
 const productUtil = new ProductUtil();
 
-export async function loader({ params: { productId } }) {
+export async function loader({ params: { id } }) {
   const { data: categories } = await new CategoryUtil()
     .findAll({ order: { column: 'title' } });
 
-  const { data: product } = await new ProductUtil().findOne(productId);
+  const { data: product } = await new ProductUtil().findOne(id);
   return { categories, product };
 }
 
-export default function Product() {
+function Product() {
   const navigate = useNavigate();
   const categories = useLoaderData().categories;
   const [product, setProduct] = useState(useLoaderData().product);
@@ -110,3 +110,6 @@ export default function Product() {
     </Container>
   )
 }
+
+Product.displayName = 'Product';
+export default Product;

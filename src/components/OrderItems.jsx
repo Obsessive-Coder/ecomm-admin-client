@@ -3,8 +3,13 @@ import React from 'react';
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { X as XIcon } from 'react-bootstrap-icons';
+import {
+  Dash as DashIcon,
+  Plus as PlusIcon,
+  X as XIcon
+} from 'react-bootstrap-icons';
 
 // Custom Components.
 import AddItemDropdown from './AddItemDropdown';
@@ -15,11 +20,11 @@ export default function OrderItems(props) {
     items = [], isExistingOrder, products, addItems, removeItems, updateItemQuantity, existingItems = []
   } = props;
   const handleDeleteAllItems = () => {
-    const productIds = items.map(({ Product: { id } }) => id);
+    const productIds = items.map(({ product_id }) => product_id);
     removeItems(productIds);
   };
 
-  const isItemExisting = productId => existingItems.filter(({ Product }) => Product.id === productId).length > 0;
+  const isItemExisting = productId => existingItems.filter(({ product_id }) => product_id === productId).length > 0;
 
   return (
     <div>
@@ -33,7 +38,6 @@ export default function OrderItems(props) {
 
       <div>
         <AddItemDropdown
-          key={`order-items-${items.length}`}
           items={items}
           products={products.filter(({ active }) => active)}
           addItems={addItems}
@@ -54,39 +58,68 @@ export default function OrderItems(props) {
       </div>
 
       <ListGroup variant="flush">
-        {items.map(({ id, title, item_price, quantity, Product }) => (
-          <ListGroup.Item
-            key={`order-item-${title}`}
-            className="d-flex justify-content-between align-items-center px-0 text-secondary border-dark"
-          >
-            <Button
-              type="button"
-              variant="outline-danger"
-              size="sm"
-              onClick={() => removeItems([Product.id])}
-              className="p-1 border-0"
+        {items.map(({ id, order_id, item_price, quantity, product_id: productId }) => {
+          const { quantity: productQuantity, title } = products
+            .filter(({ id }) => id === productId)[0];
+
+          let quantityOptions = [...Array(productQuantity + ((isExistingOrder && isItemExisting(productId)) ? quantity : 0)).keys()];
+
+          const availableQuantity = order_id === undefined ? productQuantity : productQuantity + quantity;
+
+          return (
+            <ListGroup.Item
+              key={`order-item-${title}-${availableQuantity}`}
+              className="d-flex justify-content-between align-items-center px-0 text-secondary border-dark"
             >
-              <XIcon size={18} />
-            </Button>
-
-            <div className="d-flex align-items-center flex-fill flex-wrap">
-              <span className="flex-fill px-2">{title}</span>
-
-              <Form.Select
-                name="quantity"
-                defaultValue={quantity ?? 1}
-                data-product-id={Product.id}
-                onChange={updateItemQuantity}
-                className="mx-2 form-select-sm bg-dark border-secondary text-secondary"
-                style={{ width: 100 }}
+              <Button
+                type="button"
+                variant="outline-danger"
+                size="sm"
+                onClick={() => removeItems([productId])}
+                className="p-1 border-0"
               >
-                {[...Array(Product.quantity + ((isExistingOrder && isItemExisting(Product.id)) ? quantity : 0)).keys()].map(value => (
-                  <option key={`quantity-${value + 1}`}>{value + 1}</option>
-                ))}
-              </Form.Select>
-            </div>
-          </ListGroup.Item>
-        ))}
+                <XIcon size={18} />
+              </Button>
+
+              <div className="d-flex align-items-center flex-fill flex-wrap">
+                <span className="flex-fill px-2">{title}</span>
+
+                <InputGroup className="input-group-sm w-auto">
+                  <Button
+                    variant="outline-danger"
+                    data-product-id={productId}
+                    data-amount={-1}
+                    onClick={updateItemQuantity}
+                  >
+                    <DashIcon size={18} className="no-click-events" />
+                  </Button>
+
+                  <Form.Select
+                    key={`quantity-${quantity}-${id}`}
+                    name="quantity"
+                    defaultValue={quantity}
+                    data-product-id={productId}
+                    onChange={updateItemQuantity}
+                    className="form-select-sm bg-dark border-dark text-secondary"
+                  >
+                    {quantityOptions.map(value => (
+                      <option key={`quantity-${value + 1}`}>{value + 1}</option>
+                    ))}
+                  </Form.Select>
+
+                  <Button
+                    variant="outline-success"
+                    data-product-id={productId}
+                    data-amount={1}
+                    onClick={updateItemQuantity}
+                  >
+                    <PlusIcon size={18} className="no-click-events" />
+                  </Button>
+                </InputGroup>
+              </div>
+            </ListGroup.Item>
+          )
+        })}
       </ListGroup>
     </div>
   );
