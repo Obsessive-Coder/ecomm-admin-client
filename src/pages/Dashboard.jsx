@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
@@ -58,20 +58,6 @@ export async function loader({ params: { id } }) {
 
 function Dashboard() {
   const { metrics: { totals, orders = [] } } = useLoaderData();
-
-  const [metrics, setMetrics] = useState({});
-
-  useEffect(() => {
-    (async () => {
-      const { data: metrics } = await new MetricUtil().findAll({});
-      setMetrics(metrics);
-      console.log('HERE: ', metrics);
-    })()
-
-    return () => {
-      // unloadFunctions.forEach(fn => dispatch(fn()));
-    }
-  }, []);
 
   return (
     <Container>
