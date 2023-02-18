@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLoaderData } from 'react-router-dom';
 
 // Bootstrap Components.
@@ -52,17 +52,26 @@ const TotalCard = ({ label, value }) => {
 };
 
 export async function loader({ params: { id } }) {
-  alert('Loader running...');
   const { data: metrics } = await new MetricUtil().findAll({});
-
-  console.log('METRICS ', metrics);
   return { metrics };
 }
 
 function Dashboard() {
   const { metrics: { totals, orders = [] } } = useLoaderData();
 
-  // console.log(totals, counts);
+  const [metrics, setMetrics] = useState({});
+
+  useEffect(() => {
+    (async () => {
+      const { data: metrics } = await new MetricUtil().findAll({});
+      setMetrics(metrics);
+      console.log('HERE: ', metrics);
+    })()
+
+    return () => {
+      // unloadFunctions.forEach(fn => dispatch(fn()));
+    }
+  }, []);
 
   return (
     <Container>
