@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Table from 'react-bootstrap/Table';
 
 // Other Components.
+import { Link } from 'react-router-dom';
 import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-pagination';
 
 // Custom Components.
@@ -25,6 +26,7 @@ export default function DataTable(props) {
     items = [],
     columns = [],
     filterItems = [],
+    isSmall = false,
     pageKey = '',
     tableClassName = '',
     handleUpdateItem = () => null,
@@ -64,7 +66,7 @@ export default function DataTable(props) {
     }
   };
 
-  const [rowLimit, setRowLimit] = useState(25);
+  const [rowLimit, setRowLimit] = useState(isSmall ? 2 : 25);
   const [pageIndex, setPageIndex] = useState(0);
 
   const pageItems = items.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
@@ -123,18 +125,26 @@ export default function DataTable(props) {
         </div>
       )}
 
-      {pageCount > 1 && (
-        <div>
-          <Pagination
-            {...bootstrap5PaginationPreset}
-            total={pageCount}
-            current={pageIndex + 1}
-            maxWidth={500}
-            previousLabel="<"
-            nextLabel=">"
-            onPageChange={updatePageIndex}
-          />
+      {isSmall ? (
+        <div className="mx-2 text-end">
+          <Link to="/orders" className="text-body">
+            Show All
+          </Link>
         </div>
+      ) : (
+        pageCount > 1 && (
+          <div>
+            <Pagination
+              {...bootstrap5PaginationPreset}
+              total={pageCount}
+              current={pageIndex + 1}
+              maxWidth={500}
+              previousLabel="<"
+              nextLabel=">"
+              onPageChange={updatePageIndex}
+            />
+          </div>
+        )
       )}
     </div>
   );

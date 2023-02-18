@@ -85,6 +85,7 @@ const CountCard = ({ label, orders = [] }) => {
             items={orders}
             columns={tableColumns.filter(({ label }) => includedTableColumns.includes(label))}
             filterItems={[]}
+            isSmall={true}
             pageKey="orders"
             tableClassName="m-0"
           />
