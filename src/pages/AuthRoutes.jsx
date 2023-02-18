@@ -8,7 +8,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 import Container from 'react-bootstrap/Container';
 
 // Custom Components.
-import Dashboard from './Dashboard';
+import Dashboard, { loader as dashboardLoader } from './Dashboard';
 import MasterPage from './MasterPage';
 import Order, { loader as orderLoader } from './Order';
 import Product, { loader as productLoader } from './Product';
@@ -20,7 +20,7 @@ import PageContent from '../components/PageContent';
 import pageConfigs from '../utils/pageConfigs';
 
 const otherPages = {
-  dashboard: { loader: () => null, component: Dashboard },
+  dashboard: { loader: dashboardLoader, component: Dashboard },
   'orders/:id': { loader: orderLoader, component: Order },
   'products/:id': { loader: productLoader, component: Product }
 };
