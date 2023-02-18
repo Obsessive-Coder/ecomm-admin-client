@@ -52,7 +52,10 @@ const TotalCard = ({ label, value }) => {
 };
 
 export async function loader({ params: { id } }) {
+  alert('Loader running...');
   const { data: metrics } = await new MetricUtil().findAll({});
+
+  console.log('METRICS ', metrics);
   return { metrics };
 }
 
