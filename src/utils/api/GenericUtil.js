@@ -5,6 +5,7 @@ export default class GenericUtil {
     // this.baseUrl = `http://localhost:8080/api/${endpoint}`;
     this.baseUrl = ` https://ecomm-server-dev-env.eba-rzt7pshn.us-east-1.elasticbeanstalk.com/api/${endpoint}`;
 
+
     // Bind class methods.
     this.findAll = this.findAll.bind(this);
     this.findOne = this.findOne.bind(this);
