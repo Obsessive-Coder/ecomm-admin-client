@@ -14,6 +14,7 @@ import {
 
 // Custom Components.
 import CountCollapse from '../components/CountCollapse';
+import Sales from '../components/Sales';
 
 // Styles, utils, and other helpers.
 import MetricUtil from '../utils/api//MetricUtil';
@@ -73,6 +74,16 @@ function Dashboard() {
         </Row>
 
         <CountCollapse orders={orders} />
+
+        <div className="d-flex">
+          <div className="w-50">
+            <Sales />
+          </div>
+
+          <div className="w-50">
+            Other Charts
+          </div>
+        </div>
       </div>
     </Container>
   );

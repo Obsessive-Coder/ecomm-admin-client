@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import "bootswatch/dist/slate/bootstrap.min.css";
+import '../node_modules/react-vis/dist/style.css';
 
 import store from './store';
 import reportWebVitals from './reportWebVitals';

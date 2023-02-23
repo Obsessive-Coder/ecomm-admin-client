@@ -127,10 +127,10 @@ export default function ActionBar(props) {
                 >
                   <option value="0">Select One</option>
                   <option value="ASC">
-                    {type === 'orders' ? 'New to Old' : 'Low to High'}
+                    {type === 'orders' ? 'Old to New' : 'Low to High'}
                   </option>
                   <option value='DESC'>
-                    {type === 'orders' ? 'Old to New' : 'High to Low'}
+                    {type === 'orders' ? 'New to Old' : 'High to Low'}
                   </option>
                 </Form.Select>
               </FloatingLabel>
