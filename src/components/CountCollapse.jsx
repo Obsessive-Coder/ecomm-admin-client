@@ -28,7 +28,7 @@ const includedTableColumns = ['recipient_name', 'total', 'view'];
 const countsComponentData = {
   orders: {
     icon: CartCheckIcon,
-    iconBg: 'bg-warning'
+    iconBg: 'bg-success'
   },
   pending: {
     icon: ArrowRepeatIcon,
@@ -40,7 +40,7 @@ const countsComponentData = {
   },
   delivered: {
     icon: CheckAllIcon,
-    iconBg: 'bg-success'
+    iconBg: 'bg-warning'
   }
 };
 
@@ -63,7 +63,7 @@ const CountCard = ({ label, orders = [] }) => {
 
   return (
     <Card>
-      <Card.Header className="bg-body border-0 p-0">
+      <Card.Header className="bg-darker border-0 p-0">
         <Toggler>
           <div className={`p-2 text-primary rounded-circle ${iconBg}`}>
             <Icon size={28} />

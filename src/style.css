@@ -39,6 +39,26 @@
   text-shadow: none !important;
 }
 
+.bg-darker {
+  background-color: rgb(31, 34, 38) !important;
+}
+
+.sales-tab {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.sales-tab.active {
+  background-image: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  /* border-left: thin solid black !important;
+  border-right: thin solid black !important; */
+  border-bottom: thick solid #62c462 !important;
+}
+
 @media print {
   .no-print {
     display: none !important;
