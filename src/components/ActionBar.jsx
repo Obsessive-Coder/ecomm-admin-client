@@ -17,6 +17,7 @@ import AddEditProduct from './AddEditProduct';
 export default function ActionBar(props) {
   const {
     filterItems = [],
+    filterField,
     type,
     categoryId = '0',
     direction = '0',
@@ -62,7 +63,7 @@ export default function ActionBar(props) {
           )}
 
           {/* Category Filter */}
-          {filterItems.length > 0 && (
+          {filterField && (
             <Form.Group as={Col} sm={6} md={3} controlId="filterForm" className="flex-fill my-2">
               <FloatingLabel controlId="filter" label="Filter Items">
                 <Form.Select

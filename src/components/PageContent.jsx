@@ -81,6 +81,7 @@ export default function PageContent(props) {
         filterItems={filterItems}
         categoryId={categoryId}
         direction={direction}
+        filterField={filterField}
         addItem={handleAddItem}
         getItems={handleGetItems}
         setTitle={setTitle}
