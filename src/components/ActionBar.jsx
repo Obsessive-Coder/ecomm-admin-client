@@ -17,58 +17,24 @@ import AddEditProduct from './AddEditProduct';
 export default function ActionBar(props) {
   const {
     filterItems = [],
-    statuses = [],
-    products = [],
     type,
+    categoryId = '0',
+    direction = '0',
     isAddVisible = true,
     isSearchVisible = false,
     isSortVisible = false,
+    setTitle,
     addItem,
-    getItems
+    getItems,
+    setCategoryId,
+    setDirection
   } = props;
-
-  const [title, setTitle] = useState('');
-  const [categoryId, setCategoryId] = useState('0');
-  const [direction, setDirection] = useState('0');
 
   const handleTitleOnChange = ({ target }) => setTitle(target.value);
 
-  const handleCategoryOnChange = ({ target }) => {
-    setCategoryId(target.value);
-    handleSearch(direction, target.value, title)
-  };
-
-  const handleSortOnChange = ({ target }) => {
-    setDirection(target.value);
-    handleSearch(target.value, categoryId, title);
-  }
-
-  const handleSearch = (direction, categoryId) => {
-    const queryParams = {
-      ...(direction === '0' ? {} : {
-        order: { column: type === 'orders' ? 'updatedAt' : 'price', direction }
-      }),
-      ...(categoryId === '0' ? {} : {
-        ...(type === 'products' ? { category_id: categoryId } : {}),
-        ...(type === 'categories' ? { type_id: categoryId } : {}),
-        ...(type === 'orders' ? { status_id: categoryId } : {})
-      }),
-      ...(title ? {
-        [type === 'orders' ? 'recipient_name' : 'title']: title
-      } : {})
-    };
-
-    getItems({
-      order: {
-        column: type === 'orders' ? 'recipient_name' : 'title'
-      },
-      ...queryParams
-    })
-  };
-
   const handleSubmit = event => {
     event.preventDefault();
-    handleSearch(direction, categoryId, title);
+    getItems();
   };
 
   return (
@@ -101,7 +67,8 @@ export default function ActionBar(props) {
               <FloatingLabel controlId="filter" label="Filter Items">
                 <Form.Select
                   arial-label="Filter Items"
-                  onChange={handleCategoryOnChange}
+                  value={categoryId}
+                  onChange={({ target: { value } }) => setCategoryId(value)}
                   className="bg-dark border-secondary text-secondary"
                 >
                   <option value="0">Select One</option>
@@ -122,7 +89,8 @@ export default function ActionBar(props) {
               <FloatingLabel controlId="price" label={type === 'orders' ? 'Sort By Date' : 'Sort By Price'}>
                 <Form.Select
                   arial-label={type === 'orders' ? 'Sort by date' : 'Sort by price'}
-                  onChange={handleSortOnChange}
+                  value={direction}
+                  onChange={({ target: { value } }) => setDirection(value)}
                   className="bg-dark border-secondary text-secondary"
                 >
                   <option value="0">Select One</option>
