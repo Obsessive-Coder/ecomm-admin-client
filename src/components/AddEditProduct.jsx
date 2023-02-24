@@ -40,7 +40,7 @@ export default function AddEditProduct(props) {
     category: 'required'
   });
 
-  const categories = useSelector(state => state.categories.value);
+  const categories = useSelector(state => state.categories.value?.rows ?? []);
 
   const [imageData, setImageData] = useState(null);
 

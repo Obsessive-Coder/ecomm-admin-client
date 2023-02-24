@@ -34,7 +34,7 @@ export const pageConfig = {
   reduxActions,
   config: {
     actionBarProps: { ...actionBarProps },
-    loadFunctions: [reduxActions.storeItems, storeCategories],
+    loadFunctions: [storeCategories],
     unloadFunctions: [reduxActions.clearItems, clearCategories],
     tableColumns: [...tableColumns],
     filterField: 'categories'

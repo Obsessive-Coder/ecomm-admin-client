@@ -59,7 +59,7 @@ export default function PageContent(props) {
 
   const pageKey = window.location.pathname.replace('/', '');
   const data = useSelector(state => state[pageKey].value);
-  const filterItems = useSelector(state => state[filterField]?.value ?? []);
+  const filterItems = useSelector(state => state[filterField]?.value.rows ?? []);
 
   useEffect(() => {
     handleGetItems();
