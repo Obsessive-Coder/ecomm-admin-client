@@ -14,7 +14,8 @@
   border-color: rgba(var(--bs-secondary-rgb), var(--bs-border-opacity)) !important;
 }
 
-.add-item-dropdown::after {
+.add-item-dropdown::after,
+.pagination-options::after {
   display: none !important;
 }
 
