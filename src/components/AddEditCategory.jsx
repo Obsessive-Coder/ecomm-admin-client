@@ -29,7 +29,7 @@ export default function AddEditCategory(props) {
     type: 'required'
   });
 
-  const categoryTypes = useSelector(state => state['category-types'].value);
+  const categoryTypes = useSelector(state => state['category-types']?.value?.rows ?? []);
 
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);

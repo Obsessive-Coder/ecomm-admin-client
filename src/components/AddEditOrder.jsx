@@ -44,8 +44,8 @@ export default function AddEditOrder(props) {
     status: 'required'
   });
 
-  const products = useSelector(state => state.products.value);
-  const statuses = useSelector(state => state['order-statuses'].value);
+  const products = useSelector(state => state.products.value?.rows ?? []);
+  const statuses = useSelector(state => state['order-statuses'].value?.rows ?? []);
 
   const [isOpen, setIsOpen] = useState(false);
   const handleShow = () => setIsOpen(true);

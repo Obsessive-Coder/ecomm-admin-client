@@ -60,11 +60,15 @@ export async function loader({ params: { id } }) {
 function Dashboard() {
   const { metrics: { totals, orders = [] } } = useLoaderData();
 
+  console.log(totals, orders)
+
   return (
     <Container>
       <h1 className="text-capitalize">Dashboard</h1>
 
-      <div>
+      <h2>This page is currently under development</h2>
+
+      {/* <div>
         <Row xs={1} md={3} className="g-3">
           {Object.keys(totals).map(key => (
             <Col key={`total-metrics-${key}`}>
@@ -84,7 +88,7 @@ function Dashboard() {
             Other Charts
           </div>
         </div>
-      </div>
+      </div> */}
     </Container>
   );
 }

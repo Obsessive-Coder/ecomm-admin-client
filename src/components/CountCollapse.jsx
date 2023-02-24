@@ -82,7 +82,7 @@ const CountCard = ({ label, orders = [] }) => {
       <Accordion.Collapse eventKey={label}>
         <Card.Body className="p-0">
           <DataTable
-            items={orders}
+            data={{ rows: orders }}
             columns={tableColumns.filter(({ label }) => includedTableColumns.includes(label))}
             filterItems={[]}
             isSmall={true}

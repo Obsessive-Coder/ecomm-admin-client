@@ -18,7 +18,7 @@ export const pageConfig = {
   reduxActions,
   config: {
     actionBarProps: { ...actionBarProps },
-    loadFunctions: [reduxActions.storeItems],
+    loadFunctions: [],
     unloadFunctions: [reduxActions.clearItems],
     tableColumns: [...tableColumns]
   }

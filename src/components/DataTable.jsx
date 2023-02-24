@@ -23,14 +23,17 @@ const components = {
 
 export default function DataTable(props) {
   const {
-    items = [],
+    data = {},
     columns = [],
     filterItems = [],
     isSmall = false,
+    pageIndex = 0,
     pageKey = '',
     tableClassName = '',
+    handleGetItems = () => null,
     handleUpdateItem = () => null,
-    handleRemoveItem = () => null
+    handleRemoveItem = () => null,
+    setPageIndex = () => null
   } = props;
 
   const getCellValue = (item = {}, label = '') => {
@@ -61,16 +64,13 @@ export default function DataTable(props) {
 
   const updatePageIndex = pageNumber => {
     const index = pageNumber - 1;
-    if (index < pageCount) {
+    if (index < pageCount && index >= 0) {
       setPageIndex(index);
+      handleGetItems()
     }
   };
 
-  const [rowLimit, setRowLimit] = useState(isSmall ? 2 : 25);
-  const [pageIndex, setPageIndex] = useState(0);
-
-  const pageItems = items.slice(pageIndex * rowLimit, (pageIndex * rowLimit) + rowLimit);
-  const pageCount = Math.ceil(items.length / rowLimit);
+  const { pageCount = 0, rows = [] } = data;
 
   return (
     <div>
@@ -88,7 +88,7 @@ export default function DataTable(props) {
         </thead>
 
         <tbody>
-          {pageItems.map(item => (
+          {rows.map(item => (
             <tr key={`item-${item.id}`}>
               {columns.map(({ label, componentName }, index) => {
                 const DataContent = components[componentName];
@@ -119,7 +119,7 @@ export default function DataTable(props) {
         </tbody>
       </Table>
 
-      {pageItems.length === 0 && (
+      {rows.length === 0 && (
         <div className="text-center">
           <h2>{`There are no ${pageKey.replace('-', ' ')} to show.`}</h2>
         </div>

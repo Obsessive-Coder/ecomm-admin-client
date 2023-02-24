@@ -42,7 +42,7 @@ export const pageConfig = {
   reduxActions,
   config: {
     actionBarProps: { ...actionBarProps },
-    loadFunctions: [reduxActions.storeItems, storeStatuses, storeProducts],
+    loadFunctions: [storeStatuses, storeProducts],
     unloadFunctions: [reduxActions.clearItems, clearStatuses, clearProducts],
     tableColumns: [...tableColumns],
     filterField: 'order-statuses'
