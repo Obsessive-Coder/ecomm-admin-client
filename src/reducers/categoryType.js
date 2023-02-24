@@ -48,22 +48,19 @@ export const categoryTypeSlice = createSlice({
       state.value = action.payload;
     });
 
-    builder.addCase(addItem.fulfilled, (state, action) => {
-      state.value = [...state.value, action.payload];
-    });
-
     builder.addCase(updateItem.fulfilled, (state, { payload }) => {
-      state.value = state.value.map(value => {
-        let item = { ...value };
-        if (item.id === payload.id) {
-          item = { ...payload };
-        }
-        return { ...item };
-      });
-    });
+      const { value } = state;
 
-    builder.addCase(removeItem.fulfilled, (state, action) => {
-      state.value = state.value.filter(({ id }) => id !== action.payload);
+      state.value = {
+        ...value,
+        rows: value.rows.map(value => {
+          let item = { ...value };
+          if (item.id === payload.id) {
+            item = { ...payload };
+          }
+          return { ...item };
+        })
+      };
     });
   }
 });

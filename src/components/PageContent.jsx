@@ -27,7 +27,8 @@ export default function PageContent(props) {
   }
 
   const handleAddItem = async newItem => {
-    dispatch(reduxActions.addItem(newItem));
+    await dispatch(reduxActions.addItem(newItem))
+    handleGetItems();
   }
 
   const handleUpdateItem = async updatedItem => {
@@ -35,7 +36,8 @@ export default function PageContent(props) {
   }
 
   const handleRemoveItem = async itemId => {
-    dispatch(reduxActions.removeItem(itemId));
+    await dispatch(reduxActions.removeItem(itemId));
+    handleGetItems();
   }
 
   const dispatch = useDispatch();
@@ -68,7 +70,7 @@ export default function PageContent(props) {
     return () => {
       unloadFunctions.forEach(fn => dispatch(fn()));
     }
-  }, [title, categoryId, direction, pageIndex]);
+  }, [title, categoryId, direction, pageIndex, rowLimit]);
 
   return (
     <div>
@@ -98,6 +100,7 @@ export default function PageContent(props) {
         handleUpdateItem={handleUpdateItem}
         handleRemoveItem={handleRemoveItem}
         setPageIndex={setPageIndex}
+        setRowLimit={setRowLimit}
       />
     </div>
   );

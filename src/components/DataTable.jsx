@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // Bootstrap Components.
 import Table from 'react-bootstrap/Table';
@@ -10,6 +10,7 @@ import Pagination, { bootstrap5PaginationPreset } from 'react-responsive-paginat
 // Custom Components.
 import Actions from './Actions';
 import ActiveSwitch from './ActiveSwitch';
+import PaginationOptions from './PaginationOptions';
 import StatusBadge from './StatusBadge';
 import ViewLink from './ViewLink';
 
@@ -30,10 +31,12 @@ export default function DataTable(props) {
     pageIndex = 0,
     pageKey = '',
     tableClassName = '',
+    rowLimit,
     handleGetItems = () => null,
     handleUpdateItem = () => null,
     handleRemoveItem = () => null,
-    setPageIndex = () => null
+    setPageIndex = () => null,
+    setRowLimit = () => null
   } = props;
 
   const getCellValue = (item = {}, label = '') => {
@@ -70,10 +73,18 @@ export default function DataTable(props) {
     }
   };
 
-  const { pageCount = 0, rows = [] } = data;
+  const { pageCount = 0, itemCount = 0, rows = [] } = data;
+  const firstItemNumber = (pageIndex * rowLimit) + 1;
+  const lastItemNumber = (pageIndex + 1) * rowLimit;
+  const itemsShownText = `Showing: ${firstItemNumber} - ${lastItemNumber <= itemCount ? lastItemNumber : itemCount} of ${itemCount} ${pageKey.replace('-', ' ')}`;
 
   return (
     <div>
+      <div className="d-flex justify-content-between align-items-end my-3">
+        <span className="h5">{itemsShownText}</span>
+        <PaginationOptions rowLimit={rowLimit} setRowLimit={setRowLimit} />
+      </div>
+
       <Table responsive striped bordered hover className={`table-dark ${tableClassName}`}>
         <thead className="text-body">
           <tr>
