@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 // Bootstrap Components.
 import Col from 'react-bootstrap/Col';
@@ -11,23 +12,16 @@ import AddEditProduct from '../components/AddEditProduct';
 import Confirm from '../components/Confirm';
 
 // Style, utils, and other helpers.
-import CategoryUtil from '../utils/api/CategoryUtil';
 import ProductUtil from '../utils/api/ProductUtil';
+import { reduxActions as categoryActions } from '../reducers/category';
 
 const productUtil = new ProductUtil();
 
-export async function loader({ params: { id } }) {
-  const { data: categories } = await new CategoryUtil()
-    .findAll({ order: { column: 'title' } });
-
-  const { data: product } = await new ProductUtil().findOne(id);
-  return { categories, product };
-}
-
 function Product() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const categories = useLoaderData().categories;
-  const [product, setProduct] = useState(useLoaderData().product);
+  const categories = useSelector(state => state.categories.value?.rows ?? []);
+  const [product, setProduct] = useState({});
 
   const {
     id: productId,
@@ -40,7 +34,7 @@ function Product() {
     category_id
   } = product;
 
-  const category = categories.filter(({ id }) => id === category_id)[0].title;
+  const category = categories.filter(({ id }) => id === category_id)[0]?.title;
 
   const updateProduct = updatedProduct => {
     setProduct({
@@ -53,6 +47,22 @@ function Product() {
     await productUtil.delete(productId);
     navigate('/products');
   };
+
+  useEffect(() => {
+    (async () => {
+      dispatch(categoryActions.storeItems());
+
+      const { pathname } = window.location;
+      const productId = pathname.substring(pathname.lastIndexOf('/') + 1);
+
+      const { data } = await new ProductUtil().findOne(productId);
+      setProduct(data);
+    })();
+
+    return () => {
+      dispatch(categoryActions.clearItems());
+    }
+  }, []);
 
   return (
     <Container>
@@ -83,7 +93,6 @@ function Product() {
 
             <div className="my-3">
               <AddEditProduct
-                categories={categories}
                 product={product}
                 addItem={() => null}
                 updateItem={updateProduct}

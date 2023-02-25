@@ -29,7 +29,7 @@ export default function StatusBadge({ status }) {
   }
 
   return (
-    <Badge pill bg={badgeColor}>
+    <Badge pill bg={badgeColor} text="primary">
       {status}
     </Badge>
   );

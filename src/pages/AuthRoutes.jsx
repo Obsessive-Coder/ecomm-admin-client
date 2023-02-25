@@ -1,8 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
 
 // Router components and helpers.
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider, redirect } from 'react-router-dom';
 
 // Bootstrap Components.
 import Container from 'react-bootstrap/Container';
@@ -10,8 +12,8 @@ import Container from 'react-bootstrap/Container';
 // Custom Components.
 import Dashboard from './Dashboard';
 import MasterPage from './MasterPage';
-import Order, { loader as orderLoader } from './Order';
-import Product, { loader as productLoader } from './Product';
+import Order from './Order';
+import Product from './Product';
 
 import Error404 from './Error404';
 import Login from './Login';
@@ -20,46 +22,52 @@ import PageContent from '../components/PageContent';
 import pageConfigs from '../utils/pageConfigs';
 
 const otherPages = {
-  dashboard: { loader: () => null, component: Dashboard },
-  'orders/:id': { loader: orderLoader, component: Order },
-  'products/:id': { loader: productLoader, component: Product }
+  dashboard: { component: Dashboard },
+  'orders/:id': { component: Order },
+  'products/:id': { component: Product }
 };
 
 function AuthRoutes() {
   const { uid: userId } = useSelector(({ user }) => user.value);
   const isAuthenticated = !!userId;
 
+  const auth = getAuth();
+  onAuthStateChanged(auth, user => {
+    if (!user) return redirect('/login');
+  });
+
   const withMasterPage = (Component, props = {}) => (
     isAuthenticated ? (
       <MasterPage><Component {...props} /></MasterPage>
     ) : (
-      <Navigate to="/login" />
+      <Navigate replace to="/login" />
     )
   );
 
-  const getRoute = (Component, path, props = {}, loader = () => null) => ({
+  const getRoute = (Component, path, props = {}) => ({
     path: `/${path.toLowerCase()}`,
     errorElement: <Error404 />,
-    element: withMasterPage(Component, { key: path, ...props }),
-    loader
+    element: withMasterPage(Component, { key: path, ...props })
   });
 
   const configRoutes = Object.keys(pageConfigs)
     .map(key => getRoute(PageContent, key, pageConfigs[key]));
 
   const otherRoutes = Object.keys(otherPages)
-    .map(key => getRoute(otherPages[key].component, key, {}, otherPages[key].loader));
+    .map(key => getRoute(otherPages[key].component, key, {}));
 
-  const routes = [{
-    path: '/',
-    element: <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />,
-    errorElement: <Error404 />
-  }]
+  const routes = [
+    {
+      path: '/',
+      element: <Navigate replace to={isAuthenticated ? '/dashboard' : '/login'} />,
+      errorElement: <Error404 />
+    }
+  ]
     .concat(configRoutes)
     .concat(otherRoutes)
     .concat([{
       path: '/login',
-      element: isAuthenticated ? <Navigate to="/dashboard" /> : <Login />,
+      element: isAuthenticated ? <Navigate replace to="/dashboard" /> : <Login />,
       errorElement: <Error404 />
     }]);
 

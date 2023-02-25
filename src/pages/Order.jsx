@@ -1,5 +1,4 @@
-import React from 'react'
-import { useLoaderData } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
@@ -39,24 +38,28 @@ function getValue(st, obj) {
   }, obj);
 }
 
-export async function loader({ params: { id } }) {
-  const { data: order } = await new OrderUtil().findOne(id);
-  return { order };
-}
-
 function Order() {
-  const order = useLoaderData().order;
+  const [order, setOrder] = useState({});
 
   const {
-    recipient_name,
-    address,
-    status,
-    date,
-    payment,
-    shipping,
-    total,
+    recipient_name = '',
+    address = '',
+    status = '',
+    date = '',
+    payment = '',
+    shipping = 0,
+    total = 0,
     items = [],
   } = order;
+
+  useEffect(() => {
+    (async () => {
+      const { pathname } = window.location;
+      const orderId = pathname.substring(pathname.lastIndexOf('/') + 1);
+      const { data } = await new OrderUtil().findOne(orderId);
+      setOrder(data);
+    })();
+  }, []);
 
   return (
     <Container>

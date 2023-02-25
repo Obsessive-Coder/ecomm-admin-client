@@ -8,8 +8,9 @@
 # testing
 /coverage
 
-# production
-/build
+# dotenv environment variables file
+.env
+.env.test
 
 # misc
 .DS_Store

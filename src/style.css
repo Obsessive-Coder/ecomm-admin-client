@@ -14,7 +14,8 @@
   border-color: rgba(var(--bs-secondary-rgb), var(--bs-border-opacity)) !important;
 }
 
-.add-item-dropdown::after {
+.add-item-dropdown::after,
+.pagination-options::after {
   display: none !important;
 }
 
@@ -33,6 +34,30 @@
 
 .no-click-events {
   pointer-events: none;
+}
+
+.text-shadow-0 {
+  text-shadow: none !important;
+}
+
+.bg-darker {
+  background-color: rgb(31, 34, 38) !important;
+}
+
+.sales-tab {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.sales-tab.active {
+  background-image: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  /* border-left: thin solid black !important;
+  border-right: thin solid black !important; */
+  border-bottom: thick solid #62c462 !important;
 }
 
 @media print {

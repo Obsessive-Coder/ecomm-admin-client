@@ -22,11 +22,11 @@ export const logIn = createAsyncThunk(
   async ({ email, password }) => {
     try {
       const auth = getAuth();
-      const { user: { uid } = {} } = await signInWithEmailAndPassword(auth, email, password);
+      const { user: { uid, accessToken } = {} } = await signInWithEmailAndPassword(auth, email, password);
 
       let user = {};
       if (uid) {
-        user = { email, uid };
+        user = { email, uid, accessToken };
         localStorage.setItem('user', JSON.stringify(user));
       }
 

@@ -17,62 +17,29 @@ import AddEditProduct from './AddEditProduct';
 export default function ActionBar(props) {
   const {
     filterItems = [],
-    statuses = [],
-    products = [],
+    filterField,
     type,
+    categoryId = '0',
+    direction = '0',
     isAddVisible = true,
     isSearchVisible = false,
     isSortVisible = false,
+    setTitle,
     addItem,
-    getItems
+    getItems,
+    setCategoryId,
+    setDirection
   } = props;
-
-  const [title, setTitle] = useState('');
-  const [categoryId, setCategoryId] = useState('0');
-  const [direction, setDirection] = useState('0');
 
   const handleTitleOnChange = ({ target }) => setTitle(target.value);
 
-  const handleCategoryOnChange = ({ target }) => {
-    setCategoryId(target.value);
-    handleSearch(direction, target.value, title)
-  };
-
-  const handleSortOnChange = ({ target }) => {
-    setDirection(target.value);
-    handleSearch(target.value, categoryId, title);
-  }
-
-  const handleSearch = (direction, categoryId) => {
-    const queryParams = {
-      ...(direction === '0' ? {} : {
-        order: { column: type === 'orders' ? 'updatedAt' : 'price', direction }
-      }),
-      ...(categoryId === '0' ? {} : {
-        ...(type === 'products' ? { category_id: categoryId } : {}),
-        ...(type === 'categories' ? { type_id: categoryId } : {}),
-        ...(type === 'orders' ? { status_id: categoryId } : {})
-      }),
-      ...(title ? {
-        [type === 'orders' ? 'recipient_name' : 'title']: title
-      } : {})
-    };
-
-    getItems({
-      order: {
-        column: type === 'orders' ? 'recipient_name' : 'title'
-      },
-      ...queryParams
-    })
-  };
-
   const handleSubmit = event => {
     event.preventDefault();
-    handleSearch(direction, categoryId, title);
+    getItems();
   };
 
   return (
-    <div className="d-flex flex-column flex-md-row align-items-center mb-5">
+    <div className="d-flex flex-column flex-md-row align-items-center">
       <Form onSubmit={handleSubmit} className="flex-fill w-100 me-md-3">
         <Row>
           {/* Search */}
@@ -96,12 +63,13 @@ export default function ActionBar(props) {
           )}
 
           {/* Category Filter */}
-          {filterItems.length > 0 && (
+          {filterField && (
             <Form.Group as={Col} sm={6} md={3} controlId="filterForm" className="flex-fill my-2">
               <FloatingLabel controlId="filter" label="Filter Items">
                 <Form.Select
                   arial-label="Filter Items"
-                  onChange={handleCategoryOnChange}
+                  value={categoryId}
+                  onChange={({ target: { value } }) => setCategoryId(value)}
                   className="bg-dark border-secondary text-secondary"
                 >
                   <option value="0">Select One</option>
@@ -122,15 +90,16 @@ export default function ActionBar(props) {
               <FloatingLabel controlId="price" label={type === 'orders' ? 'Sort By Date' : 'Sort By Price'}>
                 <Form.Select
                   arial-label={type === 'orders' ? 'Sort by date' : 'Sort by price'}
-                  onChange={handleSortOnChange}
+                  value={direction}
+                  onChange={({ target: { value } }) => setDirection(value)}
                   className="bg-dark border-secondary text-secondary"
                 >
                   <option value="0">Select One</option>
                   <option value="ASC">
-                    {type === 'orders' ? 'New to Old' : 'Low to High'}
+                    {type === 'orders' ? 'Old to New' : 'Low to High'}
                   </option>
                   <option value='DESC'>
-                    {type === 'orders' ? 'Old to New' : 'High to Low'}
+                    {type === 'orders' ? 'New to Old' : 'High to Low'}
                   </option>
                 </Form.Select>
               </FloatingLabel>
