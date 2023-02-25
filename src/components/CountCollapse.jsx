@@ -1,11 +1,10 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 // Bootstrap Components.
 import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import {
   ArrowRepeat as ArrowRepeatIcon,
   CartCheck as CartCheckIcon,
@@ -44,11 +43,13 @@ const countsComponentData = {
   }
 };
 
-const CountCard = ({ label, orders = [] }) => {
+export default function CountCollapse({ label = '', data = {} }) {
+  const { orders = [], count = 0 } = data;
+
   const decoratedOnClick = useAccordionButton(label);
   const { icon: Icon, iconBg } = countsComponentData[label];
 
-  const Toggler = ({ children }) => (
+  const Toggler = ({ children, ...rest }) => (
     <Button
       type="button"
       variant="link"
@@ -62,53 +63,37 @@ const CountCard = ({ label, orders = [] }) => {
   )
 
   return (
-    <Card>
-      <Card.Header className="bg-darker border-0 p-0">
-        <Toggler>
-          <div className={`p-2 text-primary rounded-circle ${iconBg}`}>
-            <Icon size={28} />
-          </div>
+    < Col >
+      <Card>
+        <Card.Header className="bg-darker border-0 p-0">
+          <Toggler>
+            <div className={`p-2 text-primary rounded-circle ${iconBg}`}>
+              <Icon size={28} />
+            </div>
 
-          <div className="mx-3">
-            <Card.Title className="h6 m-0 text-capitalize">{label}</Card.Title>
+            <div className="mx-3">
+              <Card.Title className="h6 m-0 text-capitalize">{label}</Card.Title>
 
-            <Card.Text className="h4 text-start fw-bold text-shadow-0">
-              {orders.length}
-            </Card.Text>
-          </div>
-        </Toggler>
-      </Card.Header>
+              <Card.Text className="h4 text-start fw-bold text-shadow-0">
+                {count}
+              </Card.Text>
+            </div>
+          </Toggler>
+        </Card.Header>
 
-      <Accordion.Collapse eventKey={label}>
-        <Card.Body className="p-0">
-          <DataTable
-            data={{ rows: orders }}
-            columns={tableColumns.filter(({ label }) => includedTableColumns.includes(label))}
-            filterItems={[]}
-            isSmall={true}
-            pageKey="orders"
-            tableClassName="m-0"
-          />
-        </Card.Body>
-      </Accordion.Collapse>
-    </Card>
-  );
-};
-
-export default function CountCollapse({ orders = [] }) {
-  const getOrders = value => value === 'orders' ?
-    [...orders] :
-    orders.filter(({ status }) => status.toLowerCase() === value);
-
-  return (
-    <div>
-      <Accordion alwaysOpen as={Row} defaultActiveKey={null} xs={1} md={2} xl={4} className="g-3 my-4">
-        {['orders', 'pending', 'processing', 'delivered'].map(key => (
-          <Col key={`count-metrics-${key}`}>
-            <CountCard label={key} orders={getOrders(key)} />
-          </Col>
-        ))}
-      </Accordion>
-    </div>
+        <Accordion.Collapse eventKey={label}>
+          <Card.Body className="p-0">
+            <DataTable
+              data={{ rows: orders }}
+              columns={tableColumns.filter(({ label }) => includedTableColumns.includes(label))}
+              filterItems={[]}
+              isSmall={true}
+              pageKey="orders"
+              tableClassName="m-0"
+            />
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
+    </Col >
   );
 }
