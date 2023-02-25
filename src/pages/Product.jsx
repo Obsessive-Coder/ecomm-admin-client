@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Bootstrap Components.
@@ -13,22 +13,15 @@ import Confirm from '../components/Confirm';
 
 // Style, utils, and other helpers.
 import ProductUtil from '../utils/api/ProductUtil';
-import { reduxActions } from '../reducers/category';
+import { reduxActions as categoryActions } from '../reducers/category';
 
 const productUtil = new ProductUtil();
-
-export async function loader({ params: { id } }) {
-  const { data: product } = await new ProductUtil().findOne(id);
-  return { product };
-}
 
 function Product() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const categories = useSelector(state => state.categories.value?.rows ?? []);
-  const [product, setProduct] = useState(useLoaderData().product);
-
-  console.log(categories)
+  const [product, setProduct] = useState({});
 
   const {
     id: productId,
@@ -56,10 +49,18 @@ function Product() {
   };
 
   useEffect(() => {
-    dispatch(reduxActions.storeItems());
+    (async () => {
+      dispatch(categoryActions.storeItems());
+
+      const { pathname } = window.location;
+      const productId = pathname.substring(pathname.lastIndexOf('/') + 1);
+
+      const { data } = await new ProductUtil().findOne(productId);
+      setProduct(data);
+    })();
 
     return () => {
-      dispatch(reduxActions.clearItems());
+      dispatch(categoryActions.clearItems());
     }
   }, []);
 

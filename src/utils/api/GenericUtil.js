@@ -36,31 +36,31 @@ export default class GenericUtil {
 
   findAll(params) {
     const config = this.getConfig()
-    if (!config) { return }
+    if (!config) return;
     return axios.get(this.baseUrl, { params, ...config });
   }
 
   findOne(recordId) {
     const config = this.getConfig()
-    if (!config) { return }
+    if (!config) return;
     return axios.get(`${this.baseUrl}/${recordId}`, { ...config });
   }
 
   create(record) {
     const config = this.getConfig()
-    if (!config) { return }
+    if (!config) return;
     return axios.post(`${this.baseUrl}`, record, { ...config });
   }
 
   update(recordId, updatedRecord) {
     const config = this.getConfig()
-    if (!config) { return }
+    if (!config) return;
     return axios.put(`${this.baseUrl}/${recordId}`, updatedRecord, { ...config });
   }
 
   delete(recordId) {
     const config = this.getConfig()
-    if (!config) { return }
+    if (!config) return;
     return axios.delete(`${this.baseUrl}/${recordId}`, { ...config });
   }
 }
