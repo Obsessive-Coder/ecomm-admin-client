@@ -60,8 +60,6 @@ export async function loader({ params: { id } }) {
 function Dashboard() {
   const { metrics: { totals, orders = [] } } = useLoaderData();
 
-  console.log(totals, orders)
-
   return (
     <Container>
       <h1 className="text-capitalize">Dashboard</h1>
