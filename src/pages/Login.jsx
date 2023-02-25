@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormInputValidation } from 'react-form-input-validation';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 
-import { logIn, logOut } from '../reducers/user';
+import { logIn } from '../reducers/user';
 
 export default function Login() {
   const dispatch = useDispatch();

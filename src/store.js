@@ -11,9 +11,9 @@ import userReducer from './reducers/user';
 export default configureStore({
   reducer: {
     categories: categoryReducer,
-    ['category-types']: categoryTypeReducer,
+    'category-types': categoryTypeReducer,
     orders: orderReducer,
-    ['order-statuses']: orderStatusReducer,
+    'order-statuses': orderStatusReducer,
     products: productReducer,
     user: userReducer
   }
