@@ -80,10 +80,12 @@ export default function DataTable(props) {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-end my-3">
-        <span className="h5">{itemsShownText}</span>
-        <PaginationOptions rowLimit={rowLimit} setRowLimit={setRowLimit} />
-      </div>
+      {isSmall || (
+        <div className="d-flex justify-content-between align-items-end my-3">
+          <span className="h5">{itemsShownText}</span>
+          <PaginationOptions rowLimit={rowLimit} setRowLimit={setRowLimit} />
+        </div>
+      )}
 
       <Table responsive striped bordered hover className={`table-dark ${tableClassName}`}>
         <thead className="text-body">
