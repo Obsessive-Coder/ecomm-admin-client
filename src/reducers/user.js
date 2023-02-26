@@ -52,6 +52,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: { value: JSON.parse(localStorage.getItem('user')) ?? {} },
   reducers: {
+    storeUser(state, action) {
+      state.value = { ...state.value, ...action.payload };
+    },
     clearItem(state) {
       state.value = {};
     },
@@ -67,7 +70,7 @@ export const userSlice = createSlice({
   }
 });
 
-export const { clearItem } = userSlice.actions;
+export const { clearItem, storeUser } = userSlice.actions;
 export const reduxActions = { logIn, logOut, clearItem };
 
 export default userSlice.reducer;
