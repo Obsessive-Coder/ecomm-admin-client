@@ -45,48 +45,44 @@ const TimelineDropdown = ({ menuItems = [], handleOnChange }) => {
   );
 };
 
-export default function Sales({ data, getMetrics }) {
+export default function BarGraphs({ data, getMetrics }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  if (!data?.labels) return;
+  if (!data) return;
+
+  const { tabData = {}, years = [] } = data;
 
   return (
     <div className="bg-darker">
       <Tabs
         activeKey={activeIndex}
-        onSelect={key => setActiveIndex(parseInt(key))}
+        onSelect={index => setActiveIndex(parseInt(index))}
         className="mb-3"
       >
-        <Tab
-          key={activeIndex}
-          eventKey={0}
-          title="Sales"
-          tabClassName="btn btn-link text-body rounded-0 sales-tab"
-          className="position-relative"
-        >
-          <TimelineDropdown menuItems={data?.years ?? []} handleOnChange={getMetrics} />
+        {Object.keys(tabData).map((key, index) => (
+          <Tab
+            key={`${key}-charts-${index}`}
+            eventKey={index}
+            title={key}
+            tabClassName="btn btn-link text-capitalize text-body rounded-0 charts-tab"
+            className="position-relative px-2"
+          >
+            <TimelineDropdown menuItems={years} handleOnChange={getMetrics} />
 
-          <Bar
-            data={data}
-            plugins={[{
-              beforeInit(chart) {
-                const originalFit = (chart.legend).fit;
-                (chart.legend).fit = function fit() {
-                  originalFit.bind(chart.legend)();
-                  this.height += 20;
-                };
-              }
-            }]}
-          />
-        </Tab>
-
-        <Tab
-          eventKey={1}
-          title="Orders"
-          tabClassName="btn btn-link text-body rounded-0 sales-tab"
-        >
-          Coming Soon!
-        </Tab>
+            <Bar
+              data={tabData[key]}
+              plugins={[{
+                beforeInit(chart) {
+                  const originalFit = (chart.legend).fit;
+                  (chart.legend).fit = function fit() {
+                    originalFit.bind(chart.legend)();
+                    this.height += 20;
+                  };
+                }
+              }]}
+            />
+          </Tab>
+        ))}
       </Tabs>
     </div>
   );

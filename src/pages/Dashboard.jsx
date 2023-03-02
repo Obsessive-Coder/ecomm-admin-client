@@ -5,14 +5,18 @@ import Container from 'react-bootstrap/Container';
 
 // Custom Components.
 import CountCollapses from '../components/CountCollapses';
-import Sales from '../components/Sales';
+import BarGraphs from '../components/BarGraphs';
 import TotalCards from '../components/TotalCards';
 
 // Styles, utils, and other helpers.
 import MetricUtil from '../utils/api//MetricUtil';
 
 function Dashboard() {
-  const [{ totals = {}, counts = {}, sales = {} }, setMetrics] = useState({});
+  const [{
+    totals = {},
+    counts = {},
+    chartsData
+  }, setMetrics] = useState({});
 
   const getMetrics = async (year = new Date().getUTCFullYear()) => {
     const { data } = await new MetricUtil().findAll({ year });
@@ -36,7 +40,7 @@ function Dashboard() {
 
         <div className="d-flex" style={{ height: 300 }}>
           <div className="w-50" >
-            <Sales data={sales} getMetrics={getMetrics} />
+            <BarGraphs data={chartsData} getMetrics={getMetrics} />
           </div>
 
           <div className="w-50">
