@@ -22,26 +22,27 @@ import React, { useState } from 'react';
 
 // Bootstrap Components.
 import Button from 'react-bootstrap/Button';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 // React Vis Components.
 import {
   FlexibleWidthXYPlot,
-  XYPlot,
+  FlexibleXYPlot,
+  VerticalBarSeries,
   XAxis,
   YAxis,
   HorizontalGridLines,
-  VerticalGridLines,
-  LineSeries,
   LineMarkSeries,
-  MarkSeries,
-  VerticalBarSeries,
-  DiscreteColorLegend
+  LineMarkSeriesCanvas,
+  DiscreteColorLegend,
+  Hint
 } from 'react-vis';
-// import DiscreteColorLegend from 'legends/discrete-color-legend';
 
-const MSEC_DAILY = 86400000;
+// Styles, utils, and other helpers.
+import currencyHelper from '../utils/helpers/currency';
 
 const axisStyle = {
   ticks: {
@@ -64,45 +65,147 @@ const colors = {
   delivered: 'rgb(248, 148, 6)'
 };
 
-const LineMarkGrid = ({ yAxisLabel = '', data = {} }) => {
+const TimelineDropdown = ({ handleOnChange }) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const options = ['week', 'month', 'year'];
+
+  const handleOnSelect = (eventKey) => {
+    setSelectedIndex(parseInt(eventKey));
+    handleOnChange(options[eventKey])
+  };
+
+  return (
+    <DropdownButton
+      title={options[selectedIndex]}
+      variant="dark"
+      menuVariant="dark"
+      size="sm"
+      onSelect={handleOnSelect}
+      className="position-absolute mx-3 timeline-dropdown"
+      style={{ left: 0 }}
+    >
+      {options.map((key, index) => (
+        <Dropdown.Item
+          key={`timeline-${key}`}
+          eventKey={index}
+          active={index === selectedIndex}
+          className="text-body text-capitalize"
+        >
+          {key}
+        </Dropdown.Item>
+      ))}
+    </DropdownButton>
+  );
+};
+
+const LineMarkGrid = ({ yAxisLabel = '', data = {}, getMetrics }) => {
   const [selectedLegendItem, setSelectedLegendItem] = useState('all');
+  const [hoveredItem, setHoveredItem] = useState(false);
 
   const dataKeys = Object.keys(data);
-
-  const items = (selectedLegendItem === 'all' ? (
-    dataKeys
-      .reduce((prev, key) => ([...prev, ...(data[key])]), [])
-  ) : (
-    data[selectedLegendItem]
-  ));
-
-  items.sort((a, b) => new Date(b.x) - new Date(a.x));
+  const items = data[selectedLegendItem];
+  items?.sort((a, b) => new Date(b.x) - new Date(a.x));
 
   const handleLegendItemOnClick = index => {
     setSelectedLegendItem(index);
   }
 
+  const handleValueHover = (dataPoint) => {
+    if (!hoveredItem) {
+      setHoveredItem(dataPoint);
+    }
+  }
+
+  const graphColor = colors[selectedLegendItem];
+
   return (
-    <div>
-      <Legend
-        items={['all', ...dataKeys]}
-        selectedLegendItem={selectedLegendItem}
-        handleItemOnClick={handleLegendItemOnClick}
-      />
+    <div className="position-relative">
+      <div className="d-flex justify-content-center align-items-center">
+        <TimelineDropdown handleOnChange={getMetrics} />
 
-      <FlexibleWidthXYPlot xType="time" height={300}>
-        <HorizontalGridLines />
-
-        <XAxis
-          title="Date"
-          tickValues={items.map(({ x }) => x)}
-          style={axisStyle}
+        <Legend
+          items={dataKeys}
+          selectedLegendItem={selectedLegendItem}
+          handleItemOnClick={handleLegendItemOnClick}
         />
+      </div>
 
-        <YAxis title={yAxisLabel} style={axisStyle} />
+      {!items?.length ? (
+        <div style={{ height: 300 }}>
+          <h4 className="text-center">No data to show</h4>
+        </div>
+      ) : (
+        // <FlexibleXYPlot xType="time">
+        //   <HorizontalGridLines />
 
-        <LineMarkSeries animation data={items} color={colors[selectedLegendItem]} />
-      </FlexibleWidthXYPlot>
+        //   <YAxis title={yAxisLabel} style={axisStyle} />
+
+        //   <XAxis
+        //     title="Date"
+        //     style={{ ...axisStyle }}
+        //   />
+
+        //   <LineMarkSeries
+        //     animation
+        //     data={items}
+        //     color={graphColor}
+        //     onValueMouseOver={handleValueHover}
+        //     onValueMouseOut={() => setHoveredItem(false)}
+        //   />
+        // </FlexibleXYPlot>
+
+        <FlexibleXYPlot>
+          <VerticalBarSeries data={items} />
+        </FlexibleXYPlot>
+
+
+
+        // <div>
+        //   <FlexibleWidthXYPlot xType="time" height={300}>
+        //     <HorizontalGridLines left={75} />
+
+        // <XAxis
+        //   title="Date"
+        //   tickValues={items?.map(({ x }) => x)}
+        //   left={75}
+        //   style={{ ...axisStyle, content: { right: 100 } }}
+        // />
+
+        //     <YAxis title={yAxisLabel} marginLeft={75} style={axisStyle} />
+
+        // <LineMarkSeriesCanvas
+        //   animation
+        //   data={items}
+        //   color={graphColor}
+        //   marginLeft={75}
+        //   style={{ width: 300 }}
+        //   onValueMouseOver={handleValueHover}
+        //   onValueMouseOut={() => setHoveredItem(false)}
+        // />
+
+        //     {hoveredItem && (
+        //       <Hint value={hoveredItem}>
+        //         <div className="p-1 bg-body text-body">
+        //           <div className="d-flex align-items-center">
+        //             <span
+        //               className="d-inline-block me-2"
+        //               style={{ width: 15, height: 15, backgroundColor: graphColor }}
+        //             />
+
+        //             <h6 className="fw-bold m-0">
+        //               {new Date(hoveredItem.x).toLocaleDateString()}
+        //             </h6>
+        //           </div>
+
+        //           <span>
+        //             {`${yAxisLabel}: ${currencyHelper.formatCurrency(hoveredItem.y)}`}
+        //           </span>
+        //         </div>
+        //       </Hint>
+        //     )}
+        //   </FlexibleWidthXYPlot>
+        // </div>
+      )}
     </div>
   );
 }
@@ -128,28 +231,8 @@ const Legend = ({ items, selectedLegendItem, handleItemOnClick }) => {
   );
 };
 
-export default function Sales(props) {
+export default function Sales({ data, getMetrics }) {
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const timestamp = new Date('February 15 2023').getTime();
-
-  const pending = [
-    { x: timestamp + MSEC_DAILY * 3, y: 29 },
-    { x: timestamp + MSEC_DAILY * 5, y: 7 },
-  ];
-
-  const processing = [
-    { x: timestamp, y: 3 },
-    { x: timestamp + MSEC_DAILY, y: 8 },
-    { x: timestamp + MSEC_DAILY * 2, y: 12 },
-  ];
-
-  const delivered = [
-    { x: timestamp + MSEC_DAILY * 6, y: 18 },
-    { x: timestamp + MSEC_DAILY * 12, y: 9 },
-  ];
-
-  const data = { pending, processing, delivered };
 
   return (
     <div className="bg-darker">
@@ -164,7 +247,11 @@ export default function Sales(props) {
           title="Sales"
           tabClassName="btn btn-link text-body rounded-0 sales-tab"
         >
-          <LineMarkGrid yAxisLabel="Sales" data={data} />
+          <LineMarkGrid
+            yAxisLabel="Sales"
+            data={data}
+            getMetrics={getMetrics}
+          />
         </Tab>
 
         <Tab

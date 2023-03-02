@@ -60,6 +60,10 @@
   border-bottom: thick solid #62c462 !important;
 }
 
+.timeline-dropdown .dropdown-toggle {
+  color: #929293;
+}
+
 @media print {
   .no-print {
     display: none !important;

@@ -10,6 +10,9 @@ import {
   CurrencyDollar as CurrencyDollarIcon
 } from 'react-bootstrap-icons';
 
+// Styles, utils, and other helpers.
+import currencyHelper from '../utils/helpers/currency';
+
 const componentData = {
   today: {
     variant: 'info',
@@ -36,7 +39,7 @@ function TotalCard({ label, value }) {
         <Card.Title className="fw-bold text-capitalize text-shadow-0">{label}</Card.Title>
 
         <Card.Text className="h3 fw-bold text-shadow-0">
-          {`$${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}
+          {currencyHelper.formatCurrency(parseFloat(value))}
         </Card.Text>
       </Card.Body>
     </Card>

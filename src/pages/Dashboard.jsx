@@ -12,12 +12,16 @@ import TotalCards from '../components/TotalCards';
 import MetricUtil from '../utils/api//MetricUtil';
 
 function Dashboard() {
-  const [{ totals = {}, ordersData = {} }, setMetrics] = useState({});
+  const [{ totals = {}, counts = {}, sales = {} }, setMetrics] = useState({});
+
+  const getMetrics = async (salesPeriod = 'week') => {
+    const { data } = await new MetricUtil().findAll({ salesPeriod });
+    setMetrics(data);
+  };
 
   useEffect(() => {
     (async () => {
-      const { data } = await new MetricUtil().findAll({});
-      setMetrics(data);
+      getMetrics();
     })();
   }, []);
 
@@ -28,17 +32,17 @@ function Dashboard() {
       <div>
         <TotalCards data={totals} />
 
-        <CountCollapses data={ordersData} />
+        <CountCollapses data={counts} />
 
-        {/* <div className="d-flex">
-          <div className="w-50">
-            <Sales />
+        <div className="d-flex" style={{ height: 300 }}>
+          <div className="w-50" >
+            <Sales data={sales} getMetrics={getMetrics} />
           </div>
 
           <div className="w-50">
             Other Charts
           </div>
-        </div> */}
+        </div>
       </div>
     </Container>
   );

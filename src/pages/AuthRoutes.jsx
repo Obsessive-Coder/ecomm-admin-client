@@ -40,6 +40,7 @@ function AuthRoutes() {
     if (user) {
       const accessToken = await user.getIdToken();
       if (accessToken !== user.accessToken) {
+        alert('Access token changed');
         dispatch(storeUser({ uid, email, accessToken }))
       }
     } else {
