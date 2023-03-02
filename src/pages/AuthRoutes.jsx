@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 
@@ -21,6 +21,8 @@ import PageContent from '../components/PageContent';
 
 import pageConfigs from '../utils/pageConfigs';
 
+import { storeUser } from '../reducers/user';
+
 const otherPages = {
   dashboard: { component: Dashboard },
   'orders/:id': { component: Order },
@@ -28,12 +30,22 @@ const otherPages = {
 };
 
 function AuthRoutes() {
-  const { uid: userId } = useSelector(({ user }) => user.value);
-  const isAuthenticated = !!userId;
+  const dispatch = useDispatch();
+
+  const { uid, email } = useSelector(({ user }) => user.value);
+  const isAuthenticated = !!uid;
 
   const auth = getAuth();
-  onAuthStateChanged(auth, user => {
-    if (!user) return redirect('/login');
+  onAuthStateChanged(auth, async user => {
+    if (user) {
+      const accessToken = await user.getIdToken();
+      if (accessToken !== user.accessToken) {
+        alert('Access token changed');
+        dispatch(storeUser({ uid, email, accessToken }))
+      }
+    } else {
+      redirect('/login');
+    }
   });
 
   const withMasterPage = (Component, props = {}) => (
