@@ -1,38 +1,54 @@
 import React, { useState } from 'react';
 
 // Bootstrap Components.
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 // Chart JS Components.
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { CategoryScale } from 'chart.js'
 import Chart from 'chart.js/auto';
 
-// Styles, utils, and other helpers.
-import currencyHelper from '../utils/helpers/currency';
-
 Chart.register(CategoryScale);
 
-const data2 = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  datasets: [
-    {
-      label: "First dataset",
-      data: [33, 53, 85, 41, 44, 165, 33, 53, 85, 41, 44, 165],
-      backgroundColor: "rgba(75,192,192,0.2)",
-      borderColor: "rgba(75,192,192,1)"
-    },
-    {
-      label: "Second dataset",
-      data: [33, 25, 35, 51, 54, 76, 33, 25, 35, 51, 54, 76],
-      borderColor: "#742774"
-    }
-  ]
+const TimelineDropdown = ({ menuItems = [], handleOnChange }) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const handleOnSelect = (eventKey) => {
+    setSelectedIndex(parseInt(eventKey));
+    handleOnChange(menuItems[eventKey])
+  };
+
+  return (
+    <DropdownButton
+      title={menuItems[selectedIndex]}
+      variant="dark"
+      menuVariant="dark"
+      size="sm"
+      onSelect={handleOnSelect}
+      className="position-absolute mx-3 timeline-dropdown"
+      style={{ left: 0 }}
+    >
+      {menuItems.map((key, index) => (
+        <Dropdown.Item
+          key={`year-${key}`}
+          eventKey={index}
+          active={index === selectedIndex}
+          className="text-body"
+        >
+          {key}
+        </Dropdown.Item>
+      ))}
+    </DropdownButton>
+  );
 };
 
 export default function Sales({ data, getMetrics }) {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  if (!data?.labels) return;
 
   return (
     <div className="bg-darker">
@@ -46,8 +62,22 @@ export default function Sales({ data, getMetrics }) {
           eventKey={0}
           title="Sales"
           tabClassName="btn btn-link text-body rounded-0 sales-tab"
+          className="position-relative"
         >
-          <Line data={data2} />
+          <TimelineDropdown menuItems={data?.years ?? []} handleOnChange={getMetrics} />
+
+          <Bar
+            data={data}
+            plugins={[{
+              beforeInit(chart) {
+                const originalFit = (chart.legend).fit;
+                (chart.legend).fit = function fit() {
+                  originalFit.bind(chart.legend)();
+                  this.height += 20;
+                };
+              }
+            }]}
+          />
         </Tab>
 
         <Tab

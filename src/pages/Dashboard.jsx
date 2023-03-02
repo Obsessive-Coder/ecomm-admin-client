@@ -14,8 +14,8 @@ import MetricUtil from '../utils/api//MetricUtil';
 function Dashboard() {
   const [{ totals = {}, counts = {}, sales = {} }, setMetrics] = useState({});
 
-  const getMetrics = async (salesPeriod = 'week') => {
-    const { data } = await new MetricUtil().findAll({ salesPeriod });
+  const getMetrics = async (year = new Date().getUTCFullYear()) => {
+    const { data } = await new MetricUtil().findAll({ year });
     setMetrics(data);
   };
 
